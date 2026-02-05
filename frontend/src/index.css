@@ -27,9 +27,8 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column; /* stack header/content/footer vertically */
+  min-height: 100vh;      /* full viewport height */
 }
 
 h1 {
