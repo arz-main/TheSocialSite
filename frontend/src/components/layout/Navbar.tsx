@@ -7,8 +7,8 @@ const Navbar = () => {
 			<img src={ReactLogo} alt="React Logo" className="h-10 w-10" />
 			<div className="flex gap-4">
 				<Link to="/" className="hover:bg-[#fdf5e2] py-2 px-3 rounded-xl border-none font-semibold">Home</Link>
+				<Link to="/practice" className="hover:bg-[#fdf5e2]  py-2 px-3 rounded-xl border-none font-semibold">Practice</Link>
 				<Link to="/about" className="hover:bg-[#fdf5e2]  py-2 px-3 rounded-xl border-none font-semibold">About</Link>
-				<Link to="/contact" className="hover:bg-[#fdf5e2]  py-2 px-3 rounded-xl border-none font-semibold">Contact</Link>
 			</div>
 		</nav>
 	);

@@ -1,5 +1,7 @@
 import Card from "../components/ui/Card"
 import DefaultLogo from "../assets/world_logo.svg"
+import { Link } from "react-router-dom"
+
 const Home = () => {
 	return (
 		<>
@@ -12,12 +14,18 @@ const Home = () => {
 					SketchFlow helps you develop your drawing skills with timed reference practice, progress tracking, and a supportive community of artists.
 				</h1>
 				<div className="flex gap-4 pt-4">
-					<button className="hover:bg-[#C24A48] bg-[#F9F6EE] hover:text-white border rounded-lg py-2.5 px-8">
+					<Link
+						to="/practice"
+						className="inline-block bg-[#F9F6EE] hover:bg-[#C24A48] hover:text-white border rounded-lg py-2.5 px-8"
+					>
 						Start Practicing
-					</button>
-					<button className="hover:bg-[#C24A48] bg-[#F9F6EE] hover:text-white border rounded-lg py-2.5 px-8">
+					</Link>
+					<Link
+						to="/"
+						className="inline-block bg-[#F9F6EE] hover:bg-[#C24A48] hover:text-white border rounded-lg py-2.5 px-8"
+					>
 						Explore Gallery
-					</button>
+					</Link>
 				</div>
 			</section>
 			<section className="mx-screen w-full flex flex-col items-center gap-3 pb-20 p-6 bg-gradient-to-br from-[#fdf5e2] to-[#f7ecd9]">
@@ -38,9 +46,9 @@ const Home = () => {
 					<h1 className="text-white text-4xl mb-6">Ready to Level Up Your Art?</h1>
 					<h1 className="text-white text-xl mb-4">Join thousands of artists improving their skills every day</h1>
 				</div>
-				<button className="hover:bg-[#C24A48] bg-[#F9F6EE] hover:text-white border rounded-lg py-2.5 px-8">
-						Begin Your Journey
-					</button>
+				<Link to="/practice" className="hover:bg-[#C24A48] bg-[#F9F6EE] hover:text-white border rounded-lg py-2.5 px-8">
+					Begin Your Journey
+				</Link>
 			</section>
 		</>
 	);
