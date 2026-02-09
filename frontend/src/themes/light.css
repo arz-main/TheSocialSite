@@ -1,0 +1,5 @@
+[data-theme='light'] {
+  --color-primary: 34, 197, 94; /* example green-500 in RGB format */
+  --color-text-default: 17, 24, 39; /* example gray-900 */
+  --color-background-default: #ede4d5;
+}
