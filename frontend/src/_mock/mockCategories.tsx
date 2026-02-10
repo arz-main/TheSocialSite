@@ -1,31 +1,31 @@
-import { Palette, Clock, TrendingUp, Users, Award } from "lucide-react";
+import { PersonStanding, Hand, Amphora, HandFist, SquareUserRound, Panda } from "lucide-react";
 const MockCategories = [
 	{
 		id: 1,
 		title: "Figure Drawing",
-		icon: Clock,
+		icon: PersonStanding,
 	},
 	{
 		id: 2,
 		title: "Hands",
-		icon: Palette,
+		icon: Hand,
 	},
 	{
 		id: 3,
 		title: "Still Life",
-		icon: TrendingUp,
+		icon: Amphora,
 	},{
 		id: 4,
 		title: "Fights",
-		icon: Users,
+		icon: HandFist,
 	},{
 		id: 5,
 		title: "Portraits",
-		icon: Award,
+		icon: SquareUserRound,
 	},{
 		id: 6,
 		title: "Animals",
-		icon: Award,
+		icon: Panda,
 	}
 ];
 

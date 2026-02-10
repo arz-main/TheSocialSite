@@ -1,22 +1,31 @@
 @import "tailwindcss";
 
+@theme {
+	--color-primary: var(--primary);
+	--color-background: var(--background);
+	--color-text: var(--text);
+	--color-text-opaque: var(--text-opaque);
+	--color-button: var(--button);
+	--color-card: var(--card);
+	--color-card-sub: var(--card-sub);
+}
+
 :root {
-	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-	line-height: 1.5;
-	font-weight: 400;
+	--primary: #C24A48;
+	--background: #faf1de;
+	--text: #1C0D0C;
+	--text-opaque: #4a5565;
+	--button: #F9F6EE;
+	--card: #FFF9EF;
+	/* --card-sub: #F4EADB; */
+}
 
-	/* 
-	Background/light: #EDE4D5
-	Accent/red: #C24A48
-	Text: #1C0D0C 
-	*/
-	color-scheme: light;
-	color: #1C0D0C;
-	background-color: #EDE4D5;
-	
-
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+.dark {
+	--primary: #4AC2B1;
+	--background: #1C1C1C;
+	--text: #F0EDEB;
+	--text-opaque: #B5AA9A;
+	--button: #0A0C1A;
+	--card: #242424;
+	/* --card-sub: #2E2E2E; */
 }
