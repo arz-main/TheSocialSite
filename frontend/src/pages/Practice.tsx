@@ -1,6 +1,7 @@
 import Category from "../components/ui/Category"
 import Logo from "../assets/react.svg"
 import { useState } from "react";
+import MockCategories from "../_mock/mockCategories";
 
 const Practice = () => {
 	const [numDrawings, setNumDrawings] = useState(5);
@@ -22,12 +23,7 @@ const Practice = () => {
 						</h1>
 
 						<div className="grid grid-cols-2 gap-4">
-							<Category img={Logo} title="Figure Drawing" />
-							<Category img={Logo} title="Figure Drawing" />
-							<Category img={Logo} title="Figure Drawing" />
-							<Category img={Logo} title="Figure Drawing" />
-							<Category img={Logo} title="Figure Drawing" />
-							<Category img={Logo} title="Figure Drawing" />
+							{MockCategories.map(category => <Category key={category.id} {...category}></Category>)}
 						</div>
 
 						<div className="flex flex-col py-14 gap-10">
