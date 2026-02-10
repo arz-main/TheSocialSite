@@ -1,31 +1,25 @@
-// src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import Home from "./pages/Home";
 import Practice from "./pages/Practice";
 import About from "./pages/About";
+import Paths from "./routes/paths";
 
 const App = () => {
 	return (
 		<Router>
-			{/* Navbar fixed at top */}
 			<Navbar />
-
-			{/* Main layout: full screen height */}
 			<div className="pt-16 min-h-screen flex flex-col">
-				{/* This section grows to fill space */}
 				<main className="flex-1">
 					<Routes>
-						<Route path="/" element={<Home />} />
-						<Route path="/about" element={<About />} />
-						<Route path="/practice" element={<Practice />} />
+						<Route path={Paths.home} element={<Home />} />
+						<Route path={Paths.about} element={<About />} />
+						<Route path={Paths.practice} element={<Practice />} />
 					</Routes>
 				</main>
-
-				{/* Footer always at bottom */}
-				<Footer />
 			</div>
+			<Footer />
 		</Router>
 	);
 };
