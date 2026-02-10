@@ -8,9 +8,9 @@ type CategoryProp = {
 
 function Category({icon: Icon, title}: CategoryProp){
 	return (
-		<div className="hover:bg-red-200 hover:border-red-900 flex flex-col w-full rounded-xl border bg-white p-4 shadow items-center">
-			<Icon className="aspect-square w-10"></Icon>
-			<h1 className="text-lg text-black font-semibold">
+		<div className="hover:border-primary flex flex-col w-full rounded-xl border-2 bg-card p-4 shadow items-center">
+			<Icon className="text-text w-10 h-10 p-1 rounded-lg"></Icon>
+			<h1 className="text-lg text-text font-semibold">
 				{title}
 			</h1>
 		</div>

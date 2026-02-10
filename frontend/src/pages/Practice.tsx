@@ -1,5 +1,5 @@
 import Category from "../components/ui/Category"
-import Logo from "../assets/react.svg"
+import { Brush } from "lucide-react"
 import { useState } from "react";
 import MockCategories from "../_mock/mockCategories";
 
@@ -9,16 +9,16 @@ const Practice = () => {
 
 	return (
 		<>
-			<section className="mx-screen w-full p-6 bg-gradient-to-br from-[#fdf5e2] to-[#f7ecd9]">
-				<h1 className="text-2xl pt-4 pb-8">
+			<section className="mx-screen w-full p-6 bg-background">
+				<h1 className="text-text text-2xl pt-4 pb-8">
 					Practice Session
 				</h1>
-				<div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr]  gap-6">
+				<div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
 					{/* LEFT PANEL */}
-					<div className="flex flex-col rounded-xl bg-white shadow p-6">
-						<h1 className="text-black text-lg">Session Settings</h1>
+					<div className="flex flex-col rounded-xl bg-card shadow p-6">
+						<h1 className="text-text text-lg">Session Settings</h1>
 
-						<h1 className="text-gray-600 text-md pt-10 pb-4">
+						<h1 className="text-text-opaque text-md pt-10 pb-4">
 							Choose Category
 						</h1>
 
@@ -26,7 +26,7 @@ const Practice = () => {
 							{MockCategories.map(category => <Category key={category.id} {...category}></Category>)}
 						</div>
 
-						<div className="flex flex-col py-14 gap-10">
+						<div className="text-text flex flex-col py-14 gap-10">
 							<div>
 								<h1>Number of Drawings: {numDrawings}</h1>
 								<input
@@ -35,7 +35,7 @@ const Practice = () => {
 									max={20}
 									value={numDrawings}
 									onChange={(e) => setNumDrawings(Number(e.target.value))}
-									className="w-full accent-[#C24A48]"
+									className="w-full accent-primary"
 								/>
 								<div className="flex justify-between">
 									<small>1</small>
@@ -52,7 +52,7 @@ const Practice = () => {
 									step={10}
 									value={timePerDrawing}
 									onChange={(e) => setTimePerDrawing(Number(e.target.value))}
-									className="w-full accent-[#C24A48]"
+									className="w-full accent-primary"
 								/>
 								<div className="flex justify-between">
 									<small>10s</small>
@@ -61,17 +61,17 @@ const Practice = () => {
 							</div>
 						</div>
 
-						<button className="border hover:border-black text-center text-white bg-[#C24A48] rounded-xl p-4">
+						<button className="border-2 border-background hover:border-primary text-center text-text bg-button rounded-xl p-4">
 							Start Session
 						</button>
 					</div>
 
 					{/* RIGHT PANEL */}
 					<div className="
-					flex flex-col items-center justify-center rounded-xl 
-					bg-white shadow p-6 aspect-square lg:aspect-auto lg:min-h-full
+					flex flex-col items-center justify-center rounded-xl text-text
+					bg-card shadow p-6 aspect-square lg:aspect-auto lg:min-h-full
 					">
-						<img className="w-15 h-15" src={Logo} alt="" />
+						<Brush className="w-15 h-15"></Brush>
 						<h1>Ready to Practice</h1>
 						<small>
 							{numDrawings} drawings x {formatTime(timePerDrawing)}
