@@ -9,6 +9,7 @@ const Navbar = () => {
 			<div className="flex gap-4">
 				<Link to={Paths.home} className="text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">Home</Link>
 				<Link to={Paths.practice} className="text-text hover:bg-background  py-2 px-4 rounded-xl border-none font-semibold">Practice</Link>
+				<Link to={Paths.explore} className="text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">Explore</Link>
 				<Link to={Paths.about} className="text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">About</Link>
 			</div>
 		</nav>
