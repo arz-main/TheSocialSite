@@ -8,12 +8,14 @@
 	--color-button: var(--button);
 	--color-card: var(--card);
 	--color-card-sub: var(--card-sub);
+	--color-text-opposite: var(--text-opposite);
 }
 
 :root {
 	--primary: #C24A48;
 	--background: #faf1de;
 	--text: #1C0D0C;
+	--text-opposite: #F0EDEB;
 	--text-opaque: #4a5565;
 	--button: #F9F6EE;
 	--card: #FFF9EF;
@@ -24,6 +26,7 @@
 	--primary: #4AC2B1;
 	--background: #1C1C1C;
 	--text: #F0EDEB;
+	--text-opposite: #1C0D0C;
 	--text-opaque: #B5AA9A;
 	--button: #0A0C1A;
 	--card: #242424;
