@@ -1,5 +1,5 @@
-import Card from "../components/ui/Card"
 import { Link } from "react-router-dom"
+import Card from "../components/ui/HomeCard"
 import Paths from "../routes/paths";
 import MockCards from "../_mock/mockCards"
 
@@ -22,7 +22,7 @@ const Home = () => {
 						Start Practicing
 					</Link>
 					<Link
-						to={Paths.home}
+						to={Paths.explore}
 						className="text-text inline-block bg-button hover:bg-primary border rounded-lg py-2.5 px-8"
 					>
 						Explore Gallery
@@ -46,7 +46,7 @@ const Home = () => {
 				</div>
 				<Link
 					to={Paths.practice}
-					className="text-text hover:bg-primary bg-button border-2 rounded-lg py-2.5 px-8"
+					className="hover:text-text text-text-opposite bg-primary border-background hover:bg-button hover:border-text border-2 rounded-lg py-2.5 px-8"
 				>
 					Begin Your Journey
 				</Link>

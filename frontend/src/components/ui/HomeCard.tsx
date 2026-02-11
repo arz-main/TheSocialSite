@@ -7,7 +7,7 @@ type CardProp = {
 	description : string
 }
 
-function Card({icon: Icon, title, description }: CardProp){ // that :Icon is just a way of saying it's a react component not html tag
+function HomeCard({icon: Icon, title, description }: CardProp){ // that :Icon is just a way of saying it's a react component not html tag
 	return (
 		<div className="w-full rounded-xl border border-none bg-card p-4 shadow">
 			<Icon className="text-background bg-primary w-10 h-10 p-1 rounded-lg"></Icon>
@@ -21,4 +21,4 @@ function Card({icon: Icon, title, description }: CardProp){ // that :Icon is jus
 	)
 }
 
-export default Card
+export default HomeCard
