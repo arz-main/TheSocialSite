@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom"
-import Card from "../components/ui/HomeCard"
+import { HomeCard } from "../components/ui/Card";
 import Paths from "../routes/paths";
-import MockCards from "../_mock/mockCards"
+import MockCards from "../_mock/mockCards";
+import LinkButton from "../components/ui/LinkButton";
 
 const Home = () => {
 	return (
@@ -15,18 +15,12 @@ const Home = () => {
 					SketchFlow helps you develop your drawing skills with timed reference practice, progress tracking, and a supportive community of artists
 				</h1>
 				<div className="flex gap-4 pt-4">
-					<Link
-						to={Paths.practice}
-						className="text-text inline-block bg-button hover:bg-primary border rounded-lg py-2.5 px-8"
-					>
+					<LinkButton to={Paths.practice} variant="primary">
 						Start Practicing
-					</Link>
-					<Link
-						to={Paths.explore}
-						className="text-text inline-block bg-button hover:bg-primary border rounded-lg py-2.5 px-8"
-					>
+					</LinkButton>
+					<LinkButton to={Paths.explore} variant="primary">
 						Explore Gallery
-					</Link>
+					</LinkButton>
 				</div>
 			</section>
 			<section className="mx-screen w-full flex flex-col items-center gap-3 pb-20 p-6 bg-background">
@@ -36,7 +30,7 @@ const Home = () => {
 				</div>
 				<div className="grid gap-6 w-full max-w-6xl sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 					{/* Itereaza prin mock data si pune carduri pe pagina */}
-					{MockCards.map(card => <Card key={card.id} {...card} />)}
+					{MockCards.map(card => <HomeCard key={card.id} {...card} />)}
 				</div>
 			</section>
 			<section className="mx-screen bg-primary w-full flex flex-col items-center gap-3 pt-8 pb-16">
@@ -44,12 +38,13 @@ const Home = () => {
 					<h1 className="text-text text-4xl mb-6">Ready to Level Up Your Art?</h1>
 					<h1 className="text-text text-xl mb-4">Join thousands of artists improving their skills every day</h1>
 				</div>
-				<Link
+				<LinkButton
 					to={Paths.practice}
-					className="hover:text-text text-text-opposite bg-primary border-background hover:bg-button hover:border-text border-2 rounded-lg py-2.5 px-8"
+					variant="primary"
+					className="border-2 border-background"
 				>
 					Begin Your Journey
-				</Link>
+				</LinkButton>
 			</section>
 		</>
 	);

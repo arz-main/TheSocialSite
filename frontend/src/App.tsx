@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Practice from "./pages/Practice";
 import About from "./pages/About";
 import Explore from "./pages/Explore";
+import Statistics from "./pages/Statistics";
 import Paths from "./routes/paths";
 import ThemeToggle from "./components/layout/ThemeToggle";
 
@@ -25,6 +26,7 @@ const App = () => {
 						<Route path={Paths.about} element={<About />} />
 						<Route path={Paths.practice} element={<Practice />} />
 						<Route path={Paths.explore} element={<Explore />} />
+						<Route path={Paths.statistics} element={<Statistics />} />
 					</Routes>
 				</main>
 			</div>

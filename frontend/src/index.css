@@ -9,10 +9,14 @@
 	--color-card: var(--card);
 	--color-card-sub: var(--card-sub);
 	--color-text-opposite: var(--text-opposite);
+	--color-opposite: var(--opposite);
+	--color-muted: var(--muted);
 }
 
 :root {
+	--muted: #F0EDEB;
 	--primary: #C24A48;
+	--opposite: #1C0D0C;
 	--background: #faf1de;
 	--text: #1C0D0C;
 	--text-opposite: #F0EDEB;
@@ -23,7 +27,9 @@
 }
 
 .dark {
+	--muted: #B5AA9A;
 	--primary: #4AC2B1;
+	--opposite: #F0EDEB;
 	--background: #1C1C1C;
 	--text: #F0EDEB;
 	--text-opposite: #1C0D0C;

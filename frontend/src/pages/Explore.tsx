@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, MessageCircle, User } from "lucide-react";
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
-import { Card } from "../components/ui/ExploreCard";
+import { Card } from "../components/ui/Card";
 import { exploreDrawings } from "../_mock/mockPosts";
 import { exploreImages, referenceImages } from "../_mock/mockExploreImages"
 
@@ -52,10 +52,8 @@ export default function ExplorePage() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 			>
-				<h1 className="text-text text-2xl pt-4 pb-8">Explore</h1>
-				<p className="text-text mb-8">
-					Discover artwork from the community
-				</p>
+				<h1 className="text-text text-3xl font-bold mb-8">Explore</h1>
+
 				{/* this thing holds all the cards it's the foundation for them*/}
 				<div className="bg-background grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{exploreDrawings.map((drawing, index) => (
