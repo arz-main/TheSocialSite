@@ -1,4 +1,4 @@
-import Category from "../components/ui/Category"
+import { PracticeCard } from "../components/ui/Card"
 import { Brush } from "lucide-react"
 import { useState } from "react";
 import MockCategories from "../_mock/mockCategories";
@@ -10,20 +10,18 @@ const Practice = () => {
 	return (
 		<>
 			<section className="mx-screen w-full p-6 bg-background">
-				<h1 className="text-text text-2xl pt-4 pb-8">
+				<h1 className="text-text text-3xl font-bold mb-8">
 					Practice Session
 				</h1>
 				<div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
 					{/* LEFT PANEL */}
 					<div className="flex flex-col rounded-xl bg-card shadow p-6">
-						<h1 className="text-text text-lg">Session Settings</h1>
-
-						<h1 className="text-text-opaque text-md pt-10 pb-4">
+						<h1 className="text-text-opaque text-md pb-4">
 							Choose Category
 						</h1>
 
 						<div className="grid grid-cols-2 gap-4">
-							{MockCategories.map(category => <Category key={category.id} {...category}></Category>)}
+							{MockCategories.map(category => <PracticeCard key={category.id} {...category}></PracticeCard>)}
 						</div>
 
 						<div className="text-text flex flex-col py-14 gap-10">
