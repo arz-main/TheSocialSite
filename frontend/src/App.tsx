@@ -7,6 +7,8 @@ import About from "./pages/About";
 import Explore from "./pages/Explore";
 import Statistics from "./pages/Statistics";
 import Paths from "./routes/paths";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import ThemeToggle from "./components/layout/ThemeToggle";
 
 const App = () => {
@@ -27,6 +29,8 @@ const App = () => {
 						<Route path={Paths.practice} element={<Practice />} />
 						<Route path={Paths.explore} element={<Explore />} />
 						<Route path={Paths.statistics} element={<Statistics />} />
+						<Route path={Paths.login} element={<Login />} />
+						<Route path={Paths.signup} element={<SignUp />} />
 					</Routes>
 				</main>
 			</div>

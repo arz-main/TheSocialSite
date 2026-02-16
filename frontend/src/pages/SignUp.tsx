@@ -1,21 +1,33 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 import { motion } from "motion/react";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User as UserIcon, Eye, EyeOff } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
 import { Input } from "../utils/input";
 import { Label } from "../utils/label";
 
-export default function Login() {
+export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login with:", email, password);
+    // Handle signup logic here
+    console.log("Sign up with:", formData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
@@ -32,24 +44,42 @@ export default function Login() {
               <span className="text-2xl">✏️</span>
             </div>
           </Link>
-          <h1 className="mb-2">Welcome Back</h1>
+          <h1 className="mb-2">Create Your Account</h1>
           <p className="text-muted-foreground">
-            Log in to continue your artistic journey
+            Join our community of artists today
           </p>
         </div>
 
         <Card className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <div className="relative">
+                <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="artistname"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={handleChange}
                   className="pl-10"
                   required
                 />
@@ -62,10 +92,11 @@ export default function Login() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={handleChange}
                   className="pl-10 pr-10"
                   required
                 />
@@ -83,20 +114,51 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  className="rounded border-border text-primary focus:ring-primary"
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="pl-10 pr-10"
+                  required
                 />
-                <span>Remember me</span>
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                id="terms"
+                className="mt-1 rounded border-border text-primary focus:ring-primary"
+                required
+              />
+              <label htmlFor="terms" className="text-sm text-muted-foreground">
+                I agree to the{" "}
+                <Link to="/terms" className="text-primary hover:underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link to="/privacy" className="text-primary hover:underline">
+                  Privacy Policy
+                </Link>
               </label>
-              <Link
-                to="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                Forgot password?
-              </Link>
             </div>
 
             <motion.div
@@ -104,7 +166,7 @@ export default function Login() {
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <Button type="submit" className="w-full h-11">
-                Log In
+                Create Account
               </Button>
             </motion.div>
 
@@ -161,9 +223,9 @@ export default function Login() {
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Don't have an account? </span>
-            <Link to="/signup" className="text-primary hover:underline">
-              Sign up
+            <span className="text-muted-foreground">Already have an account? </span>
+            <Link to="/login" className="text-primary hover:underline">
+              Log in
             </Link>
           </div>
         </Card>
