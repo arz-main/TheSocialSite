@@ -3,7 +3,9 @@ const Paths = {
 	practice: "/practice",
 	about: "/about",
 	explore: "/explore",
-	statistics: "/statistics"
+	statistics: "/statistics",
+	login: "/login",
+	signup: "/signup"
 }
 
 export default Paths
