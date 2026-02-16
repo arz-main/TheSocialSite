@@ -31,7 +31,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4">
+    <div className="flex items-center justify-center py-12 px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -233,3 +233,4 @@ export default function SignupPage() {
     </div>
   );
 }
+

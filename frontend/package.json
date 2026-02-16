@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "@radix-ui/themes": "^3.3.0",
     "@tailwindcss/vite": "^4.1.18",
+    "class-variance-authority": "^0.7.1",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.563.0",
+    "motion": "^12.34.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
