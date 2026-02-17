@@ -7,7 +7,7 @@ const Paths = {
 	unauthorized: "/unauthorized",
 	
 	admin: {
-		dashboard: "/admin/dashboard",
+		dashboard: "/admin",
 	},
 
 	forgot_password: "/forgot_password",
