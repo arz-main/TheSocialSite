@@ -8,7 +8,7 @@ type User = {
 
 type AuthContextType = {
 	user: User;
-	login: (role: string) => void;
+	login: (username: string, role: string) => void;
 	logout: () => void;
 };
 
@@ -23,8 +23,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		JSON.parse(localStorage.getItem("user") as string) || null
 	);
 
-	const login = (role: string) => {
-		const newUser = { name: "Demo User", role };
+	const login = (username: string, role: string) => {
+		const newUser = { username, role };
 		setUser(newUser);
 		localStorage.setItem("user", JSON.stringify(newUser));
 	};

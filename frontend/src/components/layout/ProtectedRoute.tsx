@@ -1,23 +1,19 @@
-import type { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../../auth/AuthContext";
-import Paths from "../../routes/paths";
+import { Navigate } from "react-router";
+import type { Role } from "../../_mock/mockUsers";
 
-type ProtectedRouteProps = {
-	children: ReactNode;
-	allowedRoles: string[];
-};
+interface Props {
+  children: React.ReactNode;
+  allowedRoles: Role[];
+}
 
-export default function ProtectedRoute({children, allowedRoles}: ProtectedRouteProps) {
-	const { user } = useAuth();
+export default function ProtectedRoute({ children, allowedRoles }: Props) {
+  const raw = localStorage.getItem("currentUser");
+  if (!raw) return <Navigate to="/login" replace />;
 
-	if (!user) {
-		return <Navigate to={Paths.login} replace />;
-	}
+  const user = JSON.parse(raw);
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
 
-	if (!allowedRoles.includes(user.role)) {
-		return <Navigate to={Paths.unauthorized} replace />;
-	}
-
-	return <>{children}</>;
+  return <>{children}</>;
 }
