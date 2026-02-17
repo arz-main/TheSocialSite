@@ -1,11 +1,20 @@
 const Paths = {
 	home: "/",
-	practice: "/practice",
 	about: "/about",
 	explore: "/explore",
-	statistics: "/statistics",
 	login: "/login",
-	signup: "/signup"
+	signup: "/signup",
+	unauthorized: "/unauthorized",
+	
+	admin: {
+		dashboard: "/admin/dashboard",
+	},
+
+	forgot_password: "/forgot_password",
+	artist: {
+		practice: "/artist/practice",
+		statistics: "/artist/statistics"
+	},
 }
 
 export default Paths
