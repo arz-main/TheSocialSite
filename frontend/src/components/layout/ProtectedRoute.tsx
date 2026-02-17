@@ -1,5 +1,6 @@
 import { Navigate } from "react-router";
 import type { Role } from "../../_mock/mockUsers";
+import Paths from "../../routes/paths";
 
 interface Props {
   children: React.ReactNode;
@@ -8,11 +9,11 @@ interface Props {
 
 export default function ProtectedRoute({ children, allowedRoles }: Props) {
   const raw = localStorage.getItem("currentUser");
-  if (!raw) return <Navigate to="/login" replace />;
+  if (!raw) return <Navigate to={Paths.login} replace />;
 
   const user = JSON.parse(raw);
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+    return <Navigate to={Paths.unauthorized} replace />;
   }
 
   return <>{children}</>;
