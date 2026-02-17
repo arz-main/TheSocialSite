@@ -1,5 +1,5 @@
 import { PersonStanding, Hand, Amphora, HandFist, SquareUserRound, Panda } from "lucide-react";
-const MockCategories = [
+const mockCategories = [
 	{
 		id: 1,
 		title: "Figure Drawing",
@@ -29,4 +29,4 @@ const MockCategories = [
 	}
 ];
 
-export default MockCategories
+export default mockCategories
