@@ -15,7 +15,6 @@ import {
 import { motion } from "framer-motion";
 import { categoryData, drawingsPerMonth, speedData, practiceInfoData } from "../_mock/mockStatistics"
 
-
 export default function StatsPage() {
 	return (
 		<div className="p-6 space-y-6 bg-background min-h-screen">
