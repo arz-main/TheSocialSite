@@ -5,6 +5,9 @@ const Paths = {
 	login: "/login",
 	signup: "/signup",
 	unauthorized: "/unauthorized",
+	forbidden: "/forbidden",
+	not_found: "/not_found",
+	internal_server_error: "/internal_server_error",
 	
 	admin: {
 		dashboard: "/admin/dashboard",

@@ -11,10 +11,13 @@ import Statistics from "./pages/Statistics";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Admin from "./pages/Admin";
+import Forbidden from "./pages/Forbidden";
+import Unauthorized from "./pages/Unauthorised";
+import InternalServerError from "./pages/InternalServerError";
+import NotFound from "./pages/NotFound";
 
 import Paths from "./routes/paths";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
-import Unauthorized from "./pages/Unauthorised";
 
 const App = () => {
 	return (
@@ -46,6 +49,10 @@ const App = () => {
 							</ProtectedRoute>
 						} />
 						<Route path={Paths.unauthorized} element={<Unauthorized />} />
+						<Route path={Paths.forbidden} element={<Forbidden />} />
+						<Route path={Paths.not_found} element={<NotFound />} />
+						<Route path={Paths.internal_server_error} element={<InternalServerError />} />
+						
 					</Routes>
 				</main>
 			</div>
