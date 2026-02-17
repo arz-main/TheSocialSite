@@ -31,7 +31,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center py-12 px-4">
+    <div className="flex items-center justify-center py-12 px-4 bg-background min-h-screen">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -63,7 +63,7 @@ export default function SignupPage() {
                   placeholder="artistname"
                   value={formData.username}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 bg-background"
                   required
                 />
               </div>
@@ -80,7 +80,7 @@ export default function SignupPage() {
                   placeholder="your@email.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 bg-background"
                   required
                 />
               </div>
@@ -97,7 +97,7 @@ export default function SignupPage() {
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
-                  className="pl-10 pr-10"
+                  className="px-10 bg-background"
                   required
                 />
                 <button
@@ -125,7 +125,7 @@ export default function SignupPage() {
                   placeholder="••••••••"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="pl-10 pr-10"
+                  className="px-10 bg-background"
                   required
                 />
                 <button

@@ -14,15 +14,15 @@
 }
 
 :root {
-	--muted: #F0EDEB;
+	--muted: #fce2d1;
 	--primary: #C24A48;
 	--opposite: #1C0D0C;
-	--background: #faf1de;
+	--background: #fbf8f2;
 	--text: #1C0D0C;
 	--text-opposite: #F0EDEB;
 	--text-opaque: #4a5565;
 	--button: #F9F6EE;
-	--card: #FFF9EF;
+	--card: #faeee3;
 	/* --card-sub: #F4EADB; */
 }
 

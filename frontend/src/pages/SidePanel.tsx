@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from "react";
 import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -12,6 +12,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
+import Paths from "../routes/paths";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -22,16 +23,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
 
   const navItems = [
-    { path: "/", label: "Home", icon: Home },
-    { path: "/references", label: "Practice", icon: Image },
-    { path: "/statistics", label: "Statistics", icon: BarChart3 },
-    { path: "/profile", label: "Profile", icon: User },
-    { path: "/explore", label: "Explore", icon: Compass },
+    { path: Paths.home, label: "Home", icon: Home },
+    { path: Paths.artist.practice, label: "Practice", icon: Image },
+    { path: Paths.artist.statistics, label: "Statistics", icon: BarChart3 },
+   // { path: Paths.artist., label: "Profile", icon: User },
+    { path: Paths.explore, label: "Explore", icon: Compass },
   ];
 
   const authItems = [
-    { path: "/login", label: "Log In", icon: LogIn },
-    { path: "/signup", label: "Sign Up", icon: UserPlus },
+    { path: Paths.login, label: "Log In", icon: LogIn },
+    { path: Paths.signup, label: "Sign Up", icon: UserPlus },
   ];
 
   return (
@@ -61,7 +62,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             className="fixed left-0 top-0 bottom-0 w-72 bg-card border-r border-border z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="p-6 border-b border-border flex items-center justify-between">
+            <div className="p-6 border-b border-border flex items-center justify-between pt-22">
               <Link to="/" onClick={onClose} className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <span className="text-primary-foreground">✏️</span>
@@ -80,17 +81,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             {/* Navigation Links */}
             <nav className="flex-1 p-4 overflow-y-auto">
-              <div className="space-y-1">
+              <div className="space-y-1 gap-2">
                 {navItems.map((item) => {
                   const isActive = location.pathname === item.path;
                   const Icon = item.icon;
 
                   return (
-                    <Link key={item.path} to={item.path} onClick={onClose}>
+                    <Link className="text-text" key={item.path} to={item.path} onClick={onClose}>
                       <motion.div
                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                           isActive
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-primary text-primary-foreground text-text-opposite"
                             : "text-foreground hover:bg-muted"
                         }`}
                         whileTap={{ scale: 0.98 }}
@@ -111,15 +112,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             {/* Auth Section */}
             <div className="p-4 border-t border-border">
-              <div className="mb-3 text-sm text-muted-foreground px-4">
+              <div className="mb-2 text-sm text-text px-">
                 Account
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col space-y-1">
                 {authItems.map((item) => {
                   const Icon = item.icon;
 
                   return (
-                    <Link key={item.path} to={item.path} onClick={onClose}>
+                    <Link className="text-text" key={item.path} to={item.path} onClick={onClose}>
                       <motion.div
                         whileTap={{ scale: 0.98 }}
                         transition={{
@@ -129,7 +130,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         }}
                       >
                         <Button
-                          variant={item.path === "/signup" ? "default" : "outline"}
+                          variant="outline"
                           className="w-full justify-start gap-3"
                         >
                           <Icon className="w-4 h-4" />

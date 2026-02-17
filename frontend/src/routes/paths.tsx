@@ -10,7 +10,7 @@ const Paths = {
 	internal_server_error: "/internal_server_error",
 	
 	admin: {
-		dashboard: "/admin/dashboard",
+		dashboard: "/admin",
 	},
 
 	forgot_password: "/forgot_password",

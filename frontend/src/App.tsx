@@ -47,7 +47,8 @@ const App = () => {
 							<ProtectedRoute allowedRoles={["admin"]}>
 								<Admin />
 							</ProtectedRoute>
-						} />
+						} 
+	/>
 						<Route path={Paths.unauthorized} element={<Unauthorized />} />
 						<Route path={Paths.forbidden} element={<Forbidden />} />
 						<Route path={Paths.not_found} element={<NotFound />} />
