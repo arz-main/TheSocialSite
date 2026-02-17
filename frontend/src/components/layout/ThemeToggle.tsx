@@ -13,7 +13,7 @@ function ThemeToggle() {
 	};
 
 	return (
-		<div className="border-2 bg-button border-text rounded-lg">
+		<div className="border-2 bg-background border-text rounded-lg">
 			<button
 				onClick={handleToggle}
 				className="p-4"
