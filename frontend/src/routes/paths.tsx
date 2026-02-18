@@ -5,6 +5,8 @@ const Paths = {
 	login: "/login",
 	signup: "/signup",
 	forgot_password: "/forgot_password",
+	terms: "/terms",
+	privacy: "/privacy",
 
 	error: {
 		unauthorized: "/unauthorized",
