@@ -4,19 +4,22 @@ const Paths = {
 	explore: "/explore",
 	login: "/login",
 	signup: "/signup",
-	profile: "/profile",
-	editProfilePage: "/profile/edit",
-	unauthorized: "/unauthorized",
-	forbidden: "/forbidden",
-	not_found: "/not_found",
-	internal_server_error: "/internal_server_error",
+	forgot_password: "/forgot_password",
+
+	error: {
+		unauthorized: "/unauthorized",
+		forbidden: "/forbidden",
+		not_found: "/not_found",
+		internal_server_error: "/internal_server_error",
+	},
 	
 	admin: {
 		dashboard: "/admin",
 	},
 
-	forgot_password: "/forgot_password",
 	artist: {
+		profile: "/artist/profile",
+		edit_profile: "/artist/edit_profile",
 		practice: "/artist/practice",
 		statistics: "/artist/statistics"
 	},

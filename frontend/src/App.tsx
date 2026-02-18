@@ -5,7 +5,7 @@ import ThemeToggle from "./components/layout/ThemeToggle";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile"
-import EditProfilePage from "./pages/EditProfilePage";
+import EditProfilePage from "./pages/EditProfile";
 import Practice from "./pages/Practice";
 import About from "./pages/About";
 import Explore from "./pages/Explore";
@@ -35,28 +35,32 @@ const App = () => {
 				<main className="flex-1">
 					<Routes>
 						<Route path={Paths.home} element={<Home />} />
-						<Route path={Paths.profile} element={<Profile />} />
-						<Route path={Paths.editProfilePage} element={<EditProfilePage />} />
 						<Route path={Paths.about} element={<About />} />
-						<Route path={Paths.artist.practice} element={<Practice />} />
 						<Route path={Paths.explore} element={<Explore />} />
+
+						<Route path={Paths.artist.profile} element={<Profile />} />
+						<Route path={Paths.artist.edit_profile} element={<EditProfilePage />} />
+						<Route path={Paths.artist.practice} element={<Practice />} />
 						<Route path={Paths.artist.statistics} element={
 							<ProtectedRoute allowedRoles={["artist", "admin"]}>
 								<Statistics />
 							</ProtectedRoute>
 						} />
+
 						<Route path={Paths.login} element={<Login />} />
 						<Route path={Paths.signup} element={<SignUp />} />
+
+
 						<Route path={Paths.admin.dashboard} element={
 							<ProtectedRoute allowedRoles={["admin"]}>
 								<Admin />
 							</ProtectedRoute>
 						} 
 	/>
-						<Route path={Paths.unauthorized} element={<Unauthorized />} />
-						<Route path={Paths.forbidden} element={<Forbidden />} />
-						<Route path={Paths.not_found} element={<NotFound />} />
-						<Route path={Paths.internal_server_error} element={<InternalServerError />} />
+						<Route path={Paths.error.unauthorized} element={<Unauthorized />} />
+						<Route path={Paths.error.forbidden} element={<Forbidden />} />
+						<Route path={Paths.error.not_found} element={<NotFound />} />
+						<Route path={Paths.error.internal_server_error} element={<InternalServerError />} />
 						
 					</Routes>
 				</main>

@@ -5,6 +5,7 @@ import { mockDrawings } from "../_mock/mockDrawings";
 import { TimerRing } from "../components/ui/Timer";
 import { PracticeCard } from "../components/ui/Card"
 import { formatTime } from "../utils/practiceUtils";
+import { Button } from "../components/ui/BasicButton";
 
 type SessionState = "idle" | "active" | "paused" | "done";
 
@@ -173,13 +174,14 @@ const Practice = () => {
 							</div>
 						</div>
 
-						<button
-							className="bg-button border-2 border-sidebar hover:border-primary text-center text-text rounded-xl p-4"
+						<Button
+							size={"xl"}
+							variant={"default"}
 							onClick={handleStart}
 							disabled={isActive}
 						>
 							{isActive ? "Session in Progress..." : "Start Session"}
-						</button>
+						</Button>
 					</div>
 
 					{/* RIGHT PANEL */}
@@ -337,12 +339,12 @@ const DonePanel = ({
 			at <span className="text-text font-semibold">{formatTime(timePerDrawing)}</span> each.
 			Great work!
 		</p>
-		<button
+		<Button
+			variant={"default"}
 			onClick={onRestart}
-			className="flex items-center gap-2 px-6 py-3 bg-button border-2 border-background hover:border-primary text-text rounded-xl font-medium transition-colors"
 		>
 			<RotateCcw className="w-4 h-4" /> Start Another Session
-		</button>
+		</Button>
 	</div>
 );
 
