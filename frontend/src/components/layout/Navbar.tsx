@@ -35,7 +35,7 @@ const Navbar = () => {
 				<Link to={Paths.artist.practice} className="text-background hover:text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">Practice</Link>
 				<Link to={Paths.explore} className="text-background hover:text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">Explore</Link>
 				<Link to={Paths.artist.statistics} className="text-background hover:text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">Stats</Link>
-				<Link to={Paths.about} className="text-background hover:text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">About</Link>
+				<Link to={Paths.profile} className="text-background hover:text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">Profile</Link>
 			</div>
 		</nav>
 				</>
