@@ -174,7 +174,7 @@ const Practice = () => {
 						</div>
 
 						<button
-							className="border-2 border-background hover:border-primary text-center text-text bg-button rounded-xl p-4"
+							className="bg-button border-2 border-sidebar hover:border-primary text-center text-text rounded-xl p-4"
 							onClick={handleStart}
 							disabled={isActive}
 						>

@@ -5,6 +5,7 @@ import ThemeToggle from "./components/layout/ThemeToggle";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile"
+import EditProfilePage from "./pages/EditProfilePage";
 import Practice from "./pages/Practice";
 import About from "./pages/About";
 import Explore from "./pages/Explore";
@@ -35,6 +36,7 @@ const App = () => {
 					<Routes>
 						<Route path={Paths.home} element={<Home />} />
 						<Route path={Paths.profile} element={<Profile />} />
+						<Route path={Paths.editProfilePage} element={<EditProfilePage />} />
 						<Route path={Paths.about} element={<About />} />
 						<Route path={Paths.artist.practice} element={<Practice />} />
 						<Route path={Paths.explore} element={<Explore />} />

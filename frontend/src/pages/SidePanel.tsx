@@ -5,7 +5,7 @@ import {
   Home,
   Image,
   BarChart3,
-  User,
+  UserPen,
   Compass,
   X,
   LogIn,
@@ -29,6 +29,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { path: Paths.artist.statistics, label: "Statistics", icon: BarChart3 },
     { path: Paths.explore, label: "Explore", icon: Compass },
     { path: Paths.about, label: "About", icon: CircleQuestionMark },
+    { path: Paths.editProfilePage, label: "Edit Profile", icon: UserPen },
   ];
 
   const authItems = [
