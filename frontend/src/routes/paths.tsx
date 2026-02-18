@@ -4,6 +4,7 @@ const Paths = {
 	explore: "/explore",
 	login: "/login",
 	signup: "/signup",
+	profile: "/profile",
 	unauthorized: "/unauthorized",
 	forbidden: "/forbidden",
 	not_found: "/not_found",

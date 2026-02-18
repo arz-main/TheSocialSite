@@ -24,9 +24,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const navItems = [
     { path: Paths.home, label: "Home", icon: Home },
+    { path: Paths.profile, label: "Profile", icon: User },
     { path: Paths.artist.practice, label: "Practice", icon: Image },
     { path: Paths.artist.statistics, label: "Statistics", icon: BarChart3 },
-   // { path: Paths.artist., label: "Profile", icon: User },
     { path: Paths.explore, label: "Explore", icon: Compass },
   ];
 
