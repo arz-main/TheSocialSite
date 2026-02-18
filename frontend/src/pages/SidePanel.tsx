@@ -5,10 +5,11 @@ import {
   Home,
   Image,
   BarChart3,
-  User,
+  UserPen,
   Compass,
   X,
   LogIn,
+  CircleQuestionMark,
   UserPlus,
 } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
@@ -26,8 +27,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { path: Paths.home, label: "Home", icon: Home },
     { path: Paths.artist.practice, label: "Practice", icon: Image },
     { path: Paths.artist.statistics, label: "Statistics", icon: BarChart3 },
-   // { path: Paths.artist., label: "Profile", icon: User },
     { path: Paths.explore, label: "Explore", icon: Compass },
+    { path: Paths.about, label: "About", icon: CircleQuestionMark },
+    { path: Paths.editProfilePage, label: "Edit Profile", icon: UserPen },
   ];
 
   const authItems = [
