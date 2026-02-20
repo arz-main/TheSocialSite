@@ -15,7 +15,7 @@ const Home = () => {
 					SketchFlow helps you develop your drawing skills with timed reference practice, progress tracking, and a supportive community of artists
 				</h1>
 				<div className="flex gap-4 pt-4">
-					<LinkButton to={Paths.artist.practice} variant="primary">
+					<LinkButton to={Paths.practice} variant="primary">
 						Start Practicing
 					</LinkButton>
 					<LinkButton to={Paths.explore} variant="primary">
@@ -34,12 +34,12 @@ const Home = () => {
 				</div>
 			</section>
 			<section className="mx-screen bg-primary w-full flex flex-col items-center gap-3 pt-8 pb-16">
-				<div className="text-center flex flex-col items-center pt-10">
-					<h1 className="text-text text-4xl mb-6">Ready to Level Up Your Art?</h1>
-					<h1 className="text-text text-xl mb-4">Join thousands of artists improving their skills every day</h1>
+				<div className="text-white text-center flex flex-col items-center pt-10">
+					<h1 className="text-4xl mb-6">Ready to Level Up Your Art?</h1>
+					<h1 className="text-xl mb-4">Join thousands of artists improving their skills every day</h1>
 				</div>
 				<LinkButton
-					to={Paths.artist.practice}
+					to={Paths.practice}
 					variant="primary"
 					className="border-2 border-background"
 				>

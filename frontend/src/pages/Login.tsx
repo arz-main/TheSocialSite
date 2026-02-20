@@ -40,7 +40,7 @@ export default function Login() {
 		}
 	};
 	return (
-		<div className="flex items-center justify-center py-12 px-4 bg-background min-h-screen">
+		<div className="flex items-center justify-center py-12 px-4 bg-background text-text min-h-screen">
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -54,9 +54,6 @@ export default function Login() {
 						</div>
 					</Link>
 					<h1 className="mb-2">Welcome Back</h1>
-					<p className="text-muted-foreground">
-						Log in to continue your artistic journey
-					</p>
 				</div>
 
 				<Card className="p-8">
@@ -64,7 +61,7 @@ export default function Login() {
 						<div className="space-y-2">
 							<Label htmlFor="email">Email</Label>
 							<div className="relative">
-								<Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+								<Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" />
 								<Input
 									id="email"
 									type="email"
@@ -80,7 +77,7 @@ export default function Login() {
 						<div className="space-y-2">
 							<Label htmlFor="password">Password</Label>
 							<div className="relative">
-								<Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+								<Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" />
 								<Input
 									id="password"
 									type={showPassword ? "text" : "password"}
@@ -93,7 +90,7 @@ export default function Login() {
 								<button
 									type="button"
 									onClick={() => setShowPassword(!showPassword)}
-									className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+									className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-foreground transition-colors"
 								>
 									{showPassword ? (
 										<EyeOff className="w-5 h-5" />
@@ -134,7 +131,7 @@ export default function Login() {
 								<div className="w-full border-t border-border"></div>
 							</div>
 							<div className="relative flex justify-center text-sm">
-								<span className="bg-card px-4 text-muted-foreground">
+								<span className="bg-card px-4">
 									Or continue with
 								</span>
 							</div>

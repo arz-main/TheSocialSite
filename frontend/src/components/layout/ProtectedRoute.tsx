@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children, allowedRoles }: Props) {
 
   const user = JSON.parse(raw);
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to={Paths.unauthorized} replace />;
+    return <Navigate to={Paths.error.unauthorized} replace />;
   }
 
   return <>{children}</>;
