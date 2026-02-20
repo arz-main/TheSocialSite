@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { Camera, Save } from "lucide-react";
+import { Camera, Save, Palette } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
 import { Input } from "../utils/input";
@@ -9,10 +9,10 @@ import { Label } from "../utils/label";
 import { Textarea } from "../components/ui/TextArea";
 import Paths from "../routes/paths";
 
-export default function EditProfilePage() {
+export default function EditProfile() {
 	const navigate = useNavigate();
 	const [profileData, setProfileData] = useState({
-		username: "Your Name",
+		username: "ArtistUser",
 		email: "your@email.com",
 		description:
 			"Aspiring artist on a journey to improve my skills. Love sketching and exploring new techniques!",
@@ -20,30 +20,19 @@ export default function EditProfilePage() {
 		website: "https://yourwebsite.com",
 	});
 
-	const [profileImage, setProfileImage] = useState("🎨");
-
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		// Handle profile update logic here
 		console.log("Update profile:", profileData);
 		// Navigate back to profile
-		navigate("/profile");
+		navigate(Paths.artist.profile);
 	};
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setProfileData({
 			...profileData,
 			[e.target.name]: e.target.value,
 		});
-	};
-
-	const handleImageClick = () => {
-		// In a real app, this would open a file picker
-		const emojis = ["🎨", "✏️", "🖌️", "🖍️", "🎭", "🌟", "💫", "🔥", "⚡", "🌈"];
-		const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-		setProfileImage(randomEmoji);
 	};
 
 	return (
@@ -63,11 +52,11 @@ export default function EditProfilePage() {
 								<div className="flex items-center gap-6">
 									<div className="relative">
 										<div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-5xl">
-											{profileImage}
+											<Palette></Palette>
 										</div>
 										<motion.button
 											type="button"
-											onClick={handleImageClick}
+											// onClick={handleProfileIcon}
 											className="absolute bottom-0 right-0 p-2 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-colors"
 											whileTap={{ scale: 0.9 }}
 											whileHover={{ scale: 1.1 }}

@@ -1,36 +1,19 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Calendar, Heart, Settings } from "lucide-react";
+import { Calendar, Heart, Settings, Palette } from "lucide-react";
 import { Link } from "react-router";
 import { Card } from "../components/ui/Card";
 import { Badge as BadgeUI } from "../components/ui/Badge";
 import { Button } from "../components/ui/BasicButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
-import { badges, currentUserDrawings } from "../_mock/mockProfile";
 import { ImageWithFallback } from "../utils/imageWithFallback";
+import { formatDate, formatDuration } from "../utils/profileUtils";
 import { userDrawingImages } from "../_mock/mockProfilePostImages";
+import { badges, currentUserDrawings } from "../_mock/mockProfile";
 import Paths from "../routes/paths";
 
 export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState("badges");
-
-	const formatDate = (dateString: string) => {
-		const date = new Date(dateString);
-		return date.toLocaleDateString("en-US", {
-			month: "short",
-			day: "numeric",
-			year: "numeric",
-		});
-	};
-
-	const formatDuration = (seconds: number) => {
-		if (seconds >= 60) {
-			const minutes = Math.floor(seconds / 60);
-			return `${minutes} min`;
-		}
-		return `${seconds}s`;
-	};
-
 	return (
 		<div className="min-h-screen p-6 bg-background">
 			<h1 className="text-text text-3xl font-bold mb-8">Profile</h1>
@@ -45,7 +28,7 @@ export default function ProfilePage() {
 					<Card className="text-text p-8 mb-8">
 						<div className="flex items-center gap-6">
 							<div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl">
-								🎨
+								<Palette></Palette>
 							</div>
 							<div className="flex-1">
 								<h1 className="mb-2">Your Profile</h1>

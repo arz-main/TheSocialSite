@@ -2,6 +2,7 @@ const Paths = {
 	home: "/",
 	about: "/about",
 	explore: "/explore",
+	practice: "/practice",
 	login: "/login",
 	signup: "/signup",
 	forgot_password: "/forgot_password",
@@ -22,8 +23,8 @@ const Paths = {
 	artist: {
 		profile: "/artist/profile",
 		edit_profile: "/artist/edit_profile",
-		practice: "/artist/practice",
-		statistics: "/artist/statistics"
+		statistics: "/artist/statistics",
+		messages: "/artist/messages",
 	},
 }
 

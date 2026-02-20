@@ -4,8 +4,9 @@ import {
 	Home,
 	Image,
 	BarChart3,
-	UserPen,
+	User,
 	Compass,
+	MessageCircle,
 	X,
 	LogIn,
 	CircleQuestionMark,
@@ -24,11 +25,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
 	const navItems = [
 		{ path: Paths.home, label: "Home", icon: Home },
-		{ path: Paths.artist.practice, label: "Practice", icon: Image },
-		{ path: Paths.artist.statistics, label: "Statistics", icon: BarChart3 },
+		{ path: Paths.practice, label: "Practice", icon: Image },
 		{ path: Paths.explore, label: "Explore", icon: Compass },
+		{ path: Paths.artist.messages, label: "Messages", icon: MessageCircle },
+		{ path: Paths.artist.statistics, label: "Statistics", icon: BarChart3 },
+		{ path: Paths.artist.profile, label: "Profile", icon: User },
 		{ path: Paths.about, label: "About", icon: CircleQuestionMark },
-		{ path: Paths.artist.edit_profile, label: "Edit Profile", icon: UserPen },
 	];
 
 	const authItems = [
