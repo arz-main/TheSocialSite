@@ -11,13 +11,16 @@ import Paths from "../routes/paths";
 
 export default function EditProfile() {
 	const navigate = useNavigate();
-	const [profileData, setProfileData] = useState({
+	const [profileData, setProfileData] = useState(() => {
+		const saved = localStorage.getItem("profileData");
+		return saved
+		? JSON.parse(saved) : {
 		username: "ArtistUser",
 		email: "your@email.com",
 		description:
 			"Aspiring artist on a journey to improve my skills. Love sketching and exploring new techniques!",
 		location: "New York, USA",
-		website: "https://yourwebsite.com",
+		website: "https://yourwebsite.com", };
 	});
 
 	const handleSubmit = (e: React.FormEvent) => {
