@@ -5,7 +5,7 @@ import ThemeToggle from "./components/layout/ThemeToggle";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile"
-import EditProfilePage from "./pages/EditProfilePage";
+import EditProfile from "./pages/EditProfile";
 import Practice from "./pages/Practice";
 import About from "./pages/About";
 import Explore from "./pages/Explore";
@@ -17,6 +17,7 @@ import Forbidden from "./pages/Forbidden";
 import Unauthorized from "./pages/Unauthorised";
 import InternalServerError from "./pages/InternalServerError";
 import NotFound from "./pages/NotFound";
+import Messages from "./pages/Messages"
 
 import Paths from "./routes/paths";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
@@ -25,7 +26,6 @@ const App = () => {
 	return (
 		<Router>
 			<Navbar />
-
 			{/* Theme toggle button fixed at top-right */}
 			<div className="fixed bottom-4 right-4 z-50">
 				<ThemeToggle />
@@ -34,30 +34,48 @@ const App = () => {
 			<div className="pt-16 min-h-screen flex flex-col">
 				<main className="flex-1">
 					<Routes>
+						{/* access to all users */}
 						<Route path={Paths.home} element={<Home />} />
-						<Route path={Paths.profile} element={<Profile />} />
-						<Route path={Paths.editProfilePage} element={<EditProfilePage />} />
 						<Route path={Paths.about} element={<About />} />
-						<Route path={Paths.artist.practice} element={<Practice />} />
 						<Route path={Paths.explore} element={<Explore />} />
+						<Route path={Paths.practice} element={<Practice />} />
+						<Route path={Paths.login} element={<Login />} />
+						<Route path={Paths.signup} element={<SignUp />} />
+
+						{/* access to authenticated users */}
 						<Route path={Paths.artist.statistics} element={
 							<ProtectedRoute allowedRoles={["artist", "admin"]}>
 								<Statistics />
 							</ProtectedRoute>
 						} />
-						<Route path={Paths.login} element={<Login />} />
-						<Route path={Paths.signup} element={<SignUp />} />
+						<Route path={Paths.artist.messages} element={
+							<ProtectedRoute allowedRoles={["artist", "admin"]}>
+								<Messages />
+							</ProtectedRoute>
+						} />
+						<Route path={Paths.artist.edit_profile} element={
+							<ProtectedRoute allowedRoles={["artist", "admin"]}>
+								<EditProfile />
+							</ProtectedRoute>
+						} />
+						<Route path={Paths.artist.profile} element={
+							<ProtectedRoute allowedRoles={["artist", "admin"]}>
+								<Profile />
+							</ProtectedRoute>
+						} />
+						
+						{/* admin only */}
 						<Route path={Paths.admin.dashboard} element={
 							<ProtectedRoute allowedRoles={["admin"]}>
 								<Admin />
 							</ProtectedRoute>
-						} 
-	/>
-						<Route path={Paths.unauthorized} element={<Unauthorized />} />
-						<Route path={Paths.forbidden} element={<Forbidden />} />
-						<Route path={Paths.not_found} element={<NotFound />} />
-						<Route path={Paths.internal_server_error} element={<InternalServerError />} />
-						
+						} />
+
+						{/* error pages */}
+						<Route path={Paths.error.unauthorized} element={<Unauthorized />} />
+						<Route path={Paths.error.forbidden} element={<Forbidden />} />
+						<Route path={Paths.error.not_found} element={<NotFound />} />
+						<Route path={Paths.error.internal_server_error} element={<InternalServerError />} />
 					</Routes>
 				</main>
 			</div>
