@@ -46,7 +46,7 @@ export default function ExplorePage() {
 	};
 
 	return (
-		<section className="mx-screen w-full p-6 bg-background">
+		<section className="flex flex-col flex-1 w-full p-6 bg-background">
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}

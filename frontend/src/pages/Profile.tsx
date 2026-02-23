@@ -15,7 +15,7 @@ import Paths from "../routes/paths";
 export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState("badges");
 	return (
-		<div className="min-h-screen p-6 bg-background">
+		<div className="flex flex-col flex-1 bg-background text-primary">
 			<h1 className="text-text text-3xl font-bold mb-8">Profile</h1>
 
 			<div className="max-w-7xl mx-auto">

@@ -12,7 +12,7 @@ import Explore from "./pages/Explore";
 import Statistics from "./pages/Statistics";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
 import Forbidden from "./pages/Forbidden";
 import Unauthorized from "./pages/Unauthorised";
 import InternalServerError from "./pages/InternalServerError";
@@ -21,18 +21,18 @@ import Messages from "./pages/Messages"
 
 import Paths from "./routes/paths";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const App = () => {
 	return (
 		<Router>
-			<Navbar />
-			{/* Theme toggle button fixed at top-right */}
-			<div className="fixed bottom-4 right-4 z-50">
-				<ThemeToggle />
-			</div>
-
-			<div className="pt-16 min-h-screen flex flex-col">
-				<main className="flex-1">
+			<div className="flex flex-col min-h-screen">
+				<Navbar />
+				{/* Theme toggle button fixed at top-right */}
+				<div className="fixed bottom-4 right-4 z-50">
+					<ThemeToggle />
+				</div>
+				<main className="flex flex-col flex-1 pt-16">
 					<Routes>
 						{/* access to all users */}
 						<Route path={Paths.home} element={<Home />} />
@@ -41,6 +41,7 @@ const App = () => {
 						<Route path={Paths.practice} element={<Practice />} />
 						<Route path={Paths.login} element={<Login />} />
 						<Route path={Paths.signup} element={<SignUp />} />
+						<Route path={Paths.admin_login} element={<AdminLogin />} />
 
 						{/* access to authenticated users */}
 						<Route path={Paths.artist.statistics} element={
@@ -63,24 +64,26 @@ const App = () => {
 								<Profile />
 							</ProtectedRoute>
 						} />
-						
+
 						{/* admin only */}
 						<Route path={Paths.admin.dashboard} element={
 							<ProtectedRoute allowedRoles={["admin"]}>
-								<Admin />
+								<AdminDashboard />
 							</ProtectedRoute>
 						} />
+						{/* urmeaza sa fie adaugate toate rutele cand paginile sunt gata */}
 
 						{/* error pages */}
 						<Route path={Paths.error.unauthorized} element={<Unauthorized />} />
 						<Route path={Paths.error.forbidden} element={<Forbidden />} />
-						<Route path={Paths.error.not_found} element={<NotFound />} />
 						<Route path={Paths.error.internal_server_error} element={<InternalServerError />} />
+						<Route path="*" element={<NotFound />} />
 					</Routes>
 				</main>
+				<Footer />
 			</div>
-			<Footer />
 		</Router>
+
 	);
 };
 

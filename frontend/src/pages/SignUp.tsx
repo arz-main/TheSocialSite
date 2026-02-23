@@ -32,7 +32,7 @@ export default function SignupPage() {
 	};
 
 	return (
-		<div className="flex items-center justify-center py-12 px-4 bg-background text-text min-h-screen">
+		<div className="flex flex-1 items-center justify-center py-12 px-4 bg-background text-text">
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -40,12 +40,8 @@ export default function SignupPage() {
 				className="w-full max-w-md"
 			>
 				<div className="text-center mb-8">
-					<Link to={Paths.home} className="inline-flex items-center gap-2 mb-6">
-						<div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-							<span className="text-2xl">✏️</span>
-						</div>
-					</Link>
-					<h1 className="mb-2">Create Your Account</h1>
+					<h1 className="text-3xl font-semibold mb-2">Sign Up</h1>
+					<p className="text-text-opaque">Enter your information</p>
 				</div>
 
 				<Card className="p-8">

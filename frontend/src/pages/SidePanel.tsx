@@ -78,7 +78,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 								whileTap={{ scale: 0.9 }}
 								transition={{ type: "spring", stiffness: 400, damping: 17 }}
 							>
-								<X className="w-5 h-5" />
+								<X className="text-text w-5 h-5" />
 							</motion.button>
 						</div>
 

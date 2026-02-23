@@ -40,7 +40,7 @@ export default function Login() {
 		}
 	};
 	return (
-		<div className="flex items-center justify-center py-12 px-4 bg-background text-text min-h-screen">
+		<div className="flex flex-col flex-1 items-center justify-center py-8 px-4 bg-background text-text">
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -48,12 +48,8 @@ export default function Login() {
 				className="w-full max-w-md"
 			>
 				<div className="text-center mb-8">
-					<Link to={Paths.home} className="inline-flex items-center gap-2 mb-6">
-						<div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-							<span className="text-2xl">✏️</span>
-						</div>
-					</Link>
-					<h1 className="mb-2">Welcome Back</h1>
+					<h1 className="text-3xl font-semibold mb-2">User Login</h1>
+					<p className="text-text-opaque">Enter your credentials</p>
 				</div>
 
 				<Card className="p-8">
@@ -68,7 +64,7 @@ export default function Login() {
 									placeholder="your@email.com"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
-                  					className="pl-10 bg-background"
+									className="pl-10 bg-background"
 									required
 								/>
 							</div>
@@ -84,7 +80,7 @@ export default function Login() {
 									placeholder="••••••••"
 									value={password}
 									onChange={(e) => setPassword(e.target.value)}
-                 					className="px-10 bg-background"
+									className="px-10 bg-background"
 									required
 								/>
 								<button
