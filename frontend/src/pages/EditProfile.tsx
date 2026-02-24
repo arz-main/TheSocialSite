@@ -11,13 +11,16 @@ import Paths from "../routes/paths";
 
 export default function EditProfile() {
 	const navigate = useNavigate();
-	const [profileData, setProfileData] = useState({
+	const [profileData, setProfileData] = useState(() => {
+		const saved = localStorage.getItem("profileData");
+		return saved
+		? JSON.parse(saved) : {
 		username: "ArtistUser",
 		email: "your@email.com",
 		description:
 			"Aspiring artist on a journey to improve my skills. Love sketching and exploring new techniques!",
 		location: "New York, USA",
-		website: "https://yourwebsite.com",
+		website: "https://yourwebsite.com", };
 	});
 
 	const handleSubmit = (e: React.FormEvent) => {
@@ -36,15 +39,18 @@ export default function EditProfile() {
 	};
 
 	return (
-		<div className="min-h-screen p-6 bg-background text-text">
-			<h1 className="text-text text-3xl font-bold mb-8">Edit Profile</h1>
-			<div className="max-w-3xl mx-auto">
-				<motion.div
+		<div className="flex flex-col flex-1 bg-background text-text">
+			<div className="w-full p-6">
+				<h1 className="text-3xl font-bold">Edit Profile</h1>
+			</div>
+			<div className="flex flex-1">
+				<motion.div 
+					className="px-12 md:px-14 lg:px-16 w-full"
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5 }}
 				>
-					<Card className="p-8">
+					<Card className="w-full p-8">
 						<form onSubmit={handleSubmit} className="space-y-8">
 							{/* Profile Picture */}
 							<div>

@@ -1,6 +1,6 @@
 export default function Unauthorized() {
 	return (
-		<div className="h-screen flex flex-col items-center justify-center text-primary bg-background">
+		<div className="flex flex-col flex-1 bg-background text-primary">
 			<h1 className="text-6xl">401</h1>
 			<p>
 				You are not authorized to access this page.

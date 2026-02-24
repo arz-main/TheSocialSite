@@ -113,8 +113,8 @@ const Practice = () => {
 	const isDone = sessionState === "done";
 
 	return (
-		<>
-			<section className="mx-screen w-full p-6 bg-background">
+		<div className="flex flex-col flex-1 bg-background text-primary">
+			<section className=" w-full p-6 bg-background">
 				<h1 className="text-text text-3xl font-bold mb-8">
 					Practice Session
 				</h1>
@@ -218,7 +218,7 @@ const Practice = () => {
 					)}
 				</div>
 			</section>
-		</>
+		</div>
 	)
 };
 
