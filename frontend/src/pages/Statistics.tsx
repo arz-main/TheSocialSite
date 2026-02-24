@@ -17,7 +17,7 @@ import { categoryData, drawingsPerMonth, speedData, practiceInfoData } from "../
 
 export default function StatsPage() {
 	return (
-		<div className="p-6 space-y-6 bg-background min-h-screen">
+		<div className="flex flex-col flex-1 bg-background text-primary">
 			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 				<h1 className="text-text text-3xl font-bold">Artist Performance</h1>
 			</div>

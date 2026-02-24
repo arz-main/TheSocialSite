@@ -1,11 +1,11 @@
 import { HomeCard } from "../components/ui/Card";
 import Paths from "../routes/paths";
-import MockCards from "../_mock/mockCards";
+import MockCards from "../_mock/mockHomeCards";
 import LinkButton from "../components/ui/LinkButton";
 
 const Home = () => {
 	return (
-		<>
+		<div className="flex flex-col flex-1 bg-background text-primary">
 			<section className="mx-screen w-full flex flex-col items-center gap-3 p-6 bg-background">
 				<div className="text-center flex flex-col items-center pt-10">
 					<h1 className="text-text text-5xl mb-4">Master Your Art Through</h1>
@@ -46,7 +46,7 @@ const Home = () => {
 					Begin Your Journey
 				</LinkButton>
 			</section>
-		</>
+		</div>
 	);
 };
 

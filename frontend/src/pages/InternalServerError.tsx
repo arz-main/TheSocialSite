@@ -1,6 +1,6 @@
 export default function InternalServerError() {
     return (
-        <div className = "h-screen flex flex-col items-center justify-center text-primary bg-background">
+        <div className="flex flex-1 items-center justify-center bg-background text-primary">
             <h1 className="text-6xl">500</h1>
             <p>
 				Service error. Please refresh the page.
