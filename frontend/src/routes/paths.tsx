@@ -8,8 +8,6 @@ const Paths = {
 	forgot_password: "/forgot_password",
 	terms: "/terms",
 	privacy: "/privacy",
-	admin_login: "/admin_login",
-
 	error: {
 		unauthorized: "/unauthorized",
 		forbidden: "/forbidden",
@@ -18,7 +16,7 @@ const Paths = {
 	},
 	
 	admin: {
-		dashboard: "/admin/dashboard",
+		dashboard: "/admin",
 		manage_users: "/admin/manage_users",
 		manage_comments: "/admin/manage_comments",
 		manage_posts: "/admin/manage_posts",
