@@ -12,7 +12,6 @@ import Explore from "./pages/Explore";
 import Statistics from "./pages/Statistics";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import AdminLogin from "./pages/AdminLogin";
 import Forbidden from "./pages/Forbidden";
 import Unauthorized from "./pages/Unauthorised";
 import InternalServerError from "./pages/InternalServerError";
@@ -41,7 +40,6 @@ const App = () => {
 						<Route path={Paths.practice} element={<Practice />} />
 						<Route path={Paths.login} element={<Login />} />
 						<Route path={Paths.signup} element={<SignUp />} />
-						<Route path={Paths.admin_login} element={<AdminLogin />} />
 
 						{/* access to authenticated users */}
 						<Route path={Paths.artist.statistics} element={
