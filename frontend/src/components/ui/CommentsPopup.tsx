@@ -56,6 +56,7 @@ interface CommentsModalProps {
 	onClose: () => void;
 	likedDrawings: Set<string>;
 	toggleLike: (id: string) => void;
+	initialImageIndex?: number;
 }
 
 // --- Component ---
@@ -65,16 +66,16 @@ export function CommentsModal({
 	onClose,
 	likedDrawings,
 	toggleLike,
+	initialImageIndex = 0,
 }: CommentsModalProps) {
+	// Drawing is always index 0 (matches what's shown on the card), reference is index 1
 	const images: string[] = [];
+	images.push(exploreImages[drawing.id]);
 	if (drawing.showWithReference && drawing.referenceUrl) {
 		images.push(referenceImages[drawing.id]);
-		images.push(exploreImages[drawing.id]);
-	} else {
-		images.push(exploreImages[drawing.id]);
 	}
 
-	const [imageIndex, setImageIndex] = useState(0);
+	const [imageIndex, setImageIndex] = useState(initialImageIndex);
 	const [comments, setComments] = useState<Comment[]>(mockComments[drawing.id] || []);
 	const [newComment, setNewComment] = useState("");
 	const commentsEndRef = useRef<HTMLDivElement>(null);
@@ -209,7 +210,7 @@ export function CommentsModal({
 
 							{/* Label badge */}
 							<div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full font-medium">
-								{imageIndex === 0 ? "Reference" : "Drawing"}
+								{imageIndex === 0 ? "Drawing" : "Reference"}
 							</div>
 						</>
 					)}

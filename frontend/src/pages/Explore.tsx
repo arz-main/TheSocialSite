@@ -1,20 +1,169 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, MessageCircle, User, Search, X } from "lucide-react";
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
 import { Card } from "../components/ui/Card";
 import { exploreDrawings } from "../_mock/mockPosts";
-import { exploreImages, referenceImages } from "../_mock/mockExploreImages";
+import { exploreImages } from "../_mock/mockExploreImages";
 import { CommentsModal, generateMockComments } from "../components/ui/CommentsPopup";
 import type { Drawing } from "../components/ui/CommentsPopup";
+
+const PAGE_SIZE = 9;
 
 // Pre-generate mock comments once at module level
 const mockComments = generateMockComments(exploreDrawings);
 
+// --- PostCard with single/double click and like flash ---
+function PostCard({
+	drawing,
+	index,
+	isLiked,
+	onToggleLike,
+	onOpenComments,
+	formatDate,
+	formatDuration,
+}: {
+	drawing: Drawing;
+	index: number;
+	isLiked: boolean;
+	onToggleLike: (id: string) => void;
+	onOpenComments: (drawing: Drawing) => void;
+	formatDate: (d: string) => string;
+	formatDuration: (s: number) => string;
+}) {
+	const [likeFlash, setLikeFlash] = useState(false);
+	const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const clickCount = useRef(0);
+
+	const handleImageClick = useCallback(() => {
+		clickCount.current += 1;
+
+		if (clickTimer.current) clearTimeout(clickTimer.current);
+
+		clickTimer.current = setTimeout(() => {
+			const count = clickCount.current;
+			clickCount.current = 0;
+
+			if (count === 1) {
+				// Single click → open comments
+				onOpenComments(drawing);
+			} else if (count >= 2) {
+				// Double click → like + flash
+				onToggleLike(drawing.id);
+				setLikeFlash(true);
+				setTimeout(() => setLikeFlash(false), 800);
+			}
+		}, 220);
+	}, [drawing, onToggleLike, onOpenComments]);
+
+	const imageCount = drawing.showWithReference && drawing.referenceUrl ? 2 : 1;
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, scale: 0.9 }}
+			animate={{ opacity: 1, scale: 1 }}
+			transition={{ delay: 0.04 * (index % PAGE_SIZE), duration: 0.3 }}
+		>
+			<Card className="bg-card overflow-hidden hover:shadow-xl transition-shadow">
+				{/* User Info */}
+				<div className="p-4 flex items-center gap-3">
+					<div className="w-10 h-10 rounded-full flex items-center justify-center">
+						<User className="w-5 h-5 text-text" />
+					</div>
+					<div className="flex-1">
+						<div className="text-text flex items-center gap-2">
+							<span>{drawing.username}</span>
+							<span className="text-sm text-text/50">{formatDate(drawing.createdAt)}</span>
+						</div>
+					</div>
+				</div>
+
+				{/* Image — click to open, double-click to like */}
+				<div className="relative cursor-pointer select-none" onClick={handleImageClick}>
+					<div className="aspect-square bg-muted overflow-hidden">
+						<ImageWithFallback
+							src={exploreImages[drawing.id]}
+							alt={`Drawing by ${drawing.username}`}
+							className="w-full h-full object-cover"
+						/>
+					</div>
+
+					{/* Double-click like flash */}
+					<AnimatePresence>
+						{likeFlash && (
+							<motion.div
+								className="absolute inset-0 flex items-center justify-center pointer-events-none"
+								initial={{ opacity: 0, scale: 0.5 }}
+								animate={{ opacity: 1, scale: 1.1 }}
+								exit={{ opacity: 0, scale: 1.4 }}
+								transition={{ duration: 0.15 }}
+							>
+								<Heart className="w-16 h-16 text-[#C24A48] fill-current drop-shadow-lg" />
+							</motion.div>
+						)}
+					</AnimatePresence>
+
+					{/* Dots — multiple attachments indicator */}
+					{imageCount > 1 && (
+						<div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+							{Array.from({ length: imageCount }).map((_, i) => (
+								<span
+									key={i}
+									className={`rounded-full transition-all ${
+										i === 0
+											? "w-1.5 h-1.5 bg-white shadow-sm"
+											: "w-1.5 h-1.5 bg-white/45 shadow-sm"
+									}`}
+								/>
+							))}
+						</div>
+					)}
+				</div>
+
+				{/* Actions and Info */}
+				<div className="p-4">
+					<div className="flex items-center gap-4 mb-3">
+						<motion.button
+							onClick={() => onToggleLike(drawing.id)}
+							className="flex items-center gap-1 transition-colors"
+							whileTap={{ scale: 0.85 }}
+							transition={{ type: "spring", stiffness: 400, damping: 17 }}
+						>
+							<Heart
+								className={`w-5 h-5 text-[#C24A48] transition-all ${
+									isLiked ? "fill-current scale-110" : ""
+								}`}
+							/>
+							<span className="text-text">
+								{drawing.likes + (isLiked ? 1 : 0)}
+							</span>
+						</motion.button>
+
+						<button
+							onClick={() => onOpenComments(drawing)}
+							className="flex items-center gap-1 text-foreground hover:text-primary transition-colors"
+						>
+							<MessageCircle className="text-text w-5 h-5" />
+							<span className="text-text">{drawing.comments}</span>
+						</button>
+					</div>
+
+					<div className="flex items-center justify-between gap-2">
+						<span className="text-text text-sm">{drawing.category}</span>
+						<span className="text-sm text-text">{formatDuration(drawing.duration)}</span>
+					</div>
+				</div>
+			</Card>
+		</motion.div>
+	);
+}
+
+// --- Main Page ---
 export default function ExplorePage() {
 	const [likedDrawings, setLikedDrawings] = useState<Set<string>>(new Set());
 	const [searchQuery, setSearchQuery] = useState("");
 	const [openedDrawing, setOpenedDrawing] = useState<Drawing | null>(null);
+	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
 	const formatDate = (dateString: string) => {
 		const diffHours = Math.floor(
@@ -30,22 +179,39 @@ export default function ExplorePage() {
 		return `${seconds}s`;
 	};
 
-	const toggleLike = (drawingId: string) => {
+	const toggleLike = useCallback((drawingId: string) => {
 		setLikedDrawings((prev) => {
 			const next = new Set(prev);
 			if (next.has(drawingId)) next.delete(drawingId);
 			else next.add(drawingId);
 			return next;
 		});
-	};
+	}, []);
 
 	const filteredDrawings = useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
-		if (!query) return exploreDrawings;
-		return exploreDrawings.filter((d: Drawing) =>
-			d.username.toLowerCase().includes(query)
-		);
+		const all = query
+			? exploreDrawings.filter((d: Drawing) => d.username.toLowerCase().includes(query))
+			: exploreDrawings;
+		return all;
 	}, [searchQuery]);
+
+	const visibleDrawings = useMemo(
+		() => filteredDrawings.slice(0, visibleCount),
+		[filteredDrawings, visibleCount]
+	);
+
+	const hasMore = !searchQuery && visibleCount < filteredDrawings.length;
+
+	const handleLoadMore = () => {
+		setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filteredDrawings.length));
+	};
+
+	// Reset pagination when search changes
+	const handleSearch = (val: string) => {
+		setSearchQuery(val);
+		setVisibleCount(PAGE_SIZE);
+	};
 
 	return (
 		<>
@@ -65,13 +231,13 @@ export default function ExplorePage() {
 							<input
 								type="text"
 								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
+								onChange={(e) => handleSearch(e.target.value)}
 								placeholder="Search by username..."
 								className="w-full bg-card text-text placeholder-text/50 border border-muted rounded-lg py-2.5 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
 							/>
 							{searchQuery && (
 								<button
-									onClick={() => setSearchQuery("")}
+									onClick={() => handleSearch("")}
 									className="absolute right-3 top-1/2 -translate-y-1/2 text-text opacity-50 hover:opacity-100 transition-opacity"
 								>
 									<X className="w-4 h-4" />
@@ -82,104 +248,18 @@ export default function ExplorePage() {
 
 					{/* Cards Grid */}
 					<div className="bg-background grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{filteredDrawings.length > 0 ? (
-							filteredDrawings.map((drawing: Drawing, index: number) => (
-								<motion.div
+						{visibleDrawings.length > 0 ? (
+							visibleDrawings.map((drawing: Drawing, index: number) => (
+								<PostCard
 									key={drawing.id}
-									initial={{ opacity: 0, scale: 0.9 }}
-									animate={{ opacity: 1, scale: 1 }}
-									transition={{ delay: 0.05 * index, duration: 0.3 }}
-								>
-									<Card className="bg-card overflow-hidden hover:shadow-xl transition-shadow">
-										{/* User Info */}
-										<div className="p-4 flex items-center gap-3">
-											<div className="w-10 h-10 rounded-full flex items-center justify-center">
-												<User className="w-5 h-5 text-text" />
-											</div>
-											<div className="flex-1">
-												<div className="text-text flex items-center gap-2">
-													<span>{drawing.username}</span>
-													<span className="text-sm">{formatDate(drawing.createdAt)}</span>
-												</div>
-											</div>
-										</div>
-
-										{/* Image(s) */}
-										{drawing.showWithReference && drawing.referenceUrl ? (
-											<div className="grid grid-cols-2 gap-1 bg-muted">
-												<div className="aspect-square overflow-hidden">
-													<ImageWithFallback
-														src={referenceImages[drawing.id]}
-														alt="Reference"
-														className="w-full h-full object-cover"
-													/>
-												</div>
-												<div className="aspect-square overflow-hidden">
-													<ImageWithFallback
-														src={exploreImages[drawing.id]}
-														alt={`Drawing by ${drawing.username}`}
-														className="w-full h-full object-cover"
-													/>
-												</div>
-											</div>
-										) : (
-											<div className="aspect-square bg-muted overflow-hidden">
-												<ImageWithFallback
-													src={exploreImages[drawing.id]}
-													alt={`Drawing by ${drawing.username}`}
-													className="w-full h-full object-cover"
-												/>
-											</div>
-										)}
-
-										{/* Actions and Info */}
-										<div className="p-4">
-											<div className="flex items-center gap-4 mb-3">
-												<motion.button
-													onClick={() => toggleLike(drawing.id)}
-													className={`flex items-center gap-1 transition-colors ${
-														likedDrawings.has(drawing.id)
-															? "text-primary"
-															: "text-foreground hover:text-primary"
-													}`}
-													whileTap={{ scale: 0.9 }}
-													transition={{ type: "spring", stiffness: 400, damping: 17 }}
-												>
-													<Heart
-														className={`text-[#C24A48] w-5 h-5 ${
-															likedDrawings.has(drawing.id) ? "fill-current" : ""
-														}`}
-													/>
-													<span className="text-text">
-														{drawing.likes + (likedDrawings.has(drawing.id) ? 1 : 0)}
-													</span>
-												</motion.button>
-
-												{/* Opens comments modal */}
-												<button
-													onClick={() => setOpenedDrawing(drawing)}
-													className="flex items-center gap-1 text-foreground hover:text-primary transition-colors"
-												>
-													<MessageCircle className="text-text w-5 h-5" />
-													<span className="text-text">{drawing.comments}</span>
-												</button>
-											</div>
-
-											<div className="flex items-center justify-between gap-2">
-												<span className="text-text text-sm">{drawing.category}</span>
-												<span className="text-sm text-text">
-													{formatDuration(drawing.duration)}
-												</span>
-											</div>
-
-											{drawing.showWithReference && (
-												<div className="text-text mt-2">
-													<span className="font-semibold text-xs">Made With Reference</span>
-												</div>
-											)}
-										</div>
-									</Card>
-								</motion.div>
+									drawing={drawing}
+									index={index}
+									isLiked={likedDrawings.has(drawing.id)}
+									onToggleLike={toggleLike}
+									onOpenComments={setOpenedDrawing}
+									formatDate={formatDate}
+									formatDuration={formatDuration}
+								/>
 							))
 						) : (
 							<div className="col-span-3 text-center py-16 text-text opacity-50">
@@ -189,17 +269,21 @@ export default function ExplorePage() {
 					</div>
 
 					{/* Load More */}
-					{!searchQuery && (
+					{hasMore && (
 						<div className="mt-12 text-center">
-							<button className="cursor-pointer text-text inline-block bg-button hover:bg-primary border rounded-lg py-2.5 px-8">
+							<motion.button
+								onClick={handleLoadMore}
+								className="cursor-pointer text-text inline-block bg-button hover:bg-primary border rounded-lg py-2.5 px-8 transition-colors"
+								whileTap={{ scale: 0.96 }}
+							>
 								Load More
-							</button>
+							</motion.button>
 						</div>
 					)}
 				</motion.div>
 			</section>
 
-			{/* Comments Modal — mounted outside the scrollable section */}
+			{/* Comments Modal */}
 			<AnimatePresence>
 				{openedDrawing && (
 					<CommentsModal
@@ -208,6 +292,7 @@ export default function ExplorePage() {
 						onClose={() => setOpenedDrawing(null)}
 						likedDrawings={likedDrawings}
 						toggleLike={toggleLike}
+						initialImageIndex={0}
 					/>
 				)}
 			</AnimatePresence>
