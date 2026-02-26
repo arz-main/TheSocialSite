@@ -1,12 +1,21 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, MessageCircle, User, Search, X } from "lucide-react";
+import { Heart, MessageCircle, User, Search, X, ChevronDown } from "lucide-react";
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
 import { Card } from "../components/ui/Card";
 import { exploreDrawings } from "../_mock/mockPosts";
 import { exploreImages } from "../_mock/mockExploreImages";
 import { CommentsModal, generateMockComments } from "../components/ui/CommentsPopup";
 import type { Drawing } from "../components/ui/CommentsPopup";
+import {
+	filterDrawings,
+	sortDrawings,
+	getSearchPlaceholder,
+	searchByOptions,
+	sortByOptions,
+	type SearchByOption,
+	type SortByOption,
+} from "../utils/ExploreSearchLogic";
 
 const PAGE_SIZE = 9;
 
@@ -109,11 +118,10 @@ function PostCard({
 							{Array.from({ length: imageCount }).map((_, i) => (
 								<span
 									key={i}
-									className={`rounded-full transition-all ${
-										i === 0
+									className={`rounded-full transition-all ${i === 0
 											? "w-1.5 h-1.5 bg-white shadow-sm"
 											: "w-1.5 h-1.5 bg-white/45 shadow-sm"
-									}`}
+										}`}
 								/>
 							))}
 						</div>
@@ -130,9 +138,8 @@ function PostCard({
 							transition={{ type: "spring", stiffness: 400, damping: 17 }}
 						>
 							<Heart
-								className={`w-5 h-5 text-[#C24A48] transition-all ${
-									isLiked ? "fill-current scale-110" : ""
-								}`}
+								className={`w-5 h-5 text-[#C24A48] transition-all ${isLiked ? "fill-current scale-110" : ""
+									}`}
 							/>
 							<span className="text-text">
 								{drawing.likes + (isLiked ? 1 : 0)}
@@ -158,12 +165,85 @@ function PostCard({
 	);
 }
 
+// --- Dropdown Component ---
+function Dropdown({
+	label,
+	value,
+	options,
+	onChange,
+}: {
+	label: string;
+	value: string;
+	options: { value: string; label: string }[];
+	onChange: (value: string) => void;
+}) {
+	const [isOpen, setIsOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	// Close dropdown when clicking outside
+	useState(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+				setIsOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	});
+
+	const selectedOption = options.find((opt) => opt.value === value);
+
+	return (
+		<div ref={dropdownRef} className="relative">
+			<button
+				onClick={() => setIsOpen(!isOpen)}
+				className="flex items-center gap-2 bg-card text-text border border-muted rounded-lg py-2.5 px-4 hover:bg-muted/50 transition-colors"
+			>
+				<span className="text-sm text-text/70">{label}:</span>
+				<span className="text-sm font-medium">{selectedOption?.label}</span>
+				<ChevronDown className={`w-4 h-4 text-text/50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+			</button>
+
+			<AnimatePresence>
+				{isOpen && (
+					<motion.div
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -10 }}
+						transition={{ duration: 0.15 }}
+						className="absolute top-full mt-2 left-0 bg-card border border-muted rounded-lg shadow-lg overflow-hidden z-10 min-w-[200px]"
+					>
+						{options.map((option) => (
+							<button
+								key={option.value}
+								onClick={() => {
+									onChange(option.value);
+									setIsOpen(false);
+								}}
+								className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${option.value === value
+										? "bg-primary/10 text-primary font-medium"
+										: "text-text hover:bg-muted/50"
+									}`}
+							>
+								{option.label}
+							</button>
+						))}
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</div>
+	);
+}
+
 // --- Main Page ---
 export default function ExplorePage() {
 	const [likedDrawings, setLikedDrawings] = useState<Set<string>>(new Set());
 	const [searchQuery, setSearchQuery] = useState("");
+	const [searchBy, setSearchBy] = useState<SearchByOption>("creator");
+	const [sortBy, setSortBy] = useState<SortByOption>("relevance");
 	const [openedDrawing, setOpenedDrawing] = useState<Drawing | null>(null);
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+	const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
 	const formatDate = (dateString: string) => {
 		const diffHours = Math.floor(
@@ -189,22 +269,22 @@ export default function ExplorePage() {
 	}, []);
 
 	const filteredDrawings = useMemo(() => {
-		const query = searchQuery.trim().toLowerCase();
-		const all = query
-			? exploreDrawings.filter((d: Drawing) => d.username.toLowerCase().includes(query))
-			: exploreDrawings;
-		return all;
-	}, [searchQuery]);
+		return filterDrawings(exploreDrawings, searchQuery, searchBy);
+	}, [searchQuery, searchBy]);
+
+	const sortedDrawings = useMemo(() => {
+		return sortDrawings(filteredDrawings, sortBy);
+	}, [filteredDrawings, sortBy]);
 
 	const visibleDrawings = useMemo(
-		() => filteredDrawings.slice(0, visibleCount),
-		[filteredDrawings, visibleCount]
+		() => sortedDrawings.slice(0, visibleCount),
+		[sortedDrawings, visibleCount]
 	);
 
-	const hasMore = !searchQuery && visibleCount < filteredDrawings.length;
+	const hasMore = !searchQuery && visibleCount < sortedDrawings.length;
 
 	const handleLoadMore = () => {
-		setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filteredDrawings.length));
+		setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, sortedDrawings.length));
 	};
 
 	// Reset pagination when search changes
@@ -212,6 +292,8 @@ export default function ExplorePage() {
 		setSearchQuery(val);
 		setVisibleCount(PAGE_SIZE);
 	};
+
+	const isSearching = searchQuery.trim().length > 0;
 
 	return (
 		<>
@@ -221,18 +303,27 @@ export default function ExplorePage() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5 }}
 				>
-					{/* Header row */}
-					<div className="flex justify-between">
-						<h1 className="text-text text-3xl font-bold mb-6">Explore</h1>
+					{/* Search and Filter Bar */}
+					<div className="flex items-center gap-4 mb-8">
+						{/* Mobile Search Toggle Button */}
+						<button
+							onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+							className="md:hidden flex items-center justify-center w-10 h-10 bg-card text-text border border-muted rounded-lg hover:bg-muted/50 transition-colors"
+						>
+							<Search className="w-5 h-5" />
+						</button>
 
-						{/* Search Bar */}
-						<div className="relative mb-8 max-w-md">
+						{/* Search Bar - Full width on mobile when expanded, always visible on desktop */}
+						<div
+							className={`${isSearchExpanded ? "flex" : "hidden"
+								} md:flex relative flex-1 max-w-2xl`}
+						>
 							<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text opacity-50 pointer-events-none" />
 							<input
 								type="text"
 								value={searchQuery}
 								onChange={(e) => handleSearch(e.target.value)}
-								placeholder="Search by username..."
+								placeholder={getSearchPlaceholder(searchBy)}
 								className="w-full bg-card text-text placeholder-text/50 border border-muted rounded-lg py-2.5 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
 							/>
 							{searchQuery && (
@@ -244,6 +335,29 @@ export default function ExplorePage() {
 								</button>
 							)}
 						</div>
+
+						{/* Filter Dropdowns - Only show when not searching */}
+						{!isSearching && (
+							<>
+								{/* Search By Dropdown */}
+								<div className="hidden md:block">
+									<Dropdown
+										label="Search by"
+										value={searchBy}
+										options={searchByOptions}
+										onChange={(val) => setSearchBy(val as SearchByOption)}
+									/>
+								</div>
+
+								{/* Sort By Dropdown */}
+								<Dropdown
+									label="Sort by"
+									value={sortBy}
+									options={sortByOptions}
+									onChange={(val) => setSortBy(val as SortByOption)}
+								/>
+							</>
+						)}
 					</div>
 
 					{/* Cards Grid */}
@@ -263,7 +377,11 @@ export default function ExplorePage() {
 							))
 						) : (
 							<div className="col-span-3 text-center py-16 text-text opacity-50">
-								No users found matching "{searchQuery}"
+								{searchBy === "reference" ? (
+									<>No reference search available yet</>
+								) : (
+									<>No results found matching "{searchQuery}"</>
+								)}
 							</div>
 						)}
 					</div>
