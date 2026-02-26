@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Calendar, Heart, Settings, Palette } from "lucide-react";
+import { Calendar, Heart, Settings, Palette, Users } from "lucide-react";
 import { Link } from "react-router";
 import { Card } from "../components/ui/Card";
 import { Badge as BadgeUI } from "../components/ui/Badge";
@@ -10,15 +10,20 @@ import { ImageWithFallback } from "../utils/imageWithFallback";
 import { formatDate, formatDuration } from "../utils/profileUtils";
 import { userDrawingImages } from "../_mock/mockProfilePostImages";
 import { badges, currentUserDrawings } from "../_mock/mockProfile";
+import { mockUsers } from "../_mock/mockUsers";
 import Paths from "../routes/paths";
 
 export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState("badges");
+
+	// In a real app, this would come from auth context
+	const currentUser = mockUsers[0]; // Using first user as the logged-in user
+
 	return (
 		<div className="flex flex-col flex-1 bg-background text-primary">
-			<h1 className="text-text text-3xl font-bold mb-8">Profile</h1>
+			<h1 className="text-text text-3xl font-bold mb-8 px-6 pt-6">Profile</h1>
 
-			<div className="max-w-7xl mx-auto">
+			<div className="max-w-7xl mx-auto w-full px-6">
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -31,19 +36,21 @@ export default function ProfilePage() {
 								<Palette></Palette>
 							</div>
 							<div className="flex-1">
-								<h1 className="mb-2">Your Profile</h1>
+								<h1 className="mb-2">{currentUser.name}</h1>
 								<p className="text-muted-foreground mb-4">
-									Member since January 2026
+									Member since {formatDate(currentUser.joinedDate)}
 								</p>
 								<div className="flex gap-4 flex-wrap">
 									<BadgeUI variant="secondary" className="text-sm">
-										387 Drawings
+										{currentUser.postsCount} Posts
 									</BadgeUI>
-									<BadgeUI variant="secondary" className="text-sm">
-										15 Day Streak
+									<BadgeUI variant="secondary" className="text-sm cursor-pointer hover:bg-secondary/80">
+										<Users className="w-4 h-4 mr-1" />
+										{currentUser.followers.length} Followers
 									</BadgeUI>
-									<BadgeUI variant="secondary" className="text-sm">
-										Advanced Sketcher
+									<BadgeUI variant="secondary" className="text-sm cursor-pointer hover:bg-secondary/80">
+										<Users className="w-4 h-4 mr-1" />
+										{currentUser.following.length} Following
 									</BadgeUI>
 								</div>
 							</div>
