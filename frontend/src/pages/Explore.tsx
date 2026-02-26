@@ -1,10 +1,12 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, MessageCircle, User, Search, X, ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router";
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
 import { Card } from "../components/ui/Card";
 import { exploreDrawings } from "../_mock/mockPosts";
 import { exploreImages } from "../_mock/mockExploreImages";
+import { mockUsers, getUserById } from "../_mock/mockUsers";
 import { CommentsModal, generateMockComments } from "../components/ui/CommentsPopup";
 import type { Drawing } from "../components/ui/CommentsPopup";
 import {
@@ -16,6 +18,7 @@ import {
 	type SearchByOption,
 	type SortByOption,
 } from "../utils/ExploreSearchLogic";
+import Paths from "../routes/paths";
 
 const PAGE_SIZE = 9;
 
@@ -31,6 +34,7 @@ function PostCard({
 	onOpenComments,
 	formatDate,
 	formatDuration,
+	onUserClick,
 }: {
 	drawing: Drawing;
 	index: number;
@@ -39,10 +43,14 @@ function PostCard({
 	onOpenComments: (drawing: Drawing) => void;
 	formatDate: (d: string) => string;
 	formatDuration: (s: number) => string;
+	onUserClick: (userId: string) => void;
 }) {
 	const [likeFlash, setLikeFlash] = useState(false);
 	const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const clickCount = useRef(0);
+
+	// Find user from mockUsers based on username
+	const user = mockUsers.find(u => u.name === drawing.username);
 
 	const handleImageClick = useCallback(() => {
 		clickCount.current += 1;
@@ -76,12 +84,34 @@ function PostCard({
 			<Card className="bg-card overflow-hidden hover:shadow-xl transition-shadow">
 				{/* User Info */}
 				<div className="p-4 flex items-center gap-3">
-					<div className="w-10 h-10 rounded-full flex items-center justify-center">
-						<User className="w-5 h-5 text-text" />
+					<div
+						className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+						onClick={(e) => {
+							e.stopPropagation();
+							user && onUserClick(user.id);
+						}}
+					>
+						{user?.avatar ? (
+							<img
+								src={user.avatar}
+								alt={drawing.username}
+								className="w-full h-full object-cover"
+							/>
+						) : (
+							<User className="w-5 h-5 text-text" />
+						)}
 					</div>
 					<div className="flex-1">
 						<div className="text-text flex items-center gap-2">
-							<span>{drawing.username}</span>
+							<span
+								className="cursor-pointer hover:underline"
+								onClick={(e) => {
+									e.stopPropagation();
+									user && onUserClick(user.id);
+								}}
+							>
+								{drawing.username}
+							</span>
 							<span className="text-sm text-text/50">{formatDate(drawing.createdAt)}</span>
 						</div>
 					</div>
@@ -119,8 +149,8 @@ function PostCard({
 								<span
 									key={i}
 									className={`rounded-full transition-all ${i === 0
-											? "w-1.5 h-1.5 bg-white shadow-sm"
-											: "w-1.5 h-1.5 bg-white/45 shadow-sm"
+										? "w-1.5 h-1.5 bg-white shadow-sm"
+										: "w-1.5 h-1.5 bg-white/45 shadow-sm"
 										}`}
 								/>
 							))}
@@ -221,8 +251,8 @@ function Dropdown({
 									setIsOpen(false);
 								}}
 								className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${option.value === value
-										? "bg-primary/10 text-primary font-medium"
-										: "text-text hover:bg-muted/50"
+									? "bg-primary/10 text-primary font-medium"
+									: "text-text hover:bg-muted/50"
 									}`}
 							>
 								{option.label}
@@ -235,9 +265,90 @@ function Dropdown({
 	);
 }
 
+// --- User Banner Component ---
+function UserBanner({
+	user,
+	onUserClick,
+	onFollow,
+	isFollowing,
+}: {
+	user: typeof mockUsers[0];
+	onUserClick: (userId: string) => void;
+	onFollow: (userId: string) => void;
+	isFollowing: boolean;
+}) {
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.3 }}
+		>
+			<Card className="p-6 hover:shadow-lg transition-shadow">
+				<div className="flex items-center gap-4">
+					{/* Avatar */}
+					<div
+						className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+						onClick={() => onUserClick(user.id)}
+					>
+						{user.avatar ? (
+							<img
+								src={user.avatar}
+								alt={user.name}
+								className="w-full h-full object-cover"
+							/>
+						) : (
+							<div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl">
+								{user.name.charAt(0)}
+							</div>
+						)}
+					</div>
+
+					{/* User Info */}
+					<div className="flex-1 min-w-0">
+						<h3
+							className="text-lg font-semibold text-text mb-1 cursor-pointer hover:text-primary transition-colors truncate"
+							onClick={() => onUserClick(user.id)}
+						>
+							{user.name}
+						</h3>
+						{user.bio && (
+							<p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+								{user.bio}
+							</p>
+						)}
+						<div className="flex gap-3 text-xs text-muted-foreground">
+							<span>{user.postsCount} posts</span>
+							<span>{user.followers.length} followers</span>
+							<span>{user.following.length} following</span>
+						</div>
+					</div>
+
+					{/* Follow Button */}
+					<motion.div
+						whileTap={{ scale: 0.95 }}
+						whileHover={{ scale: 1.05 }}
+						transition={{ type: "spring", stiffness: 400, damping: 17 }}
+					>
+						<Button
+							variant={isFollowing ? "outline" : "default"}
+							size="sm"
+							onClick={() => onFollow(user.id)}
+						>
+							<User className="w-4 h-4 mr-2" />
+							{isFollowing ? "Following" : "Follow"}
+						</Button>
+					</motion.div>
+				</div>
+			</Card>
+		</motion.div>
+	);
+}
+
 // --- Main Page ---
 export default function ExplorePage() {
+	const navigate = useNavigate();
 	const [likedDrawings, setLikedDrawings] = useState<Set<string>>(new Set());
+	const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchBy, setSearchBy] = useState<SearchByOption>("creator");
 	const [sortBy, setSortBy] = useState<SortByOption>("relevance");
@@ -268,6 +379,19 @@ export default function ExplorePage() {
 		});
 	}, []);
 
+	const toggleFollow = useCallback((userId: string) => {
+		setFollowedUsers((prev) => {
+			const next = new Set(prev);
+			if (next.has(userId)) next.delete(userId);
+			else next.add(userId);
+			return next;
+		});
+	}, []);
+
+	const handleUserClick = (userId: string) => {
+		navigate(`${Paths.explore}/user/${userId}`);
+	};
+
 	const filteredDrawings = useMemo(() => {
 		return filterDrawings(exploreDrawings, searchQuery, searchBy);
 	}, [searchQuery, searchBy]);
@@ -280,6 +404,16 @@ export default function ExplorePage() {
 		() => sortedDrawings.slice(0, visibleCount),
 		[sortedDrawings, visibleCount]
 	);
+
+	// Filter users for user search
+	const filteredUsers = useMemo(() => {
+		if (searchBy !== "users" || !searchQuery.trim()) return [];
+		const query = searchQuery.trim().toLowerCase();
+		return mockUsers.filter(user =>
+			user.name.toLowerCase().includes(query) ||
+			user.bio?.toLowerCase().includes(query)
+		);
+	}, [searchQuery, searchBy]);
 
 	const hasMore = !searchQuery && visibleCount < sortedDrawings.length;
 
@@ -294,6 +428,7 @@ export default function ExplorePage() {
 	};
 
 	const isSearching = searchQuery.trim().length > 0;
+	const isUserSearch = searchBy === "users";
 
 	return (
 		<>
@@ -336,67 +471,89 @@ export default function ExplorePage() {
 							)}
 						</div>
 
-						{/* Filter Dropdowns - Only show when not searching */}
-						{!isSearching && (
-							<>
-								{/* Search By Dropdown */}
-								<div className="hidden md:block">
-									<Dropdown
-										label="Search by"
-										value={searchBy}
-										options={searchByOptions}
-										onChange={(val) => setSearchBy(val as SearchByOption)}
-									/>
-								</div>
+						{/* Filter Dropdowns - Always show */}
+						{/* Search By Dropdown */}
+						<div className="hidden md:block">
+							<Dropdown
+								label="Search by"
+								value={searchBy}
+								options={searchByOptions}
+								onChange={(val) => setSearchBy(val as SearchByOption)}
+							/>
+						</div>
 
-								{/* Sort By Dropdown */}
-								<Dropdown
-									label="Sort by"
-									value={sortBy}
-									options={sortByOptions}
-									onChange={(val) => setSortBy(val as SortByOption)}
-								/>
-							</>
+						{/* Sort By Dropdown - Hide for user search */}
+						{!isUserSearch && (
+							<Dropdown
+								label="Sort by"
+								value={sortBy}
+								options={sortByOptions}
+								onChange={(val) => setSortBy(val as SortByOption)}
+							/>
 						)}
 					</div>
 
-					{/* Cards Grid */}
-					<div className="bg-background grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{visibleDrawings.length > 0 ? (
-							visibleDrawings.map((drawing: Drawing, index: number) => (
-								<PostCard
-									key={drawing.id}
-									drawing={drawing}
-									index={index}
-									isLiked={likedDrawings.has(drawing.id)}
-									onToggleLike={toggleLike}
-									onOpenComments={setOpenedDrawing}
-									formatDate={formatDate}
-									formatDuration={formatDuration}
-								/>
-							))
-						) : (
-							<div className="col-span-3 text-center py-16 text-text opacity-50">
-								{searchBy === "reference" ? (
-									<>No reference search available yet</>
+					{/* User Search Results */}
+					{isUserSearch && isSearching ? (
+						<div className="space-y-4">
+							{filteredUsers.length > 0 ? (
+								filteredUsers.map((user) => (
+									<UserBanner
+										key={user.id}
+										user={user}
+										onUserClick={handleUserClick}
+										onFollow={toggleFollow}
+										isFollowing={followedUsers.has(user.id)}
+									/>
+								))
+							) : (
+								<div className="text-center py-16 text-text opacity-50">
+									No users found matching "{searchQuery}"
+								</div>
+							)}
+						</div>
+					) : (
+						<>
+							{/* Cards Grid */}
+							<div className="bg-background grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+								{visibleDrawings.length > 0 ? (
+									visibleDrawings.map((drawing: Drawing, index: number) => (
+										<PostCard
+											key={drawing.id}
+											drawing={drawing}
+											index={index}
+											isLiked={likedDrawings.has(drawing.id)}
+											onToggleLike={toggleLike}
+											onOpenComments={setOpenedDrawing}
+											formatDate={formatDate}
+											formatDuration={formatDuration}
+											onUserClick={handleUserClick}
+										/>
+									))
 								) : (
-									<>No results found matching "{searchQuery}"</>
+									<div className="col-span-3 text-center py-16 text-text opacity-50">
+										{searchBy === "reference" ? (
+											<>No reference search available yet</>
+										) : (
+											<>No results found matching "{searchQuery}"</>
+										)}
+									</div>
 								)}
 							</div>
-						)}
-					</div>
 
-					{/* Load More */}
-					{hasMore && (
-						<div className="mt-12 text-center">
-							<motion.button
-								onClick={handleLoadMore}
-								className="cursor-pointer text-text inline-block bg-button hover:bg-primary border rounded-lg py-2.5 px-8 transition-colors"
-								whileTap={{ scale: 0.96 }}
-							>
-								Load More
-							</motion.button>
-						</div>
+							{/* Load More */}
+							{hasMore && (
+								<div className="mt-12 text-center">
+									<motion.button
+										onClick={handleLoadMore}
+										className="cursor-pointer text-text inline-block bg-button hover:bg-primary border rounded-lg py-2.5 px-8 transition-colors"
+										whileTap={{ scale: 0.96 }}
+									>
+										Load More
+									</motion.button>
+								</div>
+							)}
+						</>
 					)}
 				</motion.div>
 			</section>
@@ -411,6 +568,7 @@ export default function ExplorePage() {
 						likedDrawings={likedDrawings}
 						toggleLike={toggleLike}
 						initialImageIndex={0}
+						onUserClick={handleUserClick}
 					/>
 				)}
 			</AnimatePresence>

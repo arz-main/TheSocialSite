@@ -32,8 +32,12 @@ export function filterDrawings(
 		case "creator":
 			return drawings.filter((d) => d.username.toLowerCase().includes(query));
 
+		case "users":
+			// Return empty for users search - handled separately
+			return [];
+
 		case "reference":
-			// Empty for now as requested
+			// Empty for now
 			return [];
 
 		case "keywords":

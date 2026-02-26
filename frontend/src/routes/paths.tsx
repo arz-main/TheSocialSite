@@ -14,7 +14,7 @@ const Paths = {
 		not_found: "/not_found",
 		internal_server_error: "/internal_server_error",
 	},
-	
+
 	admin: {
 		dashboard: "/admin",
 		manage_users: "/admin/manage_users",

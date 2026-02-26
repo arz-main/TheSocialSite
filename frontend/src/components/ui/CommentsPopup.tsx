@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, User, X, ChevronLeft, ChevronRight, Send } from "lucide-react";
 import { ImageWithFallback } from "../../utils/imageWithFallback";
 import { exploreImages, referenceImages } from "../../_mock/mockExploreImages";
+import { mockUsers } from "../../_mock/mockUsers";
 
 // --- Types ---
 export interface Drawing {
@@ -57,6 +58,7 @@ interface CommentsModalProps {
 	likedDrawings: Set<string>;
 	toggleLike: (id: string) => void;
 	initialImageIndex?: number;
+	onUserClick?: (userId: string) => void;
 }
 
 // --- Component ---
@@ -67,6 +69,7 @@ export function CommentsModal({
 	likedDrawings,
 	toggleLike,
 	initialImageIndex = 0,
+	onUserClick,
 }: CommentsModalProps) {
 	// Drawing is always index 0 (matches what's shown on the card), reference is index 1
 	const images: string[] = [];
@@ -199,11 +202,10 @@ export function CommentsModal({
 									<button
 										key={i}
 										onClick={() => setImageIndex(i)}
-										className={`rounded-full transition-all ${
-											i === imageIndex
+										className={`rounded-full transition-all ${i === imageIndex
 												? "w-4 h-1.5 bg-white"
 												: "w-1.5 h-1.5 bg-white/40 hover:bg-white/70"
-										}`}
+											}`}
 									/>
 								))}
 							</div>
@@ -220,11 +222,38 @@ export function CommentsModal({
 				<div className="flex flex-col flex-1 min-w-0 border-l border-muted">
 					{/* Post author header */}
 					<div className="px-4 py-3.5 border-b border-muted flex items-center gap-3 flex-shrink-0">
-						<div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-							<User className="w-4 h-4 text-text/60" />
+						<div
+							className="w-9 h-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all overflow-hidden"
+							onClick={() => {
+								const user = mockUsers.find(u => u.name === drawing.username);
+								if (user && onUserClick) {
+									onUserClick(user.id);
+									onClose();
+								}
+							}}
+						>
+							{(() => {
+								const user = mockUsers.find(u => u.name === drawing.username);
+								return user?.avatar ? (
+									<img src={user.avatar} alt={drawing.username} className="w-full h-full object-cover" />
+								) : (
+									<User className="w-4 h-4 text-text/60" />
+								);
+							})()}
 						</div>
 						<div className="min-w-0">
-							<p className="text-text font-semibold text-sm truncate">{drawing.username}</p>
+							<p
+								className="text-text font-semibold text-sm truncate cursor-pointer hover:underline"
+								onClick={() => {
+									const user = mockUsers.find(u => u.name === drawing.username);
+									if (user && onUserClick) {
+										onUserClick(user.id);
+										onClose();
+									}
+								}}
+							>
+								{drawing.username}
+							</p>
 							<p className="text-text/50 text-xs truncate">{drawing.category}</p>
 						</div>
 					</div>
@@ -238,9 +267,8 @@ export function CommentsModal({
 							transition={{ type: "spring", stiffness: 400, damping: 17 }}
 						>
 							<Heart
-								className={`w-4 h-4 text-[#C24A48] transition-all ${
-									likedDrawings.has(drawing.id) ? "fill-current scale-110" : ""
-								}`}
+								className={`w-4 h-4 text-[#C24A48] transition-all ${likedDrawings.has(drawing.id) ? "fill-current scale-110" : ""
+									}`}
 							/>
 							<span className="text-text text-sm">
 								{drawing.likes + (likedDrawings.has(drawing.id) ? 1 : 0)} likes
@@ -265,12 +293,39 @@ export function CommentsModal({
 								transition={{ duration: 0.2 }}
 								className="flex gap-2.5"
 							>
-								<div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0 mt-0.5">
-									<User className="w-3.5 h-3.5 text-text/50" />
+								<div
+									className="w-7 h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0 mt-0.5 cursor-pointer hover:ring-2 hover:ring-primary transition-all overflow-hidden"
+									onClick={() => {
+										const user = mockUsers.find(u => u.name === comment.username || `user_${u.id}` === comment.username);
+										if (user && onUserClick) {
+											onUserClick(user.id);
+											onClose();
+										}
+									}}
+								>
+									{(() => {
+										const user = mockUsers.find(u => u.name === comment.username || `user_${u.id}` === comment.username);
+										return user?.avatar ? (
+											<img src={user.avatar} alt={comment.username} className="w-full h-full object-cover" />
+										) : (
+											<User className="w-3.5 h-3.5 text-text/50" />
+										);
+									})()}
 								</div>
 								<div className="flex-1 min-w-0">
 									<div className="flex items-baseline gap-2 flex-wrap">
-										<span className="text-text font-semibold text-sm">{comment.username}</span>
+										<span
+											className="text-text font-semibold text-sm cursor-pointer hover:underline"
+											onClick={() => {
+												const user = mockUsers.find(u => u.name === comment.username || `user_${u.id}` === comment.username);
+												if (user && onUserClick) {
+													onUserClick(user.id);
+													onClose();
+												}
+											}}
+										>
+											{comment.username}
+										</span>
 										<span className="text-text/35 text-xs">{formatDate(comment.createdAt)}</span>
 									</div>
 									<p className="text-text/80 text-sm mt-0.5 leading-relaxed break-words">
