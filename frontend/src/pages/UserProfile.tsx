@@ -66,14 +66,16 @@ export default function UserProfile() {
         <div className="flex flex-col flex-1 bg-background text-primary">
             {/* Back Button */}
             <div className="p-6 pb-0">
-                <Button
-                    variant="ghost"
+                <motion.button
                     onClick={() => navigate(-1)}
-                    className="mb-4"
+                    className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-text hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    aria-label="Go back"
                 >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back
-                </Button>
+                    <ArrowLeft className="w-5 h-5" />
+                </motion.button>
             </div>
 
             <div className="max-w-7xl mx-auto w-full px-6 pb-6">
