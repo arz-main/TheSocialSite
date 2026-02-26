@@ -1,20 +1,99 @@
 @import "tailwindcss";
 
-:root {
-	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-	line-height: 1.5;
-	font-weight: 400;
+@theme {
+	/* Core */
+	--color-primary: var(--primary);
+	--color-primary-hover: var(--primary-hover);
+	--color-primary-soft: var(--primary-soft);
 
-	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
-	background-color: #242424;
+	--color-secondary: var(--secondary);
+	--color-secondary-hover: var(--secondary-hover);
+	--color-secondary-soft: var(--secondary-soft);
 
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	--color-accent: var(--accent);
+	--color-accent-soft: var(--accent-soft);
+
+	/* Status */
+	--color-success: var(--success);
+	--color-warning: var(--warning);
+	--color-danger: var(--danger);
+	--color-info: var(--info);
+
+	/* Surfaces */
+	--color-background: var(--background);
+	--color-card: var(--card);
+	--color-border: var(--border);
+
+	/* Text */
+	--color-text: var(--text);
+	--color-text-opposite: var(--text-opposite);
+	--color-text-opaque: var(--text-opaque);
+	--color-muted: var(--muted);
+
+	/* Interactive */
+	--color-button: var(--button);
+	--color-button-hover: var(--button-hover);
+
+	/* Utility */
+	--color-opposite: var(--opposite);
 }
 
-body {
-	margin: 0;
+:root {
+	--primary: #C94A3D;
+	--primary-hover: #B63F33;
+	--primary-soft: #F2C6C1;
+
+	--secondary: #4AC2B1;
+	--secondary-hover: #3AA99A;
+	--secondary-soft: #CDEDEA;
+
+	--accent: #FFB703;
+	--accent-soft: #FFE3A3;
+	--muted: #D6CEC4;
+
+	--success: #2E8B57;
+	--warning: #E09F3E;
+	--danger: #B00020;
+	--info: #3A86FF;
+
+	--background: #F5F1E8;
+	--card: #FFF9EF;
+	--border: #E5DED3;
+
+	--text: #1C0D0C;
+	--text-opposite: #F0EDEB;
+	--text-opaque: #4A5565;
+
+	--button: #FF6C5C;
+	--button-hover: #E85A4F;
+}
+
+.dark {
+	--primary: #4AC2B1;
+	--primary-hover: #38A89B;
+	--primary-soft: #1F3F3B;
+
+	--secondary: #C94A3D;
+	--secondary-hover: #A63C31;
+	--secondary-soft: #3A1F1C;
+
+	--accent: #FFB703;
+	--accent-soft: #3A2A00;
+	--muted: #3c3c3c;
+
+	--success: #3DDC97;
+	--warning: #F4A261;
+	--danger: #FF4D6D;
+	--info: #4895EF;
+
+	--background: #1C1C1C;
+	--card: #242424;
+	--border: #2E2E2E;
+
+	--text: #F0EDEB;
+	--text-opposite: #1C0D0C;
+	--text-opaque: #B5AA9A;
+
+	--button: #0093a3;
+	--button-hover: #17a5b0;
 }
