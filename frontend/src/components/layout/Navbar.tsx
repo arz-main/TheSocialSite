@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Link } from "react-router-dom";
 import Paths from "../../routes/paths";
-import SiteLogo from "../../assets/world_logo.svg";
+import WebsiteLogo from "../ui/SiteLogo";
 import { Menu } from "lucide-react";
 import { motion } from "motion/react";
 import { Sidebar } from "../../pages/SidePanel"
@@ -18,17 +18,15 @@ const Navbar = () => {
 				<div className="flex items-center gap-4">
 					<motion.button
 						onClick={() => setSidebarOpen(true)}
-						className="p-2 hover:bg-text/20 rounded-lg transition-colors"
+						className="hover:bg-text/20 rounded-lg transition-colors w-10 h-10 flex justify-center items-center"
 						whileTap={{ scale: 0.9 }}
 						transition={{ type: "spring", stiffness: 400, damping: 17 }}
 						aria-label="Open sidebar"
 					>
-						<Menu className="w-5 h-5 text-white" />
+						<Menu className="w-6 h-6 text-background" />
 					</motion.button>
 
-					<Link to={Paths.home} className="flex items-center">
-						<img src={SiteLogo} alt="Site Logo" className="h-10 w-10" />
-					</Link>
+					<WebsiteLogo />
 				</div>
 				<div className="flex gap-4">
 					<Link to={Paths.home} className="text-white hover:text-text hover:bg-background py-2 px-4 rounded-xl border-none font-semibold">Home</Link>
