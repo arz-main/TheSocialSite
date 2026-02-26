@@ -19,6 +19,8 @@ import { formatDate, formatDuration } from "../utils/profileUtils";
 import { userDrawingImages } from "../_mock/mockProfilePostImages";
 import { badges, currentUserDrawings } from "../_mock/mockProfile";
 import { getUserById, mockUsers } from "../_mock/mockUsers";
+import Paths from "../routes/paths";
+
 
 
 export default function UserProfile() {
@@ -28,7 +30,7 @@ export default function UserProfile() {
     const [isFollowing, setIsFollowing] = useState(false);
 
     // Get user data from mockUsers
-    const user = userId ? getUserById(userId) : null; if (!user) { return <Navigate to="/404" replace />; }
+    const user = userId ? getUserById(userId) : null; if (!user) { return <Navigate to={Paths.error.not_found} replace />; }
 
 
     const handleFollow = () => {
