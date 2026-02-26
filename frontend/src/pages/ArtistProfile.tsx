@@ -1,3 +1,4 @@
+import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { motion } from "motion/react";
@@ -18,7 +19,7 @@ import { formatDate, formatDuration } from "../utils/profileUtils";
 import { userDrawingImages } from "../_mock/mockProfilePostImages";
 import { badges, currentUserDrawings } from "../_mock/mockProfile";
 import { getUserById, mockUsers } from "../_mock/mockUsers";
-import Paths from "../routes/paths";
+
 
 export default function UserProfile() {
     const { userId } = useParams<{ userId: string }>();
@@ -27,18 +28,8 @@ export default function UserProfile() {
     const [isFollowing, setIsFollowing] = useState(false);
 
     // Get user data from mockUsers
-    const user = userId ? getUserById(userId) : null;
+    const user = userId ? getUserById(userId) : null; if (!user) { return <Navigate to="/404" replace />; }
 
-    if (!user) {
-        return (
-            <div className="flex flex-col flex-1 bg-background text-text items-center justify-center">
-                <h1 className="text-3xl font-bold mb-4">User Not Found</h1>
-                <Button onClick={() => navigate(Paths.explore)}>
-                    Back to Explore
-                </Button>
-            </div>
-        );
-    }
 
     const handleFollow = () => {
         setIsFollowing(!isFollowing);

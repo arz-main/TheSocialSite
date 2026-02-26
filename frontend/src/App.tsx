@@ -6,7 +6,7 @@ import ThemeToggle from "./components/layout/ThemeToggle";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile"
 import EditProfile from "./pages/EditProfile";
-import UserProfile from "./pages/UserProfile";
+import UserProfile from "./pages/ArtistProfile";
 import Practice from "./pages/Practice";
 import About from "./pages/About";
 import Explore from "./pages/Explore";
@@ -77,6 +77,7 @@ const App = () => {
 						<Route path={Paths.error.unauthorized} element={<Unauthorized />} />
 						<Route path={Paths.error.forbidden} element={<Forbidden />} />
 						<Route path={Paths.error.internal_server_error} element={<InternalServerError />} />
+						<Route path={Paths.error.not_found} element={<NotFound />} />
 						<Route path="*" element={<NotFound />} />
 					</Routes>
 				</main>
