@@ -24,12 +24,12 @@ const Navbar = () => {
 				<div className="flex items-center gap-4">
 					<motion.button
 						onClick={() => setSidebarOpen(true)}
-						className="hover:bg-primary rounded-lg transition-colors w-10 h-10 flex justify-center items-center"
+						className="group flex justify-center items-center w-10 h-10 rounded-lg transition-colors hover:bg-primary"
 						whileTap={{ scale: 0.9 }}
 						transition={{ type: "spring", stiffness: 400, damping: 17 }}
 						aria-label="Open sidebar"
 					>
-						<Menu className="w-6 h-6 text-text" />
+						<Menu className="text-text transition-colors group-hover:text-white" />
 					</motion.button>
 
 					<WebsiteLogo />
@@ -38,8 +38,8 @@ const Navbar = () => {
 					<Link
 						to={Paths.home}
 						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.home)
-								? 'bg-primary text-white'
-								: 'text-text hover:text-white hover:bg-primary'
+							? 'bg-primary text-white'
+							: 'text-text hover:text-white hover:bg-primary'
 							}`}
 					>
 						Home
@@ -47,8 +47,8 @@ const Navbar = () => {
 					<Link
 						to={Paths.practice}
 						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.practice)
-								? 'bg-primary text-white'
-								: 'text-text hover:text-white hover:bg-primary'
+							? 'bg-primary text-white'
+							: 'text-text hover:text-white hover:bg-primary'
 							}`}
 					>
 						Practice
@@ -56,8 +56,8 @@ const Navbar = () => {
 					<Link
 						to={Paths.explore}
 						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.explore)
-								? 'bg-primary text-white'
-								: 'text-text hover:text-white hover:bg-primary'
+							? 'bg-primary text-white'
+							: 'text-text hover:text-white hover:bg-primary'
 							}`}
 					>
 						Explore
@@ -65,8 +65,8 @@ const Navbar = () => {
 					<Link
 						to={Paths.about}
 						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.about)
-								? 'bg-primary text-white'
-								: 'text-text hover:text-white hover:bg-primary'
+							? 'bg-primary text-white'
+							: 'text-text hover:text-white hover:bg-primary'
 							}`}
 					>
 						About

@@ -17,11 +17,7 @@ import { categoryData, drawingsPerMonth, speedData, practiceInfoData } from "../
 
 export default function StatsPage() {
 	return (
-		<div className="flex flex-col flex-1 bg-background text-primary">
-			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-				<h1 className="text-text text-3xl font-bold">Artist Performance</h1>
-			</div>
-
+		<div className="flex flex-col flex-1 bg-background text-primary p-6 gap-6">
 			{/* Stat Cards */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				{practiceInfoData.map((stat, index) => (
@@ -37,7 +33,7 @@ export default function StatsPage() {
 									<p className="text-sm">{stat.title}</p>
 									<p className="text-2xl font-semibold mt-1">{stat.value}</p>
 								</div>
-								<div className="p-2 w-10 h-10 text-background bg-primary rounded-xl">{stat.icon}</div>
+								<div className="p-2 w-10 h-10 text-white bg-primary rounded-xl">{stat.icon}</div>
 							</CardContent>
 						</Card>
 					</motion.div>

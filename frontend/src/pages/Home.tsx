@@ -1,4 +1,4 @@
-import { HomeCard } from "../components/ui/Card";
+import { HomeCard } from "../components/ui/HomePageComponents";
 import Paths from "../routes/paths";
 import MockCards from "../_mock/mockHomeCards";
 import LinkButton from "../components/ui/LinkButton";

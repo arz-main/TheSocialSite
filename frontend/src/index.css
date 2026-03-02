@@ -21,6 +21,7 @@
 
 	/* Surfaces */
 	--color-background: var(--background);
+	--color-background-opposite: var(--background-opposite);
 	--color-card: var(--card);
 	--color-border: var(--border);
 
@@ -57,6 +58,7 @@
 	--info: #3A86FF;
 
 	--background: #F5F1E8;
+	--background-opposite: #1C1C1C;
 	--card: #FFF9EF;
 	--navbar: #FFFFFF;
 	--border: #E5DED3;
@@ -88,6 +90,7 @@
 	--info: #4895EF;
 
 	--background: #1C1C1C;
+	--background-opposite: #F5F1E8;
 	--card: #242424;
 	--border: #2E2E2E;
 

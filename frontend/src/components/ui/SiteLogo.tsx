@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Paths from "../../routes/paths";
-import Logo from "../../assets/site_logo.png"
+import Logo from "../../assets/3dicons-pencil.png"
 
 const WebsiteLogo = () => {
     return (
@@ -11,7 +11,7 @@ const WebsiteLogo = () => {
             <img
                 src={Logo}
                 alt="Site Logo"
-                className="w-full h-full object-cover scale-140"
+                className="w-full h-full"
             />
         </Link>
     )

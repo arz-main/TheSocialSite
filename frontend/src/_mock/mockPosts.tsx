@@ -1,17 +1,6 @@
-export interface Drawing {
-	id: string;
-	userId: string;
-	username: string;
-	imageUrl: string;
-	referenceUrl?: string;
-	category: string;
-	duration: number;
-	createdAt: string;
-	likes: number;
-	comments: number;
-	showWithReference: boolean;
-}
-export const currentUserDrawings: Drawing[] = [
+import type { Post } from "../types/PostTypes";
+
+export const currentUserPosts: Post[] = [
 	{
 		id: "1",
 		userId: "current",
@@ -52,7 +41,7 @@ export const currentUserDrawings: Drawing[] = [
 	},
 ];
 
-export const exploreDrawings: Drawing[] = [
+export const mockPosts: Post[] = [
 	{
 		id: "e1",
 		userId: "3",

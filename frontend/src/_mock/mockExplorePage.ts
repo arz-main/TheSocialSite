@@ -1,3 +1,15 @@
+// --- Mock comments ---
+export const sampleComments = [
+	"This is absolutely stunning!",
+	"Love the brushwork on this one.",
+	"How long did this take you?",
+	"The shading is incredible.",
+	"This is so inspiring, keep it up!",
+	"What tool did you use for this?",
+	"Beautiful composition!",
+	"Wow, the details are amazing.",
+];
+
 export const exploreImages: Record<string, string> = {
 	e1: "https://images.unsplash.com/photo-1615717146113-495e481c17c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnRpc3QlMjBkcmF3aW5nJTIwc2tldGNofGVufDF8fHx8MTc3MDY2MTk2Nnww&ixlib=rb-4.1.0&q=80&w=1080",
 	e2: "https://images.unsplash.com/photo-1720293315623-24354129a174?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbGx1c3RyYXRpb24lMjBhcnR3b3JrJTIwY3JlYXRpdmV8ZW58MXx8fHwxNzcwNjYxOTY3fDA&ixlib=rb-4.1.0&q=80&w=1080",

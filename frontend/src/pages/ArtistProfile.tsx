@@ -14,11 +14,11 @@ import { Card } from "../components/ui/Card";
 import { Badge as BadgeUI } from "../components/ui/Badge";
 import { Button } from "../components/ui/BasicButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
-import { ImageWithFallback } from "../utils/imageWithFallback";
-import { formatDate, formatDuration } from "../utils/profileUtils";
+import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
+import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { userDrawingImages } from "../_mock/mockProfilePostImages";
 import { badges, currentUserDrawings } from "../_mock/mockProfile";
-import { getUserById, mockUsers } from "../_mock/mockUsers";
+import { getUserById } from "../_mock/mockUsers";
 import Paths from "../routes/paths";
 
 

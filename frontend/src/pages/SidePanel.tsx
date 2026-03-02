@@ -67,9 +67,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 						{/* Header */}
 						<div className="p-6 border-b border-border flex items-center justify-between pt-22">
 							<Link to="/" onClick={onClose} className="flex items-center gap-2">
-								<div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-									<span className="text-primary-foreground">✏️</span>
-								</div>
 								<span className="text-text text-xl tracking-tight">SketchFlow</span>
 							</Link>
 							<motion.button
@@ -93,8 +90,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 										<Link className="text-text" key={item.path} to={item.path} onClick={onClose}>
 											<motion.div
 												className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-														? "bg-button text-white"
-														: "text-foreground hover:bg-muted"
+													? "bg-button text-white"
+													: "text-foreground hover:bg-muted"
 													}`}
 												whileTap={{ scale: 0.98 }}
 												transition={{

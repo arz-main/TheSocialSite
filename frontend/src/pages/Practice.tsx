@@ -2,12 +2,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Brush, RotateCcw, Pause, Play, SkipForward } from "lucide-react"
 import mockCategories from "../_mock/mockCategories";
 import { mockDrawings } from "../_mock/mockDrawings";
-import { TimerRing } from "../components/ui/Timer";
-import { PracticeCard } from "../components/ui/Card"
-import { formatTime } from "../utils/practiceUtils";
+import { TimerBar } from "../components/ui/PracticePageComponents";
+import { PracticeCard } from "../components/ui/PracticePageComponents"
+import { formatTime } from "../utils/PracticePageUtils";
 import { Button } from "../components/ui/BasicButton";
-
-type SessionState = "idle" | "active" | "paused" | "done";
+import type { ActiveSessionPanelProps, SessionState } from "../types/PracticePageTypes";
 
 const Practice = () => {
 	const [numDrawings, setNumDrawings] = useState(5);
@@ -115,14 +114,11 @@ const Practice = () => {
 	return (
 		<div className="flex flex-col flex-1 bg-background text-primary">
 			<section className=" w-full p-6 bg-background">
-				<h1 className="text-text text-3xl font-bold mb-8">
-					Practice Session
-				</h1>
 				<div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
 					{/* LEFT PANEL */}
 					<div className="flex flex-col rounded-xl bg-card shadow p-6">
-						<h1 className="text-text-opaque text-md pb-4">
-							Choose Category
+						<h1 className="text-text pb-4">
+							Choose Category:
 						</h1>
 
 						<div className="grid grid-cols-2 gap-4">
@@ -137,7 +133,7 @@ const Practice = () => {
 							))}
 						</div>
 
-						<div className="text-text flex flex-col py-14 gap-10">
+						<div className="text-text flex flex-col py-6 gap-2">
 							<div>
 								<h1>Number of Drawings: {numDrawings}</h1>
 								<input
@@ -176,7 +172,7 @@ const Practice = () => {
 
 						<Button
 							size={"xl"}
-							variant={"default"}
+							variant={"primary"}
 							onClick={handleStart}
 							disabled={isActive}
 						>
@@ -185,37 +181,42 @@ const Practice = () => {
 					</div>
 
 					{/* RIGHT PANEL */}
-					{isDone ? (
-						<DonePanel
-							totalDrawings={numDrawings}
-							timePerDrawing={timePerDrawing}
-							onRestart={handleRestart}
-						/>
-					) : isActive ? (
-						<ActiveSessionPanel
-							drawing={sessionDrawings[drawingIndex]}
-							drawingIndex={drawingIndex}
-							totalDrawings={sessionDrawings.length}
-							timeLeft={timeLeft}
-							timePerDrawing={timePerDrawing}
-							sessionState={sessionState}
-							onPause={handlePause}
-							onResume={handleResume}
-							onSkip={handleSkip}
-							onStop={handleStop}
-						/>
-					) : (
-						<div className="
-							flex flex-col items-center justify-center rounded-xl text-text
-							bg-card shadow p-6 aspect-square lg:aspect-auto lg:min-h-full
-						">
-							<Brush className="w-15 h-15"></Brush>
-							<h1>Ready to Practice</h1>
-							<small className="text-text-opaque">
-								{numDrawings} drawings x {formatTime(timePerDrawing)}
-							</small>
-						</div>
-					)}
+					<div
+						// h-full ensures this panel matches the LEFT PANEL height automatically
+						className="flex flex-col h-full"
+					>
+						{isDone ? (
+							<DonePanel
+								totalDrawings={numDrawings}
+								timePerDrawing={timePerDrawing}
+								onRestart={handleRestart}
+							/>
+						) : isActive ? (
+							<ActiveSessionPanel
+								drawing={sessionDrawings[drawingIndex]}
+								drawingIndex={drawingIndex}
+								totalDrawings={sessionDrawings.length}
+								timeLeft={timeLeft}
+								timePerDrawing={timePerDrawing}
+								sessionState={sessionState}
+								onPause={handlePause}
+								onResume={handleResume}
+								onSkip={handleSkip}
+								onStop={handleStop}
+							/>
+						) : (
+							<div className="
+								flex flex-col items-center justify-center rounded-xl text-text
+								bg-card shadow p-6 aspect-square lg:aspect-auto lg:min-h-full
+							">
+								<Brush className="w-15 h-15"></Brush>
+								<h1>Ready to Practice</h1>
+								<small className="text-text-opaque">
+									{numDrawings} drawings x {formatTime(timePerDrawing)}
+								</small>
+							</div>
+						)}
+					</div>
 				</div>
 			</section>
 		</div>
@@ -234,18 +235,7 @@ const ActiveSessionPanel = ({
 	onResume,
 	onSkip,
 	onStop,
-}: {
-	drawing: typeof mockDrawings[0];
-	drawingIndex: number;
-	totalDrawings: number;
-	timeLeft: number;
-	timePerDrawing: number;
-	sessionState: SessionState;
-	onPause: () => void;
-	onResume: () => void;
-	onSkip: () => void;
-	onStop: () => void;
-}) => (
+}: ActiveSessionPanelProps) => (
 	<div className="flex flex-col h-full rounded-xl bg-card shadow p-6 gap-4 max-h-screen overflow-hidden">
 		{/* Top bar */}
 		<div className="flex items-center justify-between">
@@ -274,18 +264,21 @@ const ActiveSessionPanel = ({
 		</div>
 
 		{/* Reference image */}
-		<div className="relative flex-1 rounded-lg overflow-hidden bg-black min-h-0 max-h-[100vh]">
+		<div className="relative flex-1 rounded-lg bg-black overflow-hidden flex items-center justify-center">
 			<img
 				key={drawing.id}
 				src={drawing.src}
 				alt={drawing.label}
-				className="w-full h-full object-cover opacity-90 animate-fadeIn"
+				className="max-h-full max-w-full object-contain"
+			// This prevents the image from ever stretching the container
 			/>
+
 			{sessionState === "paused" && (
 				<div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
 					<span className="text-white text-xl font-semibold tracking-wide">Paused</span>
 				</div>
 			)}
+
 			<div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
 				<p className="text-white text-sm font-medium">{drawing.label}</p>
 			</div>
@@ -293,30 +286,30 @@ const ActiveSessionPanel = ({
 
 		{/* Controls */}
 		<div className="flex items-center justify-between gap-4">
-			<TimerRing timeLeft={timeLeft} total={timePerDrawing} />
+			<TimerBar timeLeft={timeLeft} total={timePerDrawing} />
 
 			<div className="flex gap-3">
 				{sessionState === "paused" ? (
-					<button
+					<Button
+						variant={"primary"}
 						onClick={onResume}
-						className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
 					>
 						<Play className="w-4 h-4" /> Resume
-					</button>
+					</Button>
 				) : (
-					<button
+					<Button
+						variant={"primary"}
 						onClick={onPause}
-						className="flex items-center gap-2 px-5 py-2.5 border-2 border-primary text-primary rounded-xl font-medium hover:bg-primary/10 transition-colors"
 					>
 						<Pause className="w-4 h-4" /> Pause
-					</button>
+					</Button>
 				)}
-				<button
+				<Button
+					variant={"primary"}
 					onClick={onSkip}
-					className="flex items-center gap-2 px-5 py-2.5 border-2 border-background text-text-opaque rounded-xl font-medium hover:border-primary hover:text-primary transition-colors"
 				>
 					<SkipForward className="w-4 h-4" /> Skip
-				</button>
+				</Button>
 			</div>
 		</div>
 	</div>
@@ -340,7 +333,7 @@ const DonePanel = ({
 			Great work!
 		</p>
 		<Button
-			variant={"default"}
+			variant={"primary"}
 			onClick={onRestart}
 		>
 			<RotateCcw className="w-4 h-4" /> Start Another Session
