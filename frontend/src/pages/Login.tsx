@@ -4,8 +4,8 @@ import { motion } from "motion/react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
-import { Input } from "../utils/input";
-import { Label } from "../utils/label";
+import { Input } from "../components/ui/InputComponent";
+import { Label } from "../components/ui/LabelComponent";
 import Paths from "../routes/paths";
 import { findUser } from "../_mock/mockUsers";
 

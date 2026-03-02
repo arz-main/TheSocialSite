@@ -11,7 +11,7 @@ interface LinkButtonProps {
 
 const variantStyles = {
 	primary:
-		"bg-button hover:bg-primary text-white border rounded-lg px-8 py-2.5",
+		"bg-button hover:bg-primary text-white border-2 border-background-opposite rounded-lg px-8 py-2.5",
 	secondary:
 		"bg-primary hover:bg-button text-text-opposite border rounded-lg px-8 py-2.5",
 	outline:

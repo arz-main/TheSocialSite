@@ -1,4 +1,4 @@
-import { cn } from "../../utils/Utils";
+import { cn } from "../../utils/ClassNameMergeUtil";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

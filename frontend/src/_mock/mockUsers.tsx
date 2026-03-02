@@ -1,31 +1,6 @@
-export type Role = "artist" | "admin";
+import type { User } from "../types/UserTypes";
 
-export interface SocialLinks {
-    pinterest?: string;
-    x?: string;
-    deviantart?: string;
-    youtube?: string;
-    discord?: string;
-}
-
-export interface MockUser {
-    id: string;
-    email: string;
-    password: string;
-    name: string;
-    role: Role;
-    avatar?: string;
-    bio?: string;
-    location?: string;
-    website?: string;
-    socialLinks?: SocialLinks;
-    followers: string[]; // Array of user IDs
-    following: string[]; // Array of user IDs
-    postsCount: number;
-    joinedDate: string;
-}
-
-export const mockUsers: MockUser[] = [
+export const mockUsers: User[] = [
     {
         id: "1",
         email: "artist@test.com",
@@ -223,13 +198,13 @@ export const mockUsers: MockUser[] = [
     }
 ];
 
-export function findUser(email: string, password: string): MockUser | null {
+export function findUser(email: string, password: string): User | null {
     return mockUsers.find(
         (u) => u.email === email && u.password === password
     ) ?? null;
 }
 
-export function getUserById(id: string): MockUser | null {
+export function getUserById(id: string): User | null {
     return mockUsers.find(u => u.id === id) ?? null;
 }
 
