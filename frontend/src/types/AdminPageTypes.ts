@@ -1,41 +1,39 @@
-import type { Post } from "./PostTypes";
-import type { User } from "./UserTypes"; // make sure you import your User type
+import type { ReactNode } from "react";
 
 export interface Column<T> {
     label: string;
     field: keyof T;
     sortable?: boolean;
-    render?: (row: T) => React.ReactNode; // optional custom cell renderer
+    render?: (row: T) => ReactNode;
 }
-
-
-// Users
-export const userColumns: Column<User>[] = [
-    { label: "Name", field: "name" },
-    { label: "Email", field: "email" },
-    { label: "Role", field: "role" },
-    { label: "Posts", field: "postsCount" },
-];
-
-// Posts
-export const postColumns: Column<Post>[] = [
-    { label: "ID", field: "id" },
-    { label: "Username", field: "username" },
-    { label: "Category", field: "category" },
-    { label: "Duration", field: "duration" },
-    { label: "Likes", field: "likes" },
-    { label: "Comments", field: "comments" },
-    { label: "Created At", field: "createdAt" },
-];
 
 export interface AdminTableProps<T> {
     data: T[];
     columns: Column<T>[];
-    actions?: (row: T) => React.ReactNode;
     pageSize?: number;
+    // pagination/sort passed in from outside
+    paginatedData: T[];
+    sortField: keyof T | null;
+    sortAsc: boolean;
+    onSort: (field: keyof T) => void;
+    page: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+}
 
-    // Add these for sortable tables
-    sortField?: keyof T;
-    sortAsc?: boolean;
-    onSort?: (field: keyof T) => void;
+export interface ActionsPanelProps<T extends { id: string }> {
+    data: T[];
+    actions: (row: T) => ReactNode;
+}
+
+export interface TableSectionProps {
+    title: string;
+    count: number;
+    children: ReactNode;
+}
+
+export interface TableSectionPropsWithPagination extends TableSectionProps {
+    page?: number;
+    totalPages?: number;
+    onPageChange?: (page: number) => void;
 }
