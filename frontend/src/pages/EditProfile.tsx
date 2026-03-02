@@ -4,8 +4,8 @@ import { motion } from "motion/react";
 import { Camera, Save, Palette } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
-import { Input } from "../utils/input";
-import { Label } from "../utils/label";
+import { Input } from "../components/ui/InputComponent";
+import { Label } from "../components/ui/LabelComponent";
 import { Textarea } from "../components/ui/TextArea";
 import Paths from "../routes/paths";
 
@@ -58,10 +58,7 @@ export default function EditProfile() {
 
 	return (
 		<div className="flex flex-col flex-1 bg-background text-text">
-			<div className="w-full p-6">
-				<h1 className="text-3xl font-bold">Edit Profile</h1>
-			</div>
-			<div className="flex flex-1">
+			<div className="flex flex-1 p-6">
 				<motion.div
 					className="px-6 md:px-12 lg:px-16 w-full max-w-5xl mx-auto"
 					initial={{ opacity: 0, y: 20 }}

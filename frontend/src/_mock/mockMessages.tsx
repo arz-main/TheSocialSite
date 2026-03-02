@@ -1,4 +1,4 @@
-import type { Conversation } from "../types/messageTypes";
+import type { Conversation } from "../types/MessagesPageTypes";
 export const mockConversations: Conversation[] = [
 	{
 		id: "conv_1",

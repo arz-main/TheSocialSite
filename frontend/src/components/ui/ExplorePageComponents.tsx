@@ -1,41 +1,91 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, User, X, ChevronLeft, ChevronRight, Send } from "lucide-react";
-import { ImageWithFallback } from "../../utils/imageWithFallback";
-import { exploreImages, referenceImages } from "../../_mock/mockExploreImages";
+import { Heart, User, X, ChevronLeft, ChevronRight, Send, MessageCircle, ChevronDown } from "lucide-react";
+import { Card } from "./Card";
+import { Button } from "./BasicButton";
+import { ImageWithFallback } from "./ImageWithFallBack";
+import { sampleComments, exploreImages, referenceImages } from "../../_mock/mockExplorePage";
 import { mockUsers } from "../../_mock/mockUsers";
+import type { CommentsModalProps, Comment, Drawing, PostCardProps, DropDownProps } from "../../types/ExplorePageTypes";
 
-// --- Types ---
-export interface Drawing {
-	id: string;
-	username: string;
-	createdAt: string;
-	likes: number;
-	comments: number;
-	category: string;
-	duration: number;
-	showWithReference?: boolean;
-	referenceUrl?: string;
+// --- User Banner Component ---
+export function UserBanner({
+	user,
+	onUserClick,
+	onFollow,
+	isFollowing,
+}: {
+	user: typeof mockUsers[0];
+	onUserClick: (userId: string) => void;
+	onFollow: (userId: string) => void;
+	isFollowing: boolean;
+}) {
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.3 }}
+		>
+			<Card className="p-6 hover:shadow-lg transition-shadow">
+				<div className="flex items-center gap-4">
+					{/* Avatar */}
+					<div
+						className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+						onClick={() => onUserClick(user.id)}
+					>
+						{user.avatar ? (
+							<img
+								src={user.avatar}
+								alt={user.name}
+								className="w-full h-full object-cover"
+							/>
+						) : (
+							<div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl">
+								{user.name.charAt(0)}
+							</div>
+						)}
+					</div>
+
+					{/* User Info */}
+					<div className="flex-1 min-w-0">
+						<h3
+							className="text-lg font-semibold text-text mb-1 cursor-pointer hover:text-primary transition-colors truncate"
+							onClick={() => onUserClick(user.id)}
+						>
+							{user.name}
+						</h3>
+						{user.bio && (
+							<p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+								{user.bio}
+							</p>
+						)}
+						<div className="flex gap-3 text-xs text-muted-foreground">
+							<span>{user.postsCount} posts</span>
+							<span>{user.followers.length} followers</span>
+							<span>{user.following.length} following</span>
+						</div>
+					</div>
+
+					{/* Follow Button */}
+					<motion.div
+						whileTap={{ scale: 0.95 }}
+						whileHover={{ scale: 1.05 }}
+						transition={{ type: "spring", stiffness: 400, damping: 17 }}
+					>
+						<Button
+							variant={isFollowing ? "outline" : "default"}
+							size="sm"
+							onClick={() => onFollow(user.id)}
+						>
+							<User className="w-4 h-4 mr-2" />
+							{isFollowing ? "Following" : "Follow"}
+						</Button>
+					</motion.div>
+				</div>
+			</Card>
+		</motion.div>
+	);
 }
-
-interface Comment {
-	id: string;
-	username: string;
-	text: string;
-	createdAt: string;
-}
-
-// --- Mock comments ---
-const sampleComments = [
-	"This is absolutely stunning! 😍",
-	"Love the brushwork on this one.",
-	"How long did this take you?",
-	"The shading is incredible.",
-	"This is so inspiring, keep it up!",
-	"What tool did you use for this?",
-	"Beautiful composition!",
-	"Wow, the details are amazing.",
-];
 
 export function generateMockComments(drawings: Drawing[]): Record<string, Comment[]> {
 	const result: Record<string, Comment[]> = {};
@@ -50,18 +100,6 @@ export function generateMockComments(drawings: Drawing[]): Record<string, Commen
 	return result;
 }
 
-// --- Props ---
-interface CommentsModalProps {
-	drawing: Drawing;
-	mockComments: Record<string, Comment[]>;
-	onClose: () => void;
-	likedDrawings: Set<string>;
-	toggleLike: (id: string) => void;
-	initialImageIndex?: number;
-	onUserClick?: (userId: string) => void;
-}
-
-// --- Component ---
 export function CommentsModal({
 	drawing,
 	mockComments,
@@ -360,6 +398,233 @@ export function CommentsModal({
 					</div>
 				</div>
 			</motion.div>
+		</motion.div>
+	);
+}
+
+// --- Dropdown Component ---
+export function Dropdown({
+	label,
+	value,
+	options,
+	onChange,
+}: DropDownProps ) {
+	const [isOpen, setIsOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	// Close dropdown when clicking outside
+	useState(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+				setIsOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	});
+
+	const selectedOption = options.find((opt) => opt.value === value);
+
+	return (
+		<div ref={dropdownRef} className="relative">
+			<button
+				onClick={() => setIsOpen(!isOpen)}
+				className="flex items-center gap-2 bg-card text-text border border-muted rounded-lg py-2.5 px-4 hover:bg-muted/50 transition-colors"
+			>
+				<span className="text-sm text-text/70">{label}:</span>
+				<span className="text-sm font-medium">{selectedOption?.label}</span>
+				<ChevronDown className={`w-4 h-4 text-text/50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+			</button>
+
+			<AnimatePresence>
+				{isOpen && (
+					<motion.div
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -10 }}
+						transition={{ duration: 0.15 }}
+						className="absolute top-full mt-2 left-0 bg-card border border-muted rounded-lg shadow-lg overflow-hidden z-10 min-w-[200px]"
+					>
+						{options.map((option) => (
+							<button
+								key={option.value}
+								onClick={() => {
+									onChange(option.value);
+									setIsOpen(false);
+								}}
+								className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${option.value === value
+									? "bg-primary/10 text-primary font-medium"
+									: "text-text hover:bg-muted/50"
+									}`}
+							>
+								{option.label}
+							</button>
+						))}
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</div>
+	);
+}
+
+// --- PostCard with single/double click and like flash ---
+export function PostCard({
+	drawing,
+	index,
+	isLiked,
+	pageSize,
+	onToggleLike,
+	onOpenComments,
+	formatDate,
+	formatDuration,
+	onUserClick,
+}: PostCardProps) {
+	const [likeFlash, setLikeFlash] = useState(false);
+	const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const clickCount = useRef(0);
+
+	// Find user from mockUsers based on username
+	const user = mockUsers.find(u => u.name === drawing.username);
+
+	const handleImageClick = useCallback(() => {
+		clickCount.current += 1;
+
+		if (clickTimer.current) clearTimeout(clickTimer.current);
+
+		clickTimer.current = setTimeout(() => {
+			const count = clickCount.current;
+			clickCount.current = 0;
+
+			if (count === 1) {
+				// Single click → open comments
+				onOpenComments(drawing);
+			} else if (count >= 2) {
+				// Double click → like + flash
+				onToggleLike(drawing.id);
+				setLikeFlash(true);
+				setTimeout(() => setLikeFlash(false), 800);
+			}
+		}, 220);
+	}, [drawing, onToggleLike, onOpenComments]);
+
+	const imageCount = drawing.showWithReference && drawing.referenceUrl ? 2 : 1;
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, scale: 0.9 }}
+			animate={{ opacity: 1, scale: 1 }}
+			transition={{ delay: 0.04 * (index % pageSize), duration: 0.3 }}
+		>
+			<Card className="bg-card overflow-hidden hover:shadow-xl transition-shadow">
+				{/* User Info */}
+				<div className="p-4 flex items-center gap-3">
+					<div
+						className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+						onClick={(e) => {
+							e.stopPropagation();
+							user && onUserClick(user.id);
+						}}
+					>
+						{user?.avatar ? (
+							<img
+								src={user.avatar}
+								alt={drawing.username}
+								className="w-full h-full object-cover"
+							/>
+						) : (
+							<User className="w-5 h-5 text-text" />
+						)}
+					</div>
+					<div className="flex-1">
+						<div className="text-text flex items-center gap-2">
+							<span
+								className="cursor-pointer hover:underline"
+								onClick={(e) => {
+									e.stopPropagation();
+									user && onUserClick(user.id);
+								}}
+							>
+								{drawing.username}
+							</span>
+							<span className="text-sm text-text/50">{formatDate(drawing.createdAt)}</span>
+						</div>
+					</div>
+				</div>
+
+				{/* Image — click to open, double-click to like */}
+				<div className="relative cursor-pointer select-none" onClick={handleImageClick}>
+					<div className="aspect-square bg-muted overflow-hidden">
+						<ImageWithFallback
+							src={exploreImages[drawing.id]}
+							alt={`Drawing by ${drawing.username}`}
+							className="w-full h-full object-cover"
+						/>
+					</div>
+
+					{/* Double-click like flash */}
+					<AnimatePresence>
+						{likeFlash && (
+							<motion.div
+								className="absolute inset-0 flex items-center justify-center pointer-events-none"
+								initial={{ opacity: 0, scale: 0.5 }}
+								animate={{ opacity: 1, scale: 1.1 }}
+								exit={{ opacity: 0, scale: 1.4 }}
+								transition={{ duration: 0.15 }}
+							>
+								<Heart className="w-16 h-16 text-[#C24A48] fill-current drop-shadow-lg" />
+							</motion.div>
+						)}
+					</AnimatePresence>
+
+					{/* Dots — multiple attachments indicator */}
+					{imageCount > 1 && (
+						<div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+							{Array.from({ length: imageCount }).map((_, i) => (
+								<span
+									key={i}
+									className={`rounded-full transition-all ${i === 0
+										? "w-1.5 h-1.5 bg-white shadow-sm"
+										: "w-1.5 h-1.5 bg-white/45 shadow-sm"
+										}`}
+								/>
+							))}
+						</div>
+					)}
+				</div>
+
+				{/* Actions and Info */}
+				<div className="p-4">
+					<div className="flex items-center gap-4 mb-3">
+						<motion.button
+							onClick={() => onToggleLike(drawing.id)}
+							className="flex items-center gap-1 transition-colors"
+							whileTap={{ scale: 0.85 }}
+							transition={{ type: "spring", stiffness: 400, damping: 17 }}
+						>
+							<Heart
+								className={`w-5 h-5 text-[#C24A48] transition-all ${isLiked ? "fill-current scale-110" : ""
+									}`}
+							/>
+							<span className="text-text">
+								{drawing.likes + (isLiked ? 1 : 0)}
+							</span>
+						</motion.button>
+
+						<button
+							onClick={() => onOpenComments(drawing)}
+							className="flex items-center gap-1 text-foreground hover:text-primary transition-colors"
+						>
+							<MessageCircle className="text-text w-5 h-5" />
+							<span className="text-text">{drawing.comments}</span>
+						</button>
+					</div>
+
+					<div className="flex items-center justify-between gap-2">
+						<span className="text-text text-sm">{drawing.category}</span>
+						<span className="text-sm text-text">{formatDuration(drawing.duration)}</span>
+					</div>
+				</div>
+			</Card>
 		</motion.div>
 	);
 }

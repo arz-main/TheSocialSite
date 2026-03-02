@@ -1,7 +1,4 @@
-import type { Drawing } from "../components/ui/CommentsPopup";
-
-export type SearchByOption = "creator" | "reference" | "keywords" | "category";
-export type SortByOption = "relevance" | "likes" | "recent" | "category";
+import type { Drawing, SearchByOption, SortByOption } from "../types/ExplorePageTypes";
 
 export const searchByOptions = [
 	{ value: "creator", label: "By Creator" },
@@ -31,10 +28,6 @@ export function filterDrawings(
 	switch (searchBy) {
 		case "creator":
 			return drawings.filter((d) => d.username.toLowerCase().includes(query));
-
-		case "users":
-			// Return empty for users search - handled separately
-			return [];
 
 		case "reference":
 			// Empty for now
