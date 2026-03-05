@@ -1,7 +1,7 @@
 import { HomeCard } from "../components/ui/HomePageComponents";
 import Paths from "../routes/paths";
 import MockCards from "../_mock/mockHomeCards";
-import LinkButton from "../components/ui/LinkButton";
+import { LinkButton } from "../components/ui/LinkButton";
 
 const Home = () => {
 	return (
@@ -15,10 +15,10 @@ const Home = () => {
 					SketchFlow helps you develop your drawing skills with timed reference practice, progress tracking, and a supportive community of artists
 				</h1>
 				<div className="flex gap-4 pt-4">
-					<LinkButton to={Paths.practice} variant="primary">
+					<LinkButton to={Paths.practice} variant="primary" size="lg">
 						Start Practicing
 					</LinkButton>
-					<LinkButton to={Paths.explore} variant="primary">
+					<LinkButton to={Paths.explore} variant="primary" size="lg">
 						Explore Gallery
 					</LinkButton>
 				</div>
@@ -41,6 +41,7 @@ const Home = () => {
 				<LinkButton
 					to={Paths.practice}
 					variant="primary"
+					size="xl"
 					className="border-2 border-background"
 				>
 					Begin Your Journey

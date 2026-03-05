@@ -7,6 +7,8 @@ import { TabsPage } from "../components/ui/ProfilePageComponents";
 import { mockUsers } from "../_mock/mockUsers";
 import { badges, currentUserDrawings } from "../_mock/mockProfile";
 import { userDrawingImages } from "../_mock/mockProfilePostImages";
+import { LinkButton } from "../components/ui/LinkButton";
+import Paths from "../routes/paths";
 
 export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState("badges");
@@ -33,27 +35,33 @@ export default function ProfilePage() {
 				>
 					{/* Profile Header */}
 					<Card className="text-text p-8 mb-8">
-						<div className="flex items-center gap-6">
-							<div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl">
-								🎨
-							</div>
-							<div className="flex-1">
-								<h1 className="mb-2">{currentUser.name}</h1>
-								<p className="text-muted-foreground mb-4">
-									Member since {currentUser.joinedDate}
-								</p>
-								<div className="flex gap-4 flex-wrap">
-									<BadgeUI variant="secondary" className="text-sm">
-										{currentUser.postsCount} Posts
-									</BadgeUI>
-									<BadgeUI variant="secondary" className="text-sm">
-										{currentUser.followers.length} Followers
-									</BadgeUI>
-									<BadgeUI variant="secondary" className="text-sm">
-										{currentUser.following.length} Following
-									</BadgeUI>
+						<div className="flex justify-between items-center">
+							<div className="flex items-center gap-6">
+								<div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl">
+									🎨
+								</div>
+								<div className="flex-1">
+									<h1 className="mb-2">{currentUser.name}</h1>
+									<p className="text-muted-foreground mb-4">
+										Member since {currentUser.joinedDate}
+									</p>
+									<div className="flex gap-4 flex-wrap">
+										<BadgeUI variant="secondary" className="text-sm">
+											{currentUser.postsCount} Posts
+										</BadgeUI>
+										<BadgeUI variant="secondary" className="text-sm">
+											{currentUser.followers.length} Followers
+										</BadgeUI>
+										<BadgeUI variant="secondary" className="text-sm">
+											{currentUser.following.length} Following
+										</BadgeUI>
+									</div>
 								</div>
 							</div>
+							<LinkButton variant={"primary"} to={Paths.artist.edit_profile}>
+								Edit Profile
+							</LinkButton>
+
 						</div>
 					</Card>
 

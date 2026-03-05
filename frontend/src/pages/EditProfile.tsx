@@ -288,7 +288,7 @@ export default function EditProfile() {
 										Permanently delete your account and all your data
 									</p>
 								</div>
-								<Button variant="danger" size="sm">
+								<Button variant="danger" size="lg">
 									Delete
 								</Button>
 							</div>

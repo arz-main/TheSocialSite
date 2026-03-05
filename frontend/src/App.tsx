@@ -18,10 +18,14 @@ import Unauthorized from "./pages/Unauthorised";
 import InternalServerError from "./pages/InternalServerError";
 import NotFound from "./pages/NotFound";
 import Messages from "./pages/Messages"
+import ForgotPassword from "./pages/ForgotPassword";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import AdminDashboard from "./pages/AdminDashboard";
+import ResetPassword from "./pages/ResetPassword";
 
 import Paths from "./routes/paths";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
-import AdminDashboard from "./pages/AdminDashboard";
 
 const App = () => {
 	return (
@@ -42,6 +46,10 @@ const App = () => {
 						<Route path={Paths.practice} element={<Practice />} />
 						<Route path={Paths.login} element={<Login />} />
 						<Route path={Paths.signup} element={<SignUp />} />
+						<Route path={Paths.forgot_password} element={<ForgotPassword />} />
+						<Route path={Paths.reset_password} element={<ResetPassword />} />
+						<Route path={Paths.terms} element={<Terms />} />
+						<Route path={Paths.privacy} element={<Privacy />} />
 
 						{/* access to authenticated users */}
 						<Route path={Paths.artist.statistics} element={

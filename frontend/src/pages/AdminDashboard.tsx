@@ -1,98 +1,35 @@
-import React, { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/BasicButton";
-import { AdminTable } from "../components/ui/AdminPageComponents";
+import {
+	AdminTable,
+	TableSection,
+	StatCard,
+	userColumns,
+	postColumns,
+	ActionToggleButton,
+} from "../components/ui/AdminPageComponents";
+import { usePaginatedData } from "../hooks/usePaginatedData";
 import { mockUsers } from "../_mock/mockUsers";
 import { mockPosts } from "../_mock/mockPosts";
 import type { User } from "../types/UserTypes";
 import type { Post } from "../types/PostTypes";
-import type { Column } from "../types/AdminPageTypes";
 
-const PAGE_SIZE = 5;
+type UserAction = "delete" | "promote" | null;
+type PostAction = "delete" | null;
 
 const AdminDashboard: React.FC = () => {
-	const [allUsers, setAllUsers] = useState<User[]>(mockUsers);
-	const [allPosts, setAllPosts] = useState<Post[]>(mockPosts);
+	const [allUsers, setAllUsers] = React.useState<User[]>(mockUsers);
+	const [allPosts, setAllPosts] = React.useState<Post[]>(mockPosts);
 
-	// --- Users table state ---
-	const [userPage, setUserPage] = useState(1);
-	const [userSortField, setUserSortField] = useState<keyof User>("name");
-	const [userSortAsc, setUserSortAsc] = useState(true);
+	const [activeUserAction, setActiveUserAction] = React.useState<UserAction>(null);
+	const [activePostAction, setActivePostAction] = React.useState<PostAction>(null);
 
-	// --- Posts table state ---
-	const [postPage, setPostPage] = useState(1);
-	const [postSortField, setPostSortField] = useState<keyof Post>("createdAt");
-	const [postSortAsc, setPostSortAsc] = useState(true);
+	const userPagination = usePaginatedData(allUsers);
+	const postPagination = usePaginatedData(allPosts);
 
-	// --- Sorting helpers ---
-	const sortedUsers = useMemo(() => {
-		return [...allUsers].sort((a, b) => {
-			const aVal = a[userSortField];
-			const bVal = b[userSortField];
-
-			if (aVal === undefined) return 1;
-			if (bVal === undefined) return -1;
-
-			if (typeof aVal === "string" && typeof bVal === "string") {
-				return userSortAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-			}
-
-			if (typeof aVal === "number" && typeof bVal === "number") {
-				return userSortAsc ? aVal - bVal : bVal - aVal;
-			}
-
-			return 0;
-		});
-	}, [allUsers, userSortField, userSortAsc]);
-
-	const sortedPosts = useMemo(() => {
-		return [...allPosts].sort((a, b) => {
-			const aVal = a[postSortField];
-			const bVal = b[postSortField];
-
-			if (aVal === undefined) return 1;
-			if (bVal === undefined) return -1;
-
-			if (typeof aVal === "string" && typeof bVal === "string") {
-				return postSortAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-			}
-
-			if (typeof aVal === "number" && typeof bVal === "number") {
-				return postSortAsc ? aVal - bVal : bVal - aVal;
-			}
-
-			return 0;
-		});
-	}, [allPosts, postSortField, postSortAsc]);
-
-	// --- Pagination ---
-	const paginatedUsers = sortedUsers.slice((userPage - 1) * PAGE_SIZE, userPage * PAGE_SIZE);
-	const paginatedPosts = sortedPosts.slice((postPage - 1) * PAGE_SIZE, postPage * PAGE_SIZE);
-
-	const totalUserPages = Math.ceil(allUsers.length / PAGE_SIZE);
-	const totalPostPages = Math.ceil(allPosts.length / PAGE_SIZE);
-
-	// --- Sort toggles ---
-	const toggleUserSort = (field: keyof User) => {
-		if (userSortField === field) setUserSortAsc(!userSortAsc);
-		else {
-			setUserSortField(field);
-			setUserSortAsc(true);
-		}
-	};
-
-	const togglePostSort = (field: keyof Post) => {
-		if (postSortField === field) setPostSortAsc(!postSortAsc);
-		else {
-			setPostSortField(field);
-			setPostSortAsc(true);
-		}
-	};
-
-	// --- Actions ---
 	const handleDeleteUser = (userId: string) => {
-		if (!window.confirm("Are you sure you want to delete this user?")) return;
-
+		if (!window.confirm("Delete this user and all their posts?")) return;
 		setAllUsers(prev => prev.filter(u => u.id !== userId));
 		setAllPosts(prev => prev.filter(p => p.userId !== userId));
 	};
@@ -100,7 +37,9 @@ const AdminDashboard: React.FC = () => {
 	const handleToggleRole = (userId: string) => {
 		setAllUsers(prev =>
 			prev.map(u =>
-				u.id === userId ? { ...u, role: u.role === "admin" ? "artist" : "admin" } : u
+				u.id === userId
+					? { ...u, role: u.role === "admin" ? "artist" : "admin" }
+					: u
 			)
 		);
 	};
@@ -110,102 +49,209 @@ const AdminDashboard: React.FC = () => {
 		setAllPosts(prev => prev.filter(p => p.id !== postId));
 	};
 
-	// --- Columns ---
-	const userColumns: Column<User>[] = [
-		{ label: "Name", field: "name", sortable: true },
-		{ label: "Email", field: "email", sortable: true },
-		{ label: "Role", field: "role", sortable: true },
-		{ label: "Posts", field: "postsCount", sortable: true },
-	];
+	const adminCount = allUsers.filter(u => u.role === "admin").length;
 
-	const postColumns: Column<Post>[] = [
-		{ label: "ID", field: "id", sortable: true },
-		{ label: "Username", field: "username", sortable: true },
-		{ label: "Category", field: "category", sortable: true },
-		{ label: "Duration", field: "duration", sortable: true },
-		{ label: "Likes", field: "likes", sortable: true },
-		{ label: "Comments", field: "comments", sortable: true },
-		{ label: "Created At", field: "createdAt", sortable: true },
-	];
+	// Build action column for users based on active mode
+	const userActionColumn = React.useMemo(() => {
+		if (!activeUserAction) return [];
 
-	return (
-		<div className="flex flex-col flex-1 items-center justify-start bg-background text-text py-12 px-4">
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.5 }}
-				className="w-full max-w-6xl"
-			>
-				<div className="text-center mb-8">
-					<h1 className="text-3xl font-semibold mb-2">Admin Dashboard</h1>
-					<p className="text-text-opaque">Manage users and posts from here</p>
-				</div>
-
-				{/* Users Table */}
-				<section className="mb-12">
-					<div className="flex justify-between items-center py-2">
-						<h2 className="text-xl font-semibold">Users</h2>
-						<div className="flex gap-2">
-							<Button onClick={() => setUserPage(p => Math.max(p - 1, 1))} disabled={userPage === 1}>Prev</Button>
-							<span className="px-2 py-1">{userPage}</span>
-							<Button onClick={() => setUserPage(p => Math.min(p + 1, totalUserPages))} disabled={userPage >= totalUserPages}>Next</Button>
-						</div>
-					</div>
-
-					<AdminTable
-						data={paginatedUsers}
-						columns={userColumns}
-						actions={user => (
-							<div className="flex gap-2">
-								<Button
-									onClick={() => handleToggleRole(user.id)}
-									className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 text-xs rounded-md"
-								>
-									{user.role === "admin" ? "Demote" : "Promote"}
-								</Button>
+		return [
+			{
+				label: "Action",
+				field: "actions" as keyof User,
+				render: (user: User) => (
+					<AnimatePresence mode="wait">
+						<motion.div
+							key={activeUserAction}
+							initial={{ opacity: 0, x: -6 }}
+							animate={{ opacity: 1, x: 0 }}
+							exit={{ opacity: 0, x: 6 }}
+							transition={{ duration: 0.15 }}
+						>
+							{activeUserAction === "delete" && (
 								<Button
 									onClick={() => handleDeleteUser(user.id)}
-									className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-xs rounded-md"
-									disabled={user.role === "artist"}
+									variant="danger"
 								>
 									Delete
 								</Button>
-							</div>
-						)}
-						sortField={userSortField}
-						sortAsc={userSortAsc}
-						onSort={toggleUserSort}
-					/>
-				</section>
+							)}
+							{activeUserAction === "promote" && (
+								<Button
+									onClick={() => handleToggleRole(user.id)}
+									variant="warning"
+								>
+									{user.role === "admin" ? "Demote" : "Promote"}
+								</Button>
+							)}
+						</motion.div>
+					</AnimatePresence>
+				),
+			},
+		];
+	}, [activeUserAction, allUsers]);
 
-				{/* Posts Table */}
-				<section className="mb-12">
-					<div className="flex justify-between items-center py-2">
-						<h2 className="text-xl font-semibold">Posts</h2>
-						<div className="flex gap-2">
-							<Button onClick={() => setPostPage(p => Math.max(p - 1, 1))} disabled={postPage === 1}>Prev</Button>
-							<span className="px-2 py-1">{postPage}</span>
-							<Button onClick={() => setPostPage(p => Math.min(p + 1, totalPostPages))} disabled={postPage >= totalPostPages}>Next</Button>
-						</div>
+	// Build action column for posts based on active mode
+	const postActionColumn = React.useMemo(() => {
+		if (!activePostAction) return [];
+
+		return [
+			{
+				label: "Action",
+				field: "actions" as keyof Post,
+				render: (post: Post) => (
+					<AnimatePresence mode="wait">
+						<motion.div
+							key={activePostAction}
+							initial={{ opacity: 0, x: -6 }}
+							animate={{ opacity: 1, x: 0 }}
+							exit={{ opacity: 0, x: 6 }}
+							transition={{ duration: 0.15 }}
+						>
+							{activePostAction === "delete" && (
+								<Button
+									onClick={() => handleDeletePost(post.id)}
+									variant="danger"
+								>
+									Delete
+								</Button>
+							)}
+						</motion.div>
+					</AnimatePresence>
+				),
+			},
+		];
+	}, [activePostAction]);
+
+	const userColumnsWithActions = [...userColumns, ...userActionColumn];
+	const postColumnsWithActions = [...postColumns, ...postActionColumn];
+
+	// Action toolbar rendered next to each table's title
+	const UserActionToolbar = (
+		<div className="flex gap-2 items-center">
+			<ActionToggleButton
+				label="Delete"
+				variant="danger"
+				active={activeUserAction === "delete"}
+				onClick={() =>
+					setActiveUserAction(prev => (prev === "delete" ? null : "delete"))
+				}
+			/>
+			<ActionToggleButton
+				label="Promote / Demote"
+				variant="warning"
+				active={activeUserAction === "promote"}
+				onClick={() =>
+					setActiveUserAction(prev => (prev === "promote" ? null : "promote"))
+				}
+			/>
+			{activeUserAction && (
+				<motion.button
+					initial={{ opacity: 0, scale: 0.9 }}
+					animate={{ opacity: 1, scale: 1 }}
+					exit={{ opacity: 0, scale: 0.9 }}
+					onClick={() => setActiveUserAction(null)}
+					className="text-xs text-muted-foreground underline underline-offset-2 hover:text-text transition-colors ml-1"
+				>
+					Cancel
+				</motion.button>
+			)}
+		</div>
+	);
+
+	const PostActionToolbar = (
+		<div className="flex gap-2 items-center">
+			<ActionToggleButton
+				label="Delete"
+				variant="danger"
+				active={activePostAction === "delete"}
+				onClick={() =>
+					setActivePostAction(prev => (prev === "delete" ? null : "delete"))
+				}
+			/>
+			{activePostAction && (
+				<motion.button
+					initial={{ opacity: 0, scale: 0.9 }}
+					animate={{ opacity: 1, scale: 1 }}
+					exit={{ opacity: 0, scale: 0.9 }}
+					onClick={() => setActivePostAction(null)}
+					className="text-xs text-muted-foreground underline underline-offset-2 hover:text-text transition-colors ml-1"
+				>
+					Cancel
+				</motion.button>
+			)}
+		</div>
+	);
+
+	return (
+		<div className="flex flex-col flex-1 bg-background text-text min-h-screen">
+			<div className="w-full max-w-7xl mx-auto px-6 py-10">
+				<motion.div
+					initial={{ opacity: 0, y: 16 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.4 }}
+				>
+					{/* Stats Cards */}
+					<div className="flex flex-wrap gap-4 mb-10">
+						<StatCard label="Total Users" value={allUsers.length} color="text-blue-500" />
+						<StatCard label="Admins" value={adminCount} color="text-purple-500" />
+						<StatCard label="Total Posts" value={allPosts.length} color="text-emerald-500" />
+						<StatCard
+							label="Avg. Posts / User"
+							value={
+								allUsers.length
+									? (allPosts.length / allUsers.length).toFixed(1)
+									: 0
+							}
+							color="text-amber-500"
+						/>
 					</div>
 
-					<AdminTable
-						data={paginatedPosts}
-						columns={postColumns}
-						actions={post => (
-							<Button
-								onClick={() => handleDeletePost(post.id)}
-								className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 text-xs rounded-md"
-							>
-								Delete
-							</Button>
-						)}
-						sortField={postSortField}
-						sortAsc={postSortAsc}
-						onSort={togglePostSort}
-					/>
-				</section>
-			</motion.div>
+					{/* Users Table */}
+					<TableSection
+						title="Users"
+						count={allUsers.length}
+						page={userPagination.page}
+						totalPages={userPagination.totalPages}
+						onPageChange={userPagination.setPage}
+						actionToolbar={UserActionToolbar}
+					>
+						<AdminTable<User>
+							columns={userColumnsWithActions}
+							data={allUsers}
+							paginatedData={userPagination.paginatedData}
+							sortField={userPagination.sortField}
+							sortAsc={userPagination.sortAsc}
+							onSort={userPagination.handleSort}
+							page={userPagination.page}
+							totalPages={userPagination.totalPages}
+							onPageChange={userPagination.setPage}
+						/>
+					</TableSection>
+
+					{/* Posts Table */}
+					<TableSection
+						title="Posts"
+						count={allPosts.length}
+						page={postPagination.page}
+						totalPages={postPagination.totalPages}
+						onPageChange={postPagination.setPage}
+						actionToolbar={PostActionToolbar}
+					>
+						<AdminTable<Post>
+							columns={postColumnsWithActions}
+							data={allPosts}
+							paginatedData={postPagination.paginatedData}
+							sortField={postPagination.sortField}
+							sortAsc={postPagination.sortAsc}
+							onSort={postPagination.handleSort}
+							page={postPagination.page}
+							totalPages={postPagination.totalPages}
+							onPageChange={postPagination.setPage}
+						/>
+					</TableSection>
+				</motion.div>
+			</div>
 		</div>
 	);
 };

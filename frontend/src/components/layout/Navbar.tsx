@@ -4,7 +4,7 @@ import Paths from "../../routes/paths";
 import WebsiteLogo from "../ui/SiteLogo";
 import { Menu } from "lucide-react";
 import { motion } from "motion/react";
-import { Sidebar } from "../../pages/SidePanel"
+import { Sidebar }  from "./SidePanel";
 
 
 const Navbar = () => {
@@ -23,7 +23,7 @@ const Navbar = () => {
 				{/* Left: hamburger + logo */}
 				<div className="flex items-center gap-4">
 					<motion.button
-						onClick={() => setSidebarOpen(true)}
+						onClick={() => setSidebarOpen(prev => prev ? false : true)}
 						className="group flex justify-center items-center w-10 h-10 rounded-lg transition-colors hover:bg-primary"
 						whileTap={{ scale: 0.9 }}
 						transition={{ type: "spring", stiffness: 400, damping: 17 }}
