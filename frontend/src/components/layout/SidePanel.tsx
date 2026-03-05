@@ -12,8 +12,8 @@ import {
 	CircleQuestionMark,
 	UserPlus,
 } from "lucide-react";
-import { Button } from "../components/ui/BasicButton";
-import Paths from "../routes/paths";
+import { Button } from "../ui/BasicButton";
+import Paths from "../../routes/paths";
 
 interface SidebarProps {
 	isOpen: boolean;
