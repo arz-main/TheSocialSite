@@ -4,6 +4,7 @@ import type {
     ActionsPanelProps,
     Column,
     TableSectionPropsWithPagination,
+    ActionToggleButtonProps,
 } from "../../types/AdminPageTypes";
 
 import { Button } from "./BasicButton";
@@ -43,6 +44,7 @@ export const TableSection: React.FC<TableSectionPropsWithPagination> = ({
     page,
     totalPages,
     onPageChange,
+    actionToolbar,
     children,
 }) => (
     <section className="bg-surface border border-border rounded-xl overflow-hidden mb-8">
@@ -53,6 +55,11 @@ export const TableSection: React.FC<TableSectionPropsWithPagination> = ({
                 <span className="text-xs font-medium bg-background text-text-opaque px-2 py-0.5 rounded-full border border-border">
                     {count} total
                 </span>
+                {actionToolbar && (
+                    <div className="flex items-center gap-2 ml-2">
+                        {actionToolbar}
+                    </div>
+                )}
             </div>
 
             {page !== undefined && totalPages !== undefined && onPageChange && (
@@ -222,3 +229,14 @@ export const PostsTable: React.FC<{ data: Post[] }> = ({ data }) => {
         </div>
     );
 };
+
+export const ActionToggleButton: React.FC<ActionToggleButtonProps> = ({
+    label,
+    variant,
+    active,
+    onClick,
+}) => (
+    <Button variant={variant} active={active} onClick={onClick}>
+        {active ? `✕ ${label}` : label}
+    </Button>
+);

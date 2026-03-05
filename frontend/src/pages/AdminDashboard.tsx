@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/BasicButton";
 import {
 	AdminTable,
@@ -7,6 +7,7 @@ import {
 	StatCard,
 	userColumns,
 	postColumns,
+	ActionToggleButton,
 } from "../components/ui/AdminPageComponents";
 import { usePaginatedData } from "../hooks/usePaginatedData";
 import { mockUsers } from "../_mock/mockUsers";
@@ -14,9 +15,15 @@ import { mockPosts } from "../_mock/mockPosts";
 import type { User } from "../types/UserTypes";
 import type { Post } from "../types/PostTypes";
 
+type UserAction = "delete" | "promote" | null;
+type PostAction = "delete" | null;
+
 const AdminDashboard: React.FC = () => {
 	const [allUsers, setAllUsers] = React.useState<User[]>(mockUsers);
 	const [allPosts, setAllPosts] = React.useState<Post[]>(mockPosts);
+
+	const [activeUserAction, setActiveUserAction] = React.useState<UserAction>(null);
+	const [activePostAction, setActivePostAction] = React.useState<PostAction>(null);
 
 	const userPagination = usePaginatedData(allUsers);
 	const postPagination = usePaginatedData(allPosts);
@@ -30,7 +37,9 @@ const AdminDashboard: React.FC = () => {
 	const handleToggleRole = (userId: string) => {
 		setAllUsers(prev =>
 			prev.map(u =>
-				u.id === userId ? { ...u, role: u.role === "admin" ? "artist" : "admin" } : u
+				u.id === userId
+					? { ...u, role: u.role === "admin" ? "artist" : "admin" }
+					: u
 			)
 		);
 	};
@@ -42,46 +51,137 @@ const AdminDashboard: React.FC = () => {
 
 	const adminCount = allUsers.filter(u => u.role === "admin").length;
 
-	// Add action renderers directly into columns
-	const userColumnsWithActions = [
-		...userColumns,
-		{
-			label: "Actions",
-			field: "actions" as keyof User,
-			render: (user: User) => (
-				<div className="flex gap-2">
-					<Button
-						onClick={() => handleToggleRole(user.id)}
-						className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 text-xs rounded-md"
-					>
-						{user.role === "admin" ? "Demote" : "Promote"}
-					</Button>
-					<Button
-						onClick={() => handleDeleteUser(user.id)}
-						className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-xs rounded-md"
-					>
-						Delete
-					</Button>
-				</div>
-			),
-		},
-	];
+	// Build action column for users based on active mode
+	const userActionColumn = React.useMemo(() => {
+		if (!activeUserAction) return [];
 
-	const postColumnsWithActions = [
-		...postColumns,
-		{
-			label: "Actions",
-			field: "actions" as keyof Post,
-			render: (post: Post) => (
-				<Button
-					onClick={() => handleDeletePost(post.id)}
-					className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-xs rounded-md"
+		return [
+			{
+				label: "Action",
+				field: "actions" as keyof User,
+				render: (user: User) => (
+					<AnimatePresence mode="wait">
+						<motion.div
+							key={activeUserAction}
+							initial={{ opacity: 0, x: -6 }}
+							animate={{ opacity: 1, x: 0 }}
+							exit={{ opacity: 0, x: 6 }}
+							transition={{ duration: 0.15 }}
+						>
+							{activeUserAction === "delete" && (
+								<Button
+									onClick={() => handleDeleteUser(user.id)}
+									variant="danger"
+								>
+									Delete
+								</Button>
+							)}
+							{activeUserAction === "promote" && (
+								<Button
+									onClick={() => handleToggleRole(user.id)}
+									variant="warning"
+								>
+									{user.role === "admin" ? "Demote" : "Promote"}
+								</Button>
+							)}
+						</motion.div>
+					</AnimatePresence>
+				),
+			},
+		];
+	}, [activeUserAction, allUsers]);
+
+	// Build action column for posts based on active mode
+	const postActionColumn = React.useMemo(() => {
+		if (!activePostAction) return [];
+
+		return [
+			{
+				label: "Action",
+				field: "actions" as keyof Post,
+				render: (post: Post) => (
+					<AnimatePresence mode="wait">
+						<motion.div
+							key={activePostAction}
+							initial={{ opacity: 0, x: -6 }}
+							animate={{ opacity: 1, x: 0 }}
+							exit={{ opacity: 0, x: 6 }}
+							transition={{ duration: 0.15 }}
+						>
+							{activePostAction === "delete" && (
+								<Button
+									onClick={() => handleDeletePost(post.id)}
+									variant="danger"
+								>
+									Delete
+								</Button>
+							)}
+						</motion.div>
+					</AnimatePresence>
+				),
+			},
+		];
+	}, [activePostAction]);
+
+	const userColumnsWithActions = [...userColumns, ...userActionColumn];
+	const postColumnsWithActions = [...postColumns, ...postActionColumn];
+
+	// Action toolbar rendered next to each table's title
+	const UserActionToolbar = (
+		<div className="flex gap-2 items-center">
+			<ActionToggleButton
+				label="Delete"
+				variant="danger"
+				active={activeUserAction === "delete"}
+				onClick={() =>
+					setActiveUserAction(prev => (prev === "delete" ? null : "delete"))
+				}
+			/>
+			<ActionToggleButton
+				label="Promote / Demote"
+				variant="warning"
+				active={activeUserAction === "promote"}
+				onClick={() =>
+					setActiveUserAction(prev => (prev === "promote" ? null : "promote"))
+				}
+			/>
+			{activeUserAction && (
+				<motion.button
+					initial={{ opacity: 0, scale: 0.9 }}
+					animate={{ opacity: 1, scale: 1 }}
+					exit={{ opacity: 0, scale: 0.9 }}
+					onClick={() => setActiveUserAction(null)}
+					className="text-xs text-muted-foreground underline underline-offset-2 hover:text-text transition-colors ml-1"
 				>
-					Delete
-				</Button>
-			),
-		},
-	];
+					Cancel
+				</motion.button>
+			)}
+		</div>
+	);
+
+	const PostActionToolbar = (
+		<div className="flex gap-2 items-center">
+			<ActionToggleButton
+				label="Delete"
+				variant="danger"
+				active={activePostAction === "delete"}
+				onClick={() =>
+					setActivePostAction(prev => (prev === "delete" ? null : "delete"))
+				}
+			/>
+			{activePostAction && (
+				<motion.button
+					initial={{ opacity: 0, scale: 0.9 }}
+					animate={{ opacity: 1, scale: 1 }}
+					exit={{ opacity: 0, scale: 0.9 }}
+					onClick={() => setActivePostAction(null)}
+					className="text-xs text-muted-foreground underline underline-offset-2 hover:text-text transition-colors ml-1"
+				>
+					Cancel
+				</motion.button>
+			)}
+		</div>
+	);
 
 	return (
 		<div className="flex flex-col flex-1 bg-background text-text min-h-screen">
@@ -98,7 +198,11 @@ const AdminDashboard: React.FC = () => {
 						<StatCard label="Total Posts" value={allPosts.length} color="text-emerald-500" />
 						<StatCard
 							label="Avg. Posts / User"
-							value={allUsers.length ? (allPosts.length / allUsers.length).toFixed(1) : 0}
+							value={
+								allUsers.length
+									? (allPosts.length / allUsers.length).toFixed(1)
+									: 0
+							}
 							color="text-amber-500"
 						/>
 					</div>
@@ -110,6 +214,7 @@ const AdminDashboard: React.FC = () => {
 						page={userPagination.page}
 						totalPages={userPagination.totalPages}
 						onPageChange={userPagination.setPage}
+						actionToolbar={UserActionToolbar}
 					>
 						<AdminTable<User>
 							columns={userColumnsWithActions}
@@ -131,6 +236,7 @@ const AdminDashboard: React.FC = () => {
 						page={postPagination.page}
 						totalPages={postPagination.totalPages}
 						onPageChange={postPagination.setPage}
+						actionToolbar={PostActionToolbar}
 					>
 						<AdminTable<Post>
 							columns={postColumnsWithActions}

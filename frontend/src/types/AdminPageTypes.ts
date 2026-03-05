@@ -30,10 +30,19 @@ export interface TableSectionProps {
     title: string;
     count: number;
     children: ReactNode;
+    actionToolbar?: React.ReactNode;
 }
 
 export interface TableSectionPropsWithPagination extends TableSectionProps {
     page?: number;
     totalPages?: number;
     onPageChange?: (page: number) => void;
+}
+
+// Small helper: a toggle-style action button that shows its active state
+export interface ActionToggleButtonProps {
+	label: string;
+	variant: "danger" | "warning";
+	active: boolean;
+	onClick: () => void;
 }

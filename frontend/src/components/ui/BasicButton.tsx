@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "../../utils/ClassNameMergeUtil";
 
 const buttonVariants = cva(
@@ -14,7 +13,9 @@ const buttonVariants = cva(
 				primary:
 					"bg-button hover:bg-primary text-white border-2 border-background-opposite rounded-lg px-8 py-2.5",
 				danger:
-					"px-3 py-1.5 border border-2 hover:border-red-400 hover:text-red-400 text-text-opaque text-sm rounded-lg transition-colors",
+					"px-3 py-1.5 border border-2 border-border hover:border-red-400 hover:text-red-400 text-text-opaque text-sm rounded-lg transition-colors data-[active=true]:border-red-500 data-[active=true]:bg-red-500/15 data-[active=true]:text-red-400",
+				warning:
+					"px-3 py-1.5 border border-2 border-border hover:border-yellow-400 hover:text-yellow-400 text-text-opaque text-sm rounded-lg transition-colors data-[active=true]:border-yellow-400 data-[active=true]:bg-yellow-400/15 data-[active=true]:text-yellow-400",
 				outline:
 					"border bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 hover:bg-button/20",
 				secondary:
@@ -28,7 +29,7 @@ const buttonVariants = cva(
 				default: "h-9 px-4 py-2 has-[>svg]:px-3",
 				sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
 				lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-				xl: "h-12 rounded-xl px-8 has-[>svg]:px-6",
+				xl: "h-12 rounded-md px-8 has-[>svg]:px-6",
 				icon: "size-9 rounded-md",
 			},
 		},
@@ -44,16 +45,18 @@ function Button({
 	variant,
 	size,
 	asChild = false,
+	active,
 	...props
 }: React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants> & {
 		asChild?: boolean;
+		active?: boolean;
 	}) {
 	const Comp = asChild ? Slot : "button";
-
 	return (
 		<Comp
 			data-slot="button"
+			data-active={active ?? undefined}
 			className={cn(buttonVariants({ variant, size, className }))}
 			{...props}
 		/>
