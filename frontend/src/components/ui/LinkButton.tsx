@@ -1,45 +1,35 @@
+import * as React from "react";
 import { Link } from "react-router-dom";
-import React from "react";
+import { type VariantProps } from "class-variance-authority";
 
-interface LinkButtonProps {
-	children: React.ReactNode;
-	to?: string;
-	onClick?: () => void;
-	variant?: "primary" | "secondary" | "outline";
-	className?: string;
+import { buttonVariants } from "./BasicButton";
+import { cn } from "../../utils/ClassNameMergeUtil";
+
+interface LinkButtonProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    VariantProps<typeof buttonVariants> {
+  to: string;
+  className?: string;
 }
 
-const variantStyles = {
-	primary:
-		"bg-button hover:bg-primary text-white border-2 border-background-opposite rounded-lg px-8 py-2.5",
-	secondary:
-		"bg-primary hover:bg-button text-text-opposite border rounded-lg px-8 py-2.5",
-	outline:
-		"bg-transparent border-2 border-text hover:bg-button rounded-lg px-8 py-2.5",
-};
+function LinkButton({
+  to,
+  variant,
+  size,
+  className,
+  children,
+  ...props
+}: LinkButtonProps) {
+  return (
+    <Link
+      to={to}
+      data-slot="link-button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    >
+      {children}
+    </Link>
+  );
+}
 
-const LinkButton = ({
-	children,
-	to,
-	onClick,
-	variant = "primary",
-	className = "",
-}: LinkButtonProps) => {
-	const baseStyles = `inline-block transition-all duration-200 ${variantStyles[variant]} ${className}`;
-
-	if (to) {
-		return (
-			<Link to={to} className={baseStyles}>
-				{children}
-			</Link>
-		);
-	}
-
-	return (
-		<button onClick={onClick} className={baseStyles}>
-			{children}
-		</button>
-	);
-};
-
-export default LinkButton;
+export { LinkButton };
