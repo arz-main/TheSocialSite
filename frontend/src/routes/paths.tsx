@@ -18,11 +18,11 @@ const Paths = {
 
 	admin: {
 		dashboard: "/admin",
-		manage_users: "/admin/manage-users",
-		manage_comments: "/admin/manage-comments",
-		manage_posts: "/admin/manage-posts",
-		reset_password: "/admin/reset-password",
-		user_requests: "/admin/user-requests",
+		// manage_users: "/admin/manage-users",
+		// manage_comments: "/admin/manage-comments",
+		// manage_posts: "/admin/manage-posts",
+		// reset_password: "/admin/reset-password",
+		// user_requests: "/admin/user-requests",
 	},
 
 	artist: {
