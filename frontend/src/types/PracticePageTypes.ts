@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type { mockDrawings } from "../_mock/mockDrawings";
+import type { mockDrawings } from "../_mock/mockPracticePage";
 
 export type SessionState = "idle" | "active" | "paused" | "done";
 

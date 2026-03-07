@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Brush, RotateCcw, Pause, Play, SkipForward } from "lucide-react"
-import mockCategories from "../_mock/mockCategories";
-import { mockDrawings } from "../_mock/mockDrawings";
+import { mockDrawings, mockCategories } from "../_mock/mockPracticePage";
 import { TimerBar } from "../components/ui/PracticePageComponents";
 import { PracticeCard } from "../components/ui/PracticePageComponents"
 import { formatTime } from "../utils/PracticePageUtils";

@@ -7,19 +7,6 @@ type Badge = {
 	earnedDate?: string;
 }
 
-type Drawing = {
-	id: string;
-	userId: string;
-	username: string;
-	imageUrl: string;
-	referenceUrl?: string;
-	category: string;
-	duration: number;
-	createdAt: string;
-	likes: number;
-	showWithReference: boolean;
-}
-
 export const badges: Badge[] = [
 	{
 		id: "1",
@@ -66,43 +53,5 @@ export const badges: Badge[] = [
 		description: "Draw for 3 hours in a single day",
 		icon: "🏃",
 		earned: false,
-	},
-];
-
-export const currentUserDrawings: Drawing[] = [
-	{
-		id: "1",
-		userId: "current",
-		username: "You",
-		imageUrl: "figure-sketch-practice",
-		referenceUrl: "figure-reference-pose",
-		category: "Figure Drawing",
-		duration: 300,
-		createdAt: "2026-02-09T10:30:00",
-		likes: 24,
-		showWithReference: true,
-	},
-	{
-		id: "2",
-		userId: "current",
-		username: "You",
-		imageUrl: "hand-study-sketch",
-		category: "Hands",
-		duration: 120,
-		createdAt: "2026-02-09T09:15:00",
-		likes: 18,
-		showWithReference: false,
-	},
-	{
-		id: "3",
-		userId: "current",
-		username: "You",
-		imageUrl: "still-life-drawing",
-		referenceUrl: "still-life-objects",
-		category: "Still Life",
-		duration: 600,
-		createdAt: "2026-02-08T14:20:00",
-		likes: 31,
-		showWithReference: true,
 	},
 ];

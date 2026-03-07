@@ -16,12 +16,11 @@ import { Button } from "../components/ui/BasicButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
-import { userDrawingImages } from "../_mock/mockProfilePostImages";
-import { badges, currentUserDrawings } from "../_mock/mockProfile";
+import { badges } from "../_mock/mockProfile";
 import { getUserById } from "../_mock/mockUsers";
+import { mockPosts } from "../_mock/mockPosts";
 import Paths from "../routes/paths";
-
-
+import { exploreImages } from "../_mock/mockExplorePage";
 
 export default function UserProfile() {
     const { userId } = useParams<{ userId: string }>();
@@ -31,8 +30,10 @@ export default function UserProfile() {
 
     // Get user data from mockUsers
     const user = userId ? getUserById(userId) : null; if (!user) { return <Navigate to={Paths.error.not_found} replace />; }
-
-
+    const currentUserPosts = mockPosts.filter(post => post.userId === userId);
+    const currentUserDrawings = currentUserPosts.map(post => exploreImages[post.id]);
+    // console.log(currentUserDrawings);
+    
     const handleFollow = () => {
         setIsFollowing(!isFollowing);
         // In a real app, this would update the backend
@@ -219,7 +220,7 @@ export default function UserProfile() {
                             <TabsTrigger value="badges">Badges</TabsTrigger>
                         </TabsList>
 
-                        {/* Posts Tab */}
+                        {/* Drawings Tab */}
                         <TabsContent className="text-text" value="posts">
                             <motion.div
                                 initial={{ opacity: 0 }}
@@ -227,7 +228,7 @@ export default function UserProfile() {
                                 transition={{ duration: 0.3 }}
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {currentUserDrawings.slice(0, 6).map((drawing, index) => (
+                                    {currentUserPosts.slice(0, 6).map((drawing, index) => (
                                         <motion.div
                                             key={drawing.id}
                                             initial={{ opacity: 0, scale: 0.9 }}
@@ -237,7 +238,7 @@ export default function UserProfile() {
                                             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                                                 <div className="aspect-square bg-muted overflow-hidden">
                                                     <ImageWithFallback
-                                                        src={userDrawingImages[drawing.id]}
+                                                        src={currentUserDrawings[index]}
                                                         alt={`Drawing ${drawing.id}`}
                                                         className="w-full h-full object-cover"
                                                     />

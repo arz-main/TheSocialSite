@@ -7,7 +7,7 @@ export const mockUsers: User[] = [
         password: "artist123",
         name: "Dan",
         role: "artist",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dansy",
         bio: "Digital artist specializing in character design and illustration. Always learning and growing!",
         location: "San Francisco, CA",
         website: "https://danart.com",

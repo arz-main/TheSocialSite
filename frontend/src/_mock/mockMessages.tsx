@@ -2,7 +2,7 @@ import type { Conversation } from "../types/MessagesPageTypes";
 export const mockConversations: Conversation[] = [
 	{
 		id: "conv_1",
-		username: "sketchmaster99",
+		username: "Dan",
 		lastMessage: "That perspective drawing you shared is 🔥",
 		lastMessageAt: new Date(Date.now() - 1000 * 60 * 3).toISOString(),
 		unreadCount: 2,
@@ -16,7 +16,7 @@ export const mockConversations: Conversation[] = [
 	},
 	{
 		id: "conv_2",
-		username: "inkandpaper",
+		username: "Sarah Chen",
 		lastMessage: "Can you share the brush settings you used?",
 		lastMessageAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
 		unreadCount: 0,
