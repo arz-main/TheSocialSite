@@ -8,6 +8,14 @@ export const sampleComments = [
 	"What tool did you use for this?",
 	"Beautiful composition!",
 	"Wow, the details are amazing.",
+	"The lighting in this piece is fantastic.",
+	"This has such a great mood to it.",
+	"I really like the color palette you chose.",
+	"This feels very professional!",
+	"The textures look amazing.",
+	"This would look great as a print.",
+	"I can't stop looking at the details.",
+	"Really impressive work!",
 ];
 
 export const exploreImages: Record<string, string> = {

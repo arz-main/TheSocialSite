@@ -88,16 +88,19 @@ export function UserBanner({
 }
 
 export function generateMockComments(drawings: Drawing[]): Record<string, Comment[]> {
-	const result: Record<string, Comment[]> = {};
+	const comments: Record<string, Comment[]> = {};
 	drawings.forEach((d, i) => {
-		result[d.id] = Array.from({ length: Math.max(2, (i % 5) + 2) }, (_, j) => ({
-			id: `${d.id}-comment-${j}`,
-			username: `user_${(i * 3 + j + 1) % 20}`,
-			text: sampleComments[(i + j) % sampleComments.length],
-			createdAt: new Date(Date.now() - (j + 1) * 1000 * 60 * 60 * 3).toISOString(),
-		}));
+		comments[d.id] = Array.from({ length: Math.max(2, (i % 5) + 2) }, (_, j) => {
+			const userIndex = Math.floor(Math.random() * mockUsers.length);
+			return {
+				id: `${d.id}-comment-${j}`,
+				username: `${mockUsers.at(userIndex)?.name}`,
+				text: sampleComments[(i + j) % sampleComments.length],
+				createdAt: new Date(Date.now() - (j + 1) * 1000 * 60 * 60 * 3).toISOString(),
+			}
+		});
 	});
-	return result;
+	return comments;
 }
 
 export function CommentsModal({
@@ -241,8 +244,8 @@ export function CommentsModal({
 										key={i}
 										onClick={() => setImageIndex(i)}
 										className={`rounded-full transition-all ${i === imageIndex
-												? "w-4 h-1.5 bg-white"
-												: "w-1.5 h-1.5 bg-white/40 hover:bg-white/70"
+											? "w-4 h-1.5 bg-white"
+											: "w-1.5 h-1.5 bg-white/40 hover:bg-white/70"
 											}`}
 									/>
 								))}
@@ -408,7 +411,7 @@ export function Dropdown({
 	value,
 	options,
 	onChange,
-}: DropDownProps ) {
+}: DropDownProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
