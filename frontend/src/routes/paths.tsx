@@ -3,6 +3,7 @@ const Paths = {
 	about: "/about",
 	explore: "/explore",
 	practice: "/practice",
+    roadmap: "/roadmap",
 	login: "/login",
 	signup: "/signup",
 	forgot_password: "/forgot-password",

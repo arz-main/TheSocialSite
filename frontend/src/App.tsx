@@ -8,6 +8,7 @@ import Profile from "./pages/Profile"
 import EditProfile from "./pages/EditProfile";
 import UserProfile from "./pages/ArtistProfile";
 import Practice from "./pages/Practice";
+import Roadmap from "./pages/Roadmap";
 import About from "./pages/About";
 import Explore from "./pages/Explore";
 import Statistics from "./pages/Statistics";
@@ -44,6 +45,7 @@ const App = () => {
 						<Route path={Paths.explore} element={<Explore />} />
 						<Route path={`${Paths.explore}/user/:userId`} element={<UserProfile />} />
 						<Route path={Paths.practice} element={<Practice />} />
+						<Route path={Paths.roadmap} element={<Roadmap />} />
 						<Route path={Paths.login} element={<Login />} />
 						<Route path={Paths.signup} element={<SignUp />} />
 						<Route path={Paths.forgot_password} element={<ForgotPassword />} />
