@@ -1,20 +1,38 @@
 import React from 'react';
+import { motion } from 'motion/react';
+import CourseCard from '../components/ui/RoadmapPageComponents';
+// 1. Import the mock data
+import { MOCK_COURSES } from '../_mock/mockCourses';
 
 export default function Roadmap() {
     return (
-        <div className="flex flex-col flex-1 w-full p-6 bg-background text-text">
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-4xl font-bold mb-6">Roadmap</h1>
-            <p className="text-lg mb-4">
-                Our roadmap outlines the future development plans for our platform. We are committed to continuously improving and adding new features to enhance the user experience for artists and art enthusiasts alike.
-            </p>
-            <h2 className="text-2xl font-semibold mb-4">Q3 2024</h2>
-            <ul className="list-disc list-inside mb-6">
-                <li>Launch of the mobile app for iOS and Android.</li>
-                <li>Integration of AI-powered art critique and feedback system.</li>
-                <li>Introduction of a new "Challenges" feature to encourage artistic growth.</li>
-            </ul>
-            </div>
+        <div className="flex flex-col flex-1 w-full p-4 bg-background text-text">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <div className="container mx-auto px-10 py-5">
+                    <h1 className="text-4xl font-bold mb-6">Roadmap</h1>
+                    <p className="text-lg mb-10">
+                        Our roadmap will guide you through the basics of drawing to more advanced techniques. Each course is designed to
+                        build on the previous one, helping you develop your skills step by step. Whether you're a complete beginner or looking to refine your skills, our roadmap has something for everyone.
+                    </p>
+
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8">
+                        {MOCK_COURSES.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                image={course.image}
+                                title={course.title}
+                                description={course.description}
+                                progress={course.progress}
+                                badgeText={course.badgeText}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </motion.div>
         </div>
     );
 }
