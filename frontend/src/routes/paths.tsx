@@ -10,6 +10,7 @@ const Paths = {
 	reset_password: "/reset-password",
 	terms: "/terms",
 	privacy: "/privacy",
+
 	error: {
 		unauthorized: "/unauthorized",
 		forbidden: "/forbidden",
@@ -24,6 +25,7 @@ const Paths = {
 		manage_posts: "/admin/manage-posts",
 		reset_password: "/admin/reset-password",
 		user_requests: "/admin/user-requests",
+		course_creator: "/admin/course-creator",
 	},
 
 	artist: {
@@ -32,6 +34,8 @@ const Paths = {
 		statistics: "/artist/statistics",
 		messages: "/artist/messages",
 	},
+
+	course: (id: number | string) => `/roadmap/course/${id}`,
 }
 
 export default Paths

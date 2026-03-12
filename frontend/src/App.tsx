@@ -25,6 +25,9 @@ import Privacy from "./pages/Privacy";
 import AdminDashboard from "./pages/AdminDashboard";
 import ResetPassword from "./pages/ResetPassword";
 
+import CourseRoadmap from "./pages/CourseRoadmap";
+import AdminCourseCreator from "./pages/AdminCourseCreator";
+
 import Paths from "./routes/paths";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 
@@ -52,6 +55,7 @@ const App = () => {
 						<Route path={Paths.reset_password} element={<ResetPassword />} />
 						<Route path={Paths.terms} element={<Terms />} />
 						<Route path={Paths.privacy} element={<Privacy />} />
+						<Route path="/roadmap/course/:courseId" element={<CourseRoadmap />} />
 
 						{/* access to authenticated users */}
 						<Route path={Paths.artist.statistics} element={
@@ -81,7 +85,11 @@ const App = () => {
 								<AdminDashboard />
 							</ProtectedRoute>
 						} />
-						{/* urmeaza sa fie adaugate toate rutele cand paginile sunt gata */}
+						<Route path={Paths.admin.course_creator} element={
+							<ProtectedRoute allowedRoles={["admin"]}>
+								<AdminCourseCreator />
+							</ProtectedRoute>
+						} />
 
 						{/* error pages */}
 						<Route path={Paths.error.unauthorized} element={<Unauthorized />} />

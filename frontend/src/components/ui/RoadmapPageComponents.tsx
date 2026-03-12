@@ -70,7 +70,7 @@ function CourseCard({ image, title, description, progress, badgeText, chapters, 
                     )}
                 </div>
 
-                <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+                <p className="text-sm text-text/70 line-clamp-2">{description}</p>
 
                 <div>
                     <div className={`inline-flex items-center gap-2 py-2 text-xs rounded-full ${isCompleted ? 'text-green-500/50' : 'text-primary/50'}`}>
