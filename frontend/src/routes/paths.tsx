@@ -3,14 +3,13 @@ const Paths = {
 	about: "/about",
 	explore: "/explore",
 	practice: "/practice",
-    roadmap: "/roadmap",
+	roadmap: "/roadmap",
 	login: "/login",
 	signup: "/signup",
 	forgot_password: "/forgot-password",
 	reset_password: "/reset-password",
 	terms: "/terms",
 	privacy: "/privacy",
-
 	error: {
 		unauthorized: "/unauthorized",
 		forbidden: "/forbidden",
@@ -36,6 +35,7 @@ const Paths = {
 	},
 
 	course: (id: number | string) => `/roadmap/course/${id}`,
+	lesson: (courseId: number | string, lessonId: number | string) => `/roadmap/course/${courseId}/lesson/${lessonId}`,
 }
 
 export default Paths

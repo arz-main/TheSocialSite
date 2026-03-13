@@ -9,6 +9,7 @@ import { MOCK_COURSES } from '../_mock/mockCourses';
 import type { Lesson, Chapter } from '../_mock/mockCourses';
 import LessonPracticeModal from '../components/ui/LessonPracticeModal';
 
+
 const DIFF_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
     Beginner: { bg: 'bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500' },
     Intermediate: { bg: 'bg-amber-500/10', text: 'text-amber-600 dark:text-amber-400', dot: 'bg-amber-500' },
@@ -115,13 +116,15 @@ function ChapterSpine({
 }
 
 function LessonsPanel({
-    chapter, completedLessons, onMarkDone, onPractice,
+    chapter, completedLessons, onMarkDone, onPractice, courseId,
 }: {
     chapter: Chapter;
     completedLessons: number[];
     onMarkDone: (id: number) => void;
     onPractice: (l: Lesson) => void;
+    courseId: number | string;
 }) {
+    const navigate = useNavigate();
     const done = chapter.lessons.filter(l => completedLessons.includes(l.id)).length;
 
     return (
@@ -150,10 +153,18 @@ function LessonsPanel({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: li * 0.06, duration: 0.22 }}
+                            onClick={() => {
+                                if (lesson.type !== 'practice') {
+                                    navigate(`/roadmap/course/${courseId}/lesson/${lesson.id}`);
+                                }
+                            }}
                             className={`group relative rounded-2xl border-2 p-5 transition-all duration-200
+                                ${lesson.type !== 'practice' ? 'cursor-pointer' : ''}
                                 ${isDone
                                     ? 'border-primary/20 bg-primary/[0.03]'
-                                    : 'border-border bg-card hover:border-primary/30 hover:shadow-md hover:shadow-primary/5'}`}
+                                    : lesson.type !== 'practice'
+                                        ? 'border-border bg-card hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 hover:bg-primary/[0.01]'
+                                        : 'border-border bg-card hover:border-primary/30 hover:shadow-md hover:shadow-primary/5'}`}
                         >
                             {/* Done stripe on left */}
                             {isDone && (
@@ -368,6 +379,7 @@ export default function CourseRoadmap() {
                                 completedLessons={completedLessons}
                                 onMarkDone={markDone}
                                 onPractice={setPracticeLesson}
+                                courseId={courseId!}
                             />
                         ) : (
                             <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}

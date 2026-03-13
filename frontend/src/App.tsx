@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+﻿import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ThemeToggle from "./components/layout/ThemeToggle";
@@ -27,6 +27,7 @@ import ResetPassword from "./pages/ResetPassword";
 
 import CourseRoadmap from "./pages/CourseRoadmap";
 import AdminCourseCreator from "./pages/AdminCourseCreator";
+import LessonPage from "./pages/LessonPage";
 
 import Paths from "./routes/paths";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
@@ -36,7 +37,6 @@ const App = () => {
 		<Router>
 			<div className="flex flex-col min-h-screen">
 				<Navbar />
-				{/* Theme toggle button fixed at top-right */}
 				<div className="fixed bottom-4 right-4 z-50">
 					<ThemeToggle />
 				</div>
@@ -55,7 +55,9 @@ const App = () => {
 						<Route path={Paths.reset_password} element={<ResetPassword />} />
 						<Route path={Paths.terms} element={<Terms />} />
 						<Route path={Paths.privacy} element={<Privacy />} />
+
 						<Route path="/roadmap/course/:courseId" element={<CourseRoadmap />} />
+						<Route path="/roadmap/course/:courseId/lesson/:lessonId" element={<LessonPage />} />
 
 						{/* access to authenticated users */}
 						<Route path={Paths.artist.statistics} element={
@@ -85,6 +87,7 @@ const App = () => {
 								<AdminDashboard />
 							</ProtectedRoute>
 						} />
+
 						<Route path={Paths.admin.course_creator} element={
 							<ProtectedRoute allowedRoles={["admin"]}>
 								<AdminCourseCreator />
@@ -102,8 +105,7 @@ const App = () => {
 				<Footer />
 			</div>
 		</Router>
-
 	);
 };
 
-export default App;
+export default App;			
