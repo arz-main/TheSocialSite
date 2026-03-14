@@ -53,6 +53,17 @@ const Navbar = () => {
 					>
 						Practice
 					</Link>
+
+					<Link
+						to={Paths.roadmap}
+						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.roadmap)
+							? 'bg-primary text-white'
+							: 'text-text hover:text-white hover:bg-primary'
+							}`}
+					>
+						Roadmap
+					</Link>
+
 					<Link
 						to={Paths.explore}
 						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.explore)
