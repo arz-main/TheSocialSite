@@ -1,7 +1,11 @@
+export type PostStatus = "published" | "draft" | "flagged";
+
 export interface Post {
 	id: string;
-	userId: string;
-	username: string;
+	title: string,
+	description: string,
+	author: string;
+	status: PostStatus;
 	imageUrl: string;
 	referenceUrl?: string;
 	category: string;

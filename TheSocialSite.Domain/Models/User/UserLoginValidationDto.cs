@@ -13,7 +13,11 @@ namespace TheSocialSite.Domain.Models.User
 
         [NotMapped] // this field is not stored in DB
         public bool IsValid { get; set; } = true;
+
         [NotMapped]
         public string? ErrorMessage { get; set; }
+
+        [NotMapped]
+        public string Token { get; set; }
     }
 }

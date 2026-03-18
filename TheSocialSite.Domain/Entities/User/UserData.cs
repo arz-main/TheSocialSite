@@ -5,6 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheSocialSite.Domain.Entities.User
 {
+    public enum UserRole
+    {
+        User,
+        Admin,
+        Moderator
+    }
     public class UserData
     {
         [Key]

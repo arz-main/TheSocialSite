@@ -8,9 +8,9 @@ using TheSocialSite.Domain.Models.User;
 
 namespace TheSocialSite.Business.Interfaces
 {
-    public interface IUserSignupAction
+    public interface IUserInteractAction
     {
-        UserSignupValidationDto UserSignupValidation(UserSignupDto userData);
-        UserSignupValidationDto UserCreation(UserSignupDto userData);
+        public UserData[] GetAllUsersAction();
+        public UserSignupValidationDto CreateUserAction(UserSignupDto userData);
     }
 }

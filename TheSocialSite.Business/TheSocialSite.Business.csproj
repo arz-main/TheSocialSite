@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TheSocialSite.DataAccess\TheSocialSite.DataAccess.csproj" />
     <ProjectReference Include="..\TheSocialSite.Domain\TheSocialSite.Domain.csproj" />
   </ItemGroup>

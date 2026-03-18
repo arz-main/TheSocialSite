@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Entities.Post
 {
-    using global::TheSocialSite.Domain.Entities.User;
-    using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
-    namespace TheSocialSite.Domain.Entities.Post
+    public enum PostStatus
     {
+        Published,
+        Draft,
+        Flagged
+    }
         public class PostData
         {
             [Key]
@@ -21,14 +23,17 @@ namespace TheSocialSite.Domain.Entities.Post
             public string Id { get; set; }
 
             [Required]
-            public string UserId { get; set; }
+        public UserData Author { get; set; }
 
-            [ForeignKey("UserId")]
-            public UserData? User { get; set; }
+        [Required]
+        [MaxLength(200)]
+        public string Title { get; set; }
+
+        [MaxLength(1000)]
+        public string? Description { get; set; }
 
             [Required]
-            [MaxLength(50)]
-            public string Username { get; set; }
+        public PostStatus Status { get; set; } = PostStatus.Draft;
 
             [Required]
             [MaxLength(500)]
@@ -42,20 +47,18 @@ namespace TheSocialSite.Domain.Entities.Post
             public string Category { get; set; }
 
             [Required]
-            public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int? Duration { get; set; } // in seconds
 
             [Required]
-            public int Likes { get; set; } = 0;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
             [Required]
-            public int Comments { get; set; } = 0;
+        public int? Likes { get; set; } = 0;
 
             [Required]
-            public bool MadeWithReference { get; set; } = false;
+        public int? Comments { get; set; } = 0;
 
             [Required]
-            public int? Duration { get; set; } // in seconds
-
-        }
+        public bool? ShowWithReference { get; set; } = false;
     }
 }

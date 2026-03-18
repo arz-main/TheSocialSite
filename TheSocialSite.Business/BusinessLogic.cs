@@ -6,13 +6,21 @@ namespace TheSocialSite.Business
     public class BusinessLogic
     {
         public BusinessLogic() { }
-        public IUserLoginAction UserLoginAction()
+        public IUserAuthAction UserAuthAction()
         {
-            return new UserLoginAction();
+            return new UserAuthAction();
         }
-        public IUserSignupAction UserSignupAction()
+        public IUserInteractAction UserInteractAction()
         {
-            return new UserSignupAction();
+            return new UserInteractAction();
+        }
+        public IPostInteractAction PostInteractAction()
+        {
+            return new PostInteractAction();
+        }
+        public IJwtServiceAction JwtService()
+        {
+            return new JwtServiceAction();
         }
     }
 }

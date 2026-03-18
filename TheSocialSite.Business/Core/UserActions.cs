@@ -1,8 +1,11 @@
-﻿using System.Linq;
-using TheSocialSite.DataAccess.Context;
-using TheSocialSite.Domain.Models.User;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TheSocialSite.DataAccess;
 using TheSocialSite.Domain.Entities.User;
+using TheSocialSite.Domain.Models.User;
 
 namespace TheSocialSite.Business.Core
 {
@@ -15,37 +18,12 @@ namespace TheSocialSite.Business.Core
             _dbSession = new DbSession();
         }
 
-        public UserLoginValidationDto UserLoginDataValidationExecution(UserLoginDto loginData)
+        public UserData[] GetAllUsersActionExecution()
         {
-            if (loginData == null)
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Login data is required." };
-
-            if (string.IsNullOrWhiteSpace(loginData.UserIdentifier))
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Email or username is required." };
-
-            if (string.IsNullOrWhiteSpace(loginData.Password))
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Password is required." };
-
             using (var userContext = _dbSession.UserContext())
             {
-                var user = userContext.Users
-                    .FirstOrDefault(u => u.Username == loginData.UserIdentifier || u.Email == loginData.UserIdentifier);
-
-                if (user == null)
-                {
-                    return new UserLoginValidationDto
-                    {
-                        IsValid = false,
-                        ErrorMessage = "User not found."
-                    };
-                }
+                return userContext.Users.ToArray();
             }
-
-            return new UserLoginValidationDto
-            {
-                UserIdentifier = loginData.UserIdentifier,
-                IsValid = true
-            };
         }
 
         public UserSignupValidationDto UserSignupValidationExecution(UserSignupDto userData)
@@ -71,35 +49,30 @@ namespace TheSocialSite.Business.Core
             return new UserSignupValidationDto { IsValid = true };
         }
 
-        public UserSignupValidationDto UserCreationExecution(UserSignupDto userData)
+        public UserSignupValidationDto CreateUserActionExecution(UserSignupDto userData)
         {
-            var validationInfo = UserSignupValidationExecution(userData);
-            if (!validationInfo.IsValid)
-                return validationInfo;
-
+            var validationResult = UserSignupValidationExecution(userData);
+            if (!validationResult.IsValid)
+            {
+                return validationResult;
+            }
             using (var userContext = _dbSession.UserContext())
             {
-                // Hash the password before saving
-                //var hashedPassword = ...;
-
-                var user = new UserData
+                var newUser = new UserData
                 {
-                    Email = userData.Email,
                     Username = userData.Username,
-                    Password = userData.Password,
-                    Role = UserRole.User,
-                    JoinedDate = DateTime.UtcNow
+                    Email = userData.Email,
+                    Password = BCrypt.Net.BCrypt.HashPassword(userData.Password)
                 };
-
-                userContext.Users.Add(user);
+                userContext.Users.Add(newUser);
                 userContext.SaveChanges();
             }
 
             return new UserSignupValidationDto
             {
+                IsValid = true,
                 Email = userData.Email,
-                Username = userData.Username,
-                IsValid = true
+                Username = userData.Username
             };
         }
     }

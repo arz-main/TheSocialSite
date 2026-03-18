@@ -1,10 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TheSocialSite.Domain.Entities.Post;
 using TheSocialSite.Domain.Entities.User;
-
 namespace TheSocialSite.DataAccess.Context
 {
-    public class UserContext : DbContext
+    public class PostContext : DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -12,11 +16,11 @@ namespace TheSocialSite.DataAccess.Context
                 "Server=localhost;Database=TheSocialSiteDb;Trusted_Connection=True;TrustServerCertificate=True;"
             );
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Ignore<PostData>();
+            modelBuilder.Ignore<UserData>();
+            // rest of your post config...
         }
-        public DbSet<UserData> Users { get; set; }
+        public DbSet<PostData> Posts { get; set; }
     }
 }

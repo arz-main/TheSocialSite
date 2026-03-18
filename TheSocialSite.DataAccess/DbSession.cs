@@ -8,5 +8,9 @@ namespace TheSocialSite.DataAccess
         {
             return new UserContext();
         }
+        public PostContext PostContext()
+        {
+            return new PostContext();
+        }
     }
 }

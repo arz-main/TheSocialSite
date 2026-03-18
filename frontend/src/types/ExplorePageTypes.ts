@@ -1,15 +1,4 @@
-// --- Types ---
-export type Drawing = {
-	id: string;
-	username: string;
-	createdAt: string;
-	likes: number;
-	comments: number;
-	category: string;
-	duration: number;
-	showWithReference?: boolean;
-	referenceUrl?: string;
-}
+import type { Post } from "./PostTypes";
 
 export type Comment = {
 	id: string;
@@ -20,8 +9,8 @@ export type Comment = {
 
 // --- Props ---
 export interface CommentsModalProps {
-	drawing: Drawing;
-	mockComments: Record<string, Comment[]>;
+	post: Post;
+	mockComments?: Record<string, Comment[]>;
 	onClose: () => void;
 	likedDrawings: Set<string>;
 	toggleLike: (id: string) => void;
@@ -30,12 +19,12 @@ export interface CommentsModalProps {
 }
 
 export interface PostCardProps {
-    drawing: Drawing;
+    post: Post;
 	index: number;
 	isLiked: boolean;
     pageSize: number;
 	onToggleLike: (id: string) => void;
-	onOpenComments: (drawing: Drawing) => void;
+	onOpenComments: (post: Post) => void;
 	formatDate: (d: string) => string;
 	formatDuration: (s: number) => string;
 	onUserClick: (userId: string) => void;
