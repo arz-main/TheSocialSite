@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Brush, RotateCcw, Pause, Play, SkipForward } from "lucide-react"
-import mockCategories from "../_mock/mockCategories";
-import { mockDrawings } from "../_mock/mockDrawings";
+import { mockDrawings, mockCategories } from "../_mock/mockPracticePage";
 import { TimerBar } from "../components/ui/PracticePageComponents";
 import { PracticeCard } from "../components/ui/PracticePageComponents"
 import { formatTime } from "../utils/PracticePageUtils";
@@ -19,18 +18,16 @@ const Practice = () => {
 
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const timerDrawingRef = useRef<number>(-1);
+	// Ref to the right panel — used to scroll it into view on mobile when a session starts
+	const rightPanelRef = useRef<HTMLDivElement>(null);
 
-
-	// Helper: toggle a category on/off
 	const toggleCategory = (id: number) => {
 		setSelectedCategoryIds(prev =>
 			prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
 		);
 	};
 
-
 	const buildSession = useCallback(() => {
-		// If nothing selected, use all drawings; otherwise filter by chosen categories
 		const pool =
 			selectedCategoryIds.length === 0
 				? mockDrawings
@@ -72,13 +69,18 @@ const Practice = () => {
 		return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
 	}, [sessionState, drawingIndex, sessionDrawings.length, timePerDrawing]);
 
-
 	const handleStart = () => {
 		const drawings = buildSession();
 		setSessionDrawings(drawings);
 		setDrawingIndex(0);
 		setTimeLeft(timePerDrawing);
 		setSessionState("active");
+
+		// On mobile, scroll the right panel into view so the user
+		// doesn't have to manually scroll down after hitting Start
+		setTimeout(() => {
+			rightPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+		}, 50);
 	};
 
 	const handlePause = () => setSessionState("paused");
@@ -113,13 +115,17 @@ const Practice = () => {
 
 	return (
 		<div className="flex flex-col flex-1 bg-background text-primary">
-			<section className=" w-full p-6 bg-background">
-				<div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
+			<section className="w-full p-6 bg-background">
+				{/*
+					On mobile  : single column, left panel first then right panel stacks below.
+					On desktop : side-by-side, right panel takes up 2/3 and matches the left panel height.
+					The key fix is that the grid rows use `items-stretch` so both cells are the same
+					height, and the right panel itself fills that height with `h-full`.
+				*/}
+				<div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6 items-stretch">
 					{/* LEFT PANEL */}
 					<div className="flex flex-col rounded-xl bg-card shadow p-6">
-						<h1 className="text-text pb-4">
-							Choose Category:
-						</h1>
+						<h1 className="text-text pb-4">Choose Category:</h1>
 
 						<div className="grid grid-cols-2 gap-4">
 							{mockCategories.map(category => (
@@ -180,11 +186,8 @@ const Practice = () => {
 						</Button>
 					</div>
 
-					{/* RIGHT PANEL */}
-					<div
-						// h-full ensures this panel matches the LEFT PANEL height automatically
-						className="flex flex-col h-full"
-					>
+					{/* RIGHT PANEL — ref is used for mobile scroll-into-view */}
+					<div ref={rightPanelRef} className="flex flex-col h-full">
 						{isDone ? (
 							<DonePanel
 								totalDrawings={numDrawings}
@@ -209,7 +212,7 @@ const Practice = () => {
 								flex flex-col items-center justify-center rounded-xl text-text
 								bg-card shadow p-6 aspect-square lg:aspect-auto lg:min-h-full
 							">
-								<Brush className="w-15 h-15"></Brush>
+								<Brush className="w-15 h-15" />
 								<h1>Ready to Practice</h1>
 								<small className="text-text-opaque">
 									{numDrawings} drawings x {formatTime(timePerDrawing)}
@@ -220,7 +223,7 @@ const Practice = () => {
 				</div>
 			</section>
 		</div>
-	)
+	);
 };
 
 
@@ -236,9 +239,23 @@ const ActiveSessionPanel = ({
 	onSkip,
 	onStop,
 }: ActiveSessionPanelProps) => (
-	<div className="flex flex-col h-full rounded-xl bg-card shadow p-6 gap-4 max-h-screen overflow-hidden">
-		{/* Top bar */}
-		<div className="flex items-center justify-between">
+	/*
+		Layout contract:
+		- The outer div is a flex column that fills the height its parent gives it (h-full).
+		- The image wrapper uses `flex-1 min-h-0` — this is the critical pair:
+		    • flex-1  : take all remaining vertical space after the fixed top/bottom rows
+		    • min-h-0 : override the default min-height:auto so flex can actually shrink it
+		- Inside the image wrapper we use absolute positioning so the <img> never
+		  influences the container's size — it just fills whatever space is available.
+		- Controls are a fixed-height row at the bottom, so they never move.
+		
+		On mobile the panel has no enforced height from the grid, so it sizes naturally
+		to the viewport using `min-h-[70vh]` — tall enough to show image + controls
+		without the user needing to scroll.
+	*/
+	<div className="flex flex-col rounded-xl bg-card shadow p-6 gap-4 h-full min-h-[70vh]">
+		{/* Top bar — fixed height */}
+		<div className="flex items-center justify-between flex-shrink-0">
 			<span className="text-text-opaque text-sm">
 				Drawing <span className="text-text font-semibold">{drawingIndex + 1}</span> / {totalDrawings}
 			</span>
@@ -250,27 +267,35 @@ const ActiveSessionPanel = ({
 			</button>
 		</div>
 
-		{/* Progress pills */}
-		<div className="flex gap-1">
+		{/* Progress pills — fixed height */}
+		<div className="flex gap-1 flex-shrink-0">
 			{Array.from({ length: totalDrawings }).map((_, i) => (
 				<div
 					key={i}
-					className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${i < drawingIndex ? "bg-primary opacity-60" :
+					className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+						i < drawingIndex  ? "bg-primary opacity-60" :
 						i === drawingIndex ? "bg-primary" :
-							"bg-card-border opacity-20"
-						}`}
+						"bg-card-border opacity-20"
+					}`}
 				/>
 			))}
 		</div>
 
-		{/* Reference image */}
-		<div className="relative flex-1 rounded-lg bg-black overflow-hidden flex items-center justify-center">
+		{/*
+			Image wrapper — grows to fill remaining space, never influences its own height.
+			`relative` + `overflow-hidden` clip the absolutely-positioned img.
+		*/}
+		<div className="relative flex-1 min-h-0 rounded-lg bg-black overflow-hidden">
 			<img
 				key={drawing.id}
 				src={drawing.src}
 				alt={drawing.label}
-				className="max-h-full max-w-full object-contain"
-			// This prevents the image from ever stretching the container
+				/*
+					`absolute inset-0` makes the image fill the container exactly.
+					`object-contain` keeps the aspect ratio; the image never overflows.
+					This completely decouples the image dimensions from the layout.
+				*/
+				className="absolute inset-0 w-full h-full object-contain"
 			/>
 
 			{sessionState === "paused" && (
@@ -284,30 +309,21 @@ const ActiveSessionPanel = ({
 			</div>
 		</div>
 
-		{/* Controls */}
-		<div className="flex items-center justify-between gap-4">
+		{/* Controls — fixed height, always pinned at bottom */}
+		<div className="flex items-center justify-between gap-4 flex-shrink-0">
 			<TimerBar timeLeft={timeLeft} total={timePerDrawing} />
 
 			<div className="flex gap-3">
 				{sessionState === "paused" ? (
-					<Button
-						variant={"primary"}
-						onClick={onResume}
-					>
+					<Button variant={"primary"} onClick={onResume}>
 						<Play className="w-4 h-4" /> Resume
 					</Button>
 				) : (
-					<Button
-						variant={"primary"}
-						onClick={onPause}
-					>
+					<Button variant={"primary"} onClick={onPause}>
 						<Pause className="w-4 h-4" /> Pause
 					</Button>
 				)}
-				<Button
-					variant={"primary"}
-					onClick={onSkip}
-				>
+				<Button variant={"primary"} onClick={onSkip}>
 					<SkipForward className="w-4 h-4" /> Skip
 				</Button>
 			</div>
@@ -332,13 +348,10 @@ const DonePanel = ({
 			at <span className="text-text font-semibold">{formatTime(timePerDrawing)}</span> each.
 			Great work!
 		</p>
-		<Button
-			variant={"primary"}
-			onClick={onRestart}
-		>
+		<Button variant={"primary"} onClick={onRestart}>
 			<RotateCcw className="w-4 h-4" /> Start Another Session
 		</Button>
 	</div>
 );
 
-export default Practice
+export default Practice;

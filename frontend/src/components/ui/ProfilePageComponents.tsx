@@ -143,7 +143,7 @@ export const TabsPage: React.FC<TabsPageProps> = ({
             {/* Posts Tab */}
             <TabsContent value="posts">
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                    <Card className="p-12 text-center">
+                    <Card className="p-12 text-center text-text">
                         <div className="text-5xl mb-4">📝</div>
                         <h3 className="mb-2">No Posts Yet</h3>
                         <p className="text-muted-foreground">Share your progress and thoughts with the community</p>

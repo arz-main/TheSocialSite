@@ -5,16 +5,21 @@ import { Badge as BadgeUI } from "../components/ui/Badge";
 import { Button } from "../components/ui/BasicButton";
 import { TabsPage } from "../components/ui/ProfilePageComponents";
 import { mockUsers } from "../_mock/mockUsers";
-import { badges, currentUserDrawings } from "../_mock/mockProfile";
-import { userDrawingImages } from "../_mock/mockProfilePostImages";
+import { badges } from "../_mock/mockProfile";
 import { LinkButton } from "../components/ui/LinkButton";
 import Paths from "../routes/paths";
+import { mockPosts } from "../_mock/mockPosts";
+import { exploreImages } from "../_mock/mockExplorePage";
 
 export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState("badges");
 
 	// In a real app, this would come from auth context
 	const currentUser = mockUsers[0]; // Using first user as the logged-in user
+	const currentUserPosts = mockPosts.filter(post => post.userId === currentUser.id);
+	const currentUserDrawings: Record<string, string> = Object.fromEntries(
+		currentUserPosts.map(post => [post.id, exploreImages[post.id]])
+	); 
 
 	// Handlers for upload buttons
 	const openUploadDrawingModal = () => {
@@ -68,8 +73,8 @@ export default function ProfilePage() {
 					{/* Tabs with Upload Buttons */}
 					<TabsPage
 						badges={badges}
-						currentUserDrawings={currentUserDrawings}
-						userDrawingImages={userDrawingImages}
+						currentUserDrawings={currentUserPosts}
+						userDrawingImages={currentUserDrawings}
 						activeTab={activeTab}
 						setActiveTab={setActiveTab}
 						renderUploadButtons={(tab) => {
