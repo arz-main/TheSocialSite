@@ -3,7 +3,7 @@ const Paths = {
 	about: "/about",
 	explore: "/explore",
 	practice: "/practice",
-    roadmap: "/roadmap",
+	roadmap: "/roadmap",
 	login: "/login",
 	signup: "/signup",
 	forgot_password: "/forgot-password",
@@ -19,11 +19,12 @@ const Paths = {
 
 	admin: {
 		dashboard: "/admin",
-		// manage_users: "/admin/manage-users",
-		// manage_comments: "/admin/manage-comments",
-		// manage_posts: "/admin/manage-posts",
-		// reset_password: "/admin/reset-password",
-		// user_requests: "/admin/user-requests",
+		manage_users: "/admin/manage-users",
+		manage_comments: "/admin/manage-comments",
+		manage_posts: "/admin/manage-posts",
+		reset_password: "/admin/reset-password",
+		user_requests: "/admin/user-requests",
+		course_creator: "/admin/course-creator",
 	},
 
 	artist: {
@@ -32,6 +33,9 @@ const Paths = {
 		statistics: "/artist/statistics",
 		messages: "/artist/messages",
 	},
+
+	course: (id: number | string) => `/roadmap/course/${id}`,
+	lesson: (courseId: number | string, lessonId: number | string) => `/roadmap/course/${courseId}/lesson/${lessonId}`,
 }
 
 export default Paths
