@@ -1,259 +1,583 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../components/ui/BasicButton";
-import {
-	AdminTable,
-	TableSection,
-	StatCard,
-	userColumns,
-	postColumns,
-	ActionToggleButton,
-} from "../components/ui/AdminPageComponents";
-import { usePaginatedData } from "../hooks/usePaginatedData";
-import { mockUsers } from "../_mock/mockUsers";
-import { mockPosts } from "../_mock/mockPosts";
-import type { User } from "../types/UserTypes";
-import type { Post } from "../types/PostTypes";
+import { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 
-type UserAction = "delete" | "promote" | null;
-type PostAction = "delete" | null;
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-const AdminDashboard: React.FC = () => {
-	const [allUsers, setAllUsers] = React.useState<User[]>(mockUsers);
-	const [allPosts, setAllPosts] = React.useState<Post[]>(mockPosts);
+type Role = "admin" | "moderator" | "user";
+type PostStatus = "published" | "draft" | "flagged";
 
-	const [activeUserAction, setActiveUserAction] = React.useState<UserAction>(null);
-	const [activePostAction, setActivePostAction] = React.useState<PostAction>(null);
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: Role;
+  joined: string;
+  posts: number;
+}
 
-	const userPagination = usePaginatedData(allUsers);
-	const postPagination = usePaginatedData(allPosts);
+interface Post {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  status: PostStatus;
+  imageUrl: string;
+  referenceUrl?: string;
+  category: string;
+  duration: number;
+  createdAt: string;
+  likes: number;
+  comments: number;
+  showWithReference: boolean;
+}
 
-	const handleDeleteUser = (userId: string) => {
-		if (!window.confirm("Delete this user and all their posts?")) return;
-		setAllUsers(prev => prev.filter(u => u.id !== userId));
-		setAllPosts(prev => prev.filter(p => p.userId !== userId));
-	};
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-	const handleToggleRole = (userId: string) => {
-		setAllUsers(prev =>
-			prev.map(u =>
-				u.id === userId
-					? { ...u, role: u.role === "admin" ? "artist" : "admin" }
-					: u
-			)
-		);
-	};
+const ROLE_ORDER: Role[] = ["user", "moderator", "admin"];
 
-	const handleDeletePost = (postId: string) => {
-		if (!window.confirm("Delete this post?")) return;
-		setAllPosts(prev => prev.filter(p => p.id !== postId));
-	};
+function promoteRole(role: Role): Role {
+  const idx = ROLE_ORDER.indexOf(role);
+  return idx < ROLE_ORDER.length - 1 ? ROLE_ORDER[idx + 1] : role;
+}
 
-	const adminCount = allUsers.filter(u => u.role === "admin").length;
-
-	// Build action column for users based on active mode
-	const userActionColumn = React.useMemo(() => {
-		if (!activeUserAction) return [];
-
-		return [
-			{
-				label: "Action",
-				field: "actions" as keyof User,
-				render: (user: User) => (
-					<AnimatePresence mode="wait">
-						<motion.div
-							key={activeUserAction}
-							initial={{ opacity: 0, x: -6 }}
-							animate={{ opacity: 1, x: 0 }}
-							exit={{ opacity: 0, x: 6 }}
-							transition={{ duration: 0.15 }}
-						>
-							{activeUserAction === "delete" && (
-								<Button
-									onClick={() => handleDeleteUser(user.id)}
-									variant="danger"
-								>
-									Delete
-								</Button>
-							)}
-							{activeUserAction === "promote" && (
-								<Button
-									onClick={() => handleToggleRole(user.id)}
-									variant="warning"
-								>
-									{user.role === "admin" ? "Demote" : "Promote"}
-								</Button>
-							)}
-						</motion.div>
-					</AnimatePresence>
-				),
-			},
-		];
-	}, [activeUserAction, allUsers]);
-
-	// Build action column for posts based on active mode
-	const postActionColumn = React.useMemo(() => {
-		if (!activePostAction) return [];
-
-		return [
-			{
-				label: "Action",
-				field: "actions" as keyof Post,
-				render: (post: Post) => (
-					<AnimatePresence mode="wait">
-						<motion.div
-							key={activePostAction}
-							initial={{ opacity: 0, x: -6 }}
-							animate={{ opacity: 1, x: 0 }}
-							exit={{ opacity: 0, x: 6 }}
-							transition={{ duration: 0.15 }}
-						>
-							{activePostAction === "delete" && (
-								<Button
-									onClick={() => handleDeletePost(post.id)}
-									variant="danger"
-								>
-									Delete
-								</Button>
-							)}
-						</motion.div>
-					</AnimatePresence>
-				),
-			},
-		];
-	}, [activePostAction]);
-
-	const userColumnsWithActions = [...userColumns, ...userActionColumn];
-	const postColumnsWithActions = [...postColumns, ...postActionColumn];
-
-	// Action toolbar rendered next to each table's title
-	const UserActionToolbar = (
-		<div className="flex gap-2 items-center">
-			<ActionToggleButton
-				label="Delete"
-				variant="danger"
-				active={activeUserAction === "delete"}
-				onClick={() =>
-					setActiveUserAction(prev => (prev === "delete" ? null : "delete"))
-				}
-			/>
-			<ActionToggleButton
-				label="Promote / Demote"
-				variant="warning"
-				active={activeUserAction === "promote"}
-				onClick={() =>
-					setActiveUserAction(prev => (prev === "promote" ? null : "promote"))
-				}
-			/>
-			{activeUserAction && (
-				<motion.button
-					initial={{ opacity: 0, scale: 0.9 }}
-					animate={{ opacity: 1, scale: 1 }}
-					exit={{ opacity: 0, scale: 0.9 }}
-					onClick={() => setActiveUserAction(null)}
-					className="text-xs text-muted-foreground underline underline-offset-2 hover:text-text transition-colors ml-1"
-				>
-					Cancel
-				</motion.button>
-			)}
-		</div>
-	);
-
-	const PostActionToolbar = (
-		<div className="flex gap-2 items-center">
-			<ActionToggleButton
-				label="Delete"
-				variant="danger"
-				active={activePostAction === "delete"}
-				onClick={() =>
-					setActivePostAction(prev => (prev === "delete" ? null : "delete"))
-				}
-			/>
-			{activePostAction && (
-				<motion.button
-					initial={{ opacity: 0, scale: 0.9 }}
-					animate={{ opacity: 1, scale: 1 }}
-					exit={{ opacity: 0, scale: 0.9 }}
-					onClick={() => setActivePostAction(null)}
-					className="text-xs text-muted-foreground underline underline-offset-2 hover:text-text transition-colors ml-1"
-				>
-					Cancel
-				</motion.button>
-			)}
-		</div>
-	);
-
-	return (
-		<div className="flex flex-col flex-1 bg-background text-text min-h-screen">
-			<div className="w-full max-w-7xl mx-auto px-6 py-10">
-				<motion.div
-					initial={{ opacity: 0, y: 16 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.4 }}
-				>
-					{/* Stats Cards */}
-					<div className="flex flex-wrap gap-4 mb-10">
-						<StatCard label="Total Users" value={allUsers.length} color="text-blue-500" />
-						<StatCard label="Admins" value={adminCount} color="text-purple-500" />
-						<StatCard label="Total Posts" value={allPosts.length} color="text-emerald-500" />
-						<StatCard
-							label="Avg. Posts / User"
-							value={
-								allUsers.length
-									? (allPosts.length / allUsers.length).toFixed(1)
-									: 0
-							}
-							color="text-amber-500"
-						/>
-					</div>
-
-					{/* Users Table */}
-					<TableSection
-						title="Users"
-						count={allUsers.length}
-						page={userPagination.page}
-						totalPages={userPagination.totalPages}
-						onPageChange={userPagination.setPage}
-						actionToolbar={UserActionToolbar}
-					>
-						<AdminTable<User>
-							columns={userColumnsWithActions}
-							data={allUsers}
-							paginatedData={userPagination.paginatedData}
-							sortField={userPagination.sortField}
-							sortAsc={userPagination.sortAsc}
-							onSort={userPagination.handleSort}
-							page={userPagination.page}
-							totalPages={userPagination.totalPages}
-							onPageChange={userPagination.setPage}
-						/>
-					</TableSection>
-
-					{/* Posts Table */}
-					<TableSection
-						title="Posts"
-						count={allPosts.length}
-						page={postPagination.page}
-						totalPages={postPagination.totalPages}
-						onPageChange={postPagination.setPage}
-						actionToolbar={PostActionToolbar}
-					>
-						<AdminTable<Post>
-							columns={postColumnsWithActions}
-							data={allPosts}
-							paginatedData={postPagination.paginatedData}
-							sortField={postPagination.sortField}
-							sortAsc={postPagination.sortAsc}
-							onSort={postPagination.handleSort}
-							page={postPagination.page}
-							totalPages={postPagination.totalPages}
-							onPageChange={postPagination.setPage}
-						/>
-					</TableSection>
-				</motion.div>
-			</div>
-		</div>
-	);
+const roleBadge: Record<Role, string> = {
+  admin:     "bg-amber-400/10 text-amber-400 border border-amber-400/25",
+  moderator: "bg-sky-400/10 text-sky-400 border border-sky-400/25",
+  user:      "bg-slate-400/10 text-slate-400 border border-slate-400/25",
 };
 
-export default AdminDashboard;
+const statusBadge: Record<PostStatus, string> = {
+  published: "bg-emerald-400/10 text-emerald-400 border border-emerald-400/25",
+  draft:     "bg-slate-400/10 text-slate-400 border border-slate-400/25",
+  flagged:   "bg-red-400/10 text-red-400 border border-red-400/25",
+};
+
+// ─── Shared UI ────────────────────────────────────────────────────────────────
+
+function SearchBar({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="relative flex items-center">
+      <svg
+        className="absolute left-2.5 w-3.5 h-3.5 text-slate-500 pointer-events-none"
+        viewBox="0 0 20 20"
+        fill="none"
+      >
+        <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M13 13l3.5 3.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-7 py-1.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 w-52 transition-all focus:w-64"
+      />
+      {value && (
+        <button
+          onClick={() => onChange("")}
+          className="absolute right-2 text-slate-500 hover:text-slate-300 text-xs"
+        >
+          ✕
+        </button>
+      )}
+    </div>
+  );
+}
+
+function ConfirmModal({
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-slate-900 border border-slate-700 rounded-xl p-6 w-full max-w-sm shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="text-sm text-slate-300 leading-relaxed">{message}</p>
+        <div className="flex justify-end gap-2 mt-5">
+          <button
+            onClick={onCancel}
+            className="px-3 py-1.5 text-sm rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-3 py-1.5 text-sm rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-colors"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TableSkeleton({ cols }: { cols: number }) {
+  return (
+    <>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <tr key={i} className="border-b border-slate-800">
+          {Array.from({ length: cols }).map((__, j) => (
+            <td key={j} className="px-4 py-3">
+              <div className="h-3.5 rounded bg-slate-800 animate-pulse" style={{ width: `${60 + Math.random() * 30}%` }} />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
+  );
+}
+
+function ErrorRow({ cols, message }: { cols: number; message: string }) {
+  return (
+    <tr>
+      <td colSpan={cols} className="text-center py-10 text-red-400 text-sm">
+        {message}
+      </td>
+    </tr>
+  );
+}
+
+// ─── Users Table ──────────────────────────────────────────────────────────────
+
+function UsersTable() {
+  const [users, setUsers]           = useState<User[]>([]);
+  const [loadingUsers, setLoading]  = useState(false);
+  const [errorUsers, setError]      = useState<string | null>(null);
+  const [search, setSearch]         = useState("");
+  const [confirm, setConfirm]       = useState<{ type: "delete" | "promote"; id: number } | null>(null);
+
+  // Fetch users
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<User[]>("/users");
+        setUsers(response.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load users");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const filtered = useMemo(
+    () =>
+      users.filter(
+        (u) =>
+          u.name.toLowerCase().includes(search.toLowerCase()) ||
+          u.email.toLowerCase().includes(search.toLowerCase()) ||
+          u.role.toLowerCase().includes(search.toLowerCase())
+      ),
+    [users, search]
+  );
+
+  const executeConfirm = async () => {
+    if (!confirm) return;
+    try {
+      if (confirm.type === "delete") {
+        await axios.delete(`/users/${confirm.id}`);
+        setUsers((prev) => prev.filter((u) => u.id !== confirm.id));
+      } else {
+        const target = users.find((u) => u.id === confirm.id);
+        if (!target) return;
+        const newRole = promoteRole(target.role);
+        await axios.patch<User>(`/users/${confirm.id}`, { role: newRole });
+        setUsers((prev) =>
+          prev.map((u) => (u.id === confirm.id ? { ...u, role: newRole } : u))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setConfirm(null);
+    }
+  };
+
+  const targetUser = confirm ? users.find((u) => u.id === confirm.id) : null;
+
+  return (
+    <section className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      {confirm && targetUser && (
+        <ConfirmModal
+          message={
+            confirm.type === "delete"
+              ? `Delete user "${targetUser.name}"? This cannot be undone.`
+              : `Promote "${targetUser.name}" from ${targetUser.role} to ${promoteRole(targetUser.role)}?`
+          }
+          onConfirm={executeConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800 flex-wrap gap-3">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-sm font-semibold text-slate-100">Users</h2>
+          {!loadingUsers && (
+            <span className="text-xs font-mono bg-slate-800 border border-slate-700 rounded-full px-2 py-0.5 text-slate-500">
+              {filtered.length}
+            </span>
+          )}
+        </div>
+        <SearchBar value={search} onChange={setSearch} placeholder="Search users…" />
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-slate-800/50">
+              {["#", "Name", "Email", "Role", "Joined", "Posts", "Actions"].map((h) => (
+                <th
+                  key={h}
+                  className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap border-b border-slate-800"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loadingUsers ? (
+              <TableSkeleton cols={7} />
+            ) : errorUsers ? (
+              <ErrorRow cols={7} message={errorUsers} />
+            ) : filtered.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="text-center py-10 text-slate-600 text-sm">
+                  No users match your search.
+                </td>
+              </tr>
+            ) : (
+              filtered.map((user) => (
+                <tr
+                  key={user.id}
+                  className="border-b border-slate-800 last:border-0 hover:bg-slate-800/40 transition-colors"
+                >
+                  <td className="px-4 py-3 font-mono text-xs text-slate-600">{user.id}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-sky-400 flex items-center justify-center text-xs font-bold text-slate-900 shrink-0">
+                        {user.name.charAt(0)}
+                      </div>
+                      <span className="font-medium text-slate-200">{user.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">{user.email}</td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${roleBadge[user.role]}`}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">{user.joined}</td>
+                  <td className="px-4 py-3 text-slate-400 font-mono text-xs">{user.posts}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setConfirm({ type: "promote", id: user.id })}
+                        disabled={user.role === "admin"}
+                        title={user.role === "admin" ? "Already top role" : `Promote to ${promoteRole(user.role)}`}
+                        className="px-2.5 py-1 text-xs rounded-lg bg-violet-500/10 hover:bg-violet-500/20 text-violet-400 border border-violet-500/25 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        ↑ Promote
+                      </button>
+                      <button
+                        onClick={() => setConfirm({ type: "delete", id: user.id })}
+                        className="px-2.5 py-1 text-xs rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/25 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+// ─── Posts Table ──────────────────────────────────────────────────────────────
+
+function PostsTable() {
+  const [posts, setPosts]           = useState<Post[]>([]);
+  const [loadingPosts, setLoading]  = useState(false);
+  const [errorPosts, setError]      = useState<string | null>(null);
+  const [search, setSearch]         = useState("");
+  const [confirm, setConfirm]       = useState<string | null>(null);
+
+  // Fetch posts
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<Post[]>("/posts");
+        setPosts(response.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load posts");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const filtered = useMemo(
+    () =>
+      posts.filter(
+        (p) =>
+          p.title.toLowerCase().includes(search.toLowerCase()) ||
+          p.author.toLowerCase().includes(search.toLowerCase()) ||
+          p.status.toLowerCase().includes(search.toLowerCase()) ||
+          p.category.toLowerCase().includes(search.toLowerCase())
+      ),
+    [posts, search]
+  );
+
+  const handleDeleteConfirm = async () => {
+    if (confirm === null) return;
+    try {
+      await axios.delete(`/posts/${confirm}`);
+      setPosts((prev) => prev.filter((p) => p.id !== confirm));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setConfirm(null);
+    }
+  };
+
+  const targetPost = confirm !== null ? posts.find((p) => p.id === confirm) : null;
+
+  return (
+    <section className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      {confirm !== null && targetPost && (
+        <ConfirmModal
+          message={`Delete post "${targetPost.title}"? This cannot be undone.`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800 flex-wrap gap-3">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-sm font-semibold text-slate-100">Posts</h2>
+          {!loadingPosts && (
+            <span className="text-xs font-mono bg-slate-800 border border-slate-700 rounded-full px-2 py-0.5 text-slate-500">
+              {filtered.length}
+            </span>
+          )}
+        </div>
+        <SearchBar value={search} onChange={setSearch} placeholder="Search posts…" />
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-slate-800/50">
+              {["#", "Title", "Author", "Category", "Status", "Likes", "Comments", "Created At", "Actions"].map((h) => (
+                <th
+                  key={h}
+                  className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap border-b border-slate-800"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loadingPosts ? (
+              <TableSkeleton cols={9} />
+            ) : errorPosts ? (
+              <ErrorRow cols={9} message={errorPosts} />
+            ) : filtered.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="text-center py-10 text-slate-600 text-sm">
+                  No posts match your search.
+                </td>
+              </tr>
+            ) : (
+              filtered.map((post) => (
+                <tr
+                  key={post.id}
+                  className="border-b border-slate-800 last:border-0 hover:bg-slate-800/40 transition-colors"
+                >
+                  <td className="px-4 py-3 font-mono text-xs text-slate-600">{post.id}</td>
+                  <td className="px-4 py-3 max-w-xs">
+                    <div className="flex items-center gap-2.5">
+                      {post.imageUrl && (
+                        <img src={post.imageUrl} alt={post.title} className="w-8 h-8 rounded object-cover shrink-0 bg-slate-800" />
+                      )}
+                      <div className="min-w-0">
+                        <div className="font-medium text-slate-200 truncate">{post.title}</div>
+                        {post.description && (
+                          <div className="text-xs text-slate-500 truncate max-w-[180px]">{post.description}</div>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">{post.author}</td>
+                  <td className="px-4 py-3 text-slate-400 text-xs">{post.category}</td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${statusBadge[post.status]}`}>
+                      {post.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-slate-400 font-mono text-xs">{post.likes.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-slate-400 font-mono text-xs">{post.comments.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-slate-500 font-mono text-xs">{post.createdAt}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => setConfirm(post.id)}
+                      className="px-2.5 py-1 text-xs rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/25 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+// ─── Stat Cards ───────────────────────────────────────────────────────────────
+
+interface StatCardsProps {
+  userCount: number;
+  postCount: number;
+  publishedCount: number;
+  flaggedCount: number;
+}
+
+function StatCards({ userCount, postCount, publishedCount, flaggedCount }: StatCardsProps) {
+  const stats = [
+    { label: "Total Users",  value: userCount,      icon: "👤", color: "text-sky-400"     },
+    { label: "Total Posts",  value: postCount,       icon: "📝", color: "text-violet-400"  },
+    { label: "Published",    value: publishedCount,  icon: "✅", color: "text-emerald-400" },
+    { label: "Flagged",      value: flaggedCount,    icon: "🚩", color: "text-red-400"     },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {stats.map((s) => (
+        <div
+          key={s.label}
+          className="bg-slate-900 border border-slate-800 rounded-xl px-5 py-4 flex items-center gap-4 hover:border-slate-700 transition-colors"
+        >
+          <span className="text-2xl">{s.icon}</span>
+          <div>
+            <div className={`text-2xl font-bold font-mono ${s.color}`}>{s.value}</div>
+            <div className="text-xs text-slate-500 mt-0.5">{s.label}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+
+export default function AdminDashboard() {
+  const [users, setUsers]           = useState<User[]>([]);
+  const [posts, setPosts]           = useState<Post[]>([]);
+  const [loadingUsers, setLoadingU] = useState(false);
+  const [loadingPosts, setLoadingP] = useState(false);
+
+  // Fetch users for stat cards
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoadingU(true);
+        const response = await axios.get<User[]>("/users");
+        setUsers(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingU(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  // Fetch posts for stat cards
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoadingP(true);
+        const response = await axios.get<Post[]>("/posts");
+        setPosts(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingP(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const isLoading = loadingUsers || loadingPosts;
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100">
+      {/* Topbar */}
+      <header className="sticky top-0 z-10 bg-slate-900 border-b border-slate-800 px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-sky-400 flex items-center justify-center text-xs font-bold text-slate-900">
+            A
+          </div>
+          <span className="text-sm font-semibold tracking-tight">AdminPanel</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className={`w-2 h-2 rounded-full ${isLoading ? "bg-amber-400" : "bg-emerald-400"} animate-pulse`} />
+          <span className="text-xs font-mono text-slate-500">
+            {isLoading ? "Loading…" : "Live"}
+          </span>
+        </div>
+      </header>
+
+      {/* Main */}
+      <main className="max-w-6xl mx-auto px-6 py-8 flex flex-col gap-8">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-slate-500 mt-1">Manage your users and content.</p>
+        </div>
+
+        <StatCards
+          userCount={users.length}
+          postCount={posts.length}
+          publishedCount={posts.filter((p) => p.status === "published").length}
+          flaggedCount={posts.filter((p) => p.status === "flagged").length}
+        />
+
+        <UsersTable />
+        <PostsTable />
+      </main>
+    </div>
+  );
+}

@@ -13,7 +13,7 @@ import type { Post } from "../../types/PostTypes";
 import { usePaginatedData } from "../../hooks/usePaginatedData";
 
 export const userColumns: Column<User>[] = [
-    { label: "Name", field: "name", sortable: true },
+    { label: "Username", field: "username", sortable: true },
     { label: "Email", field: "email", sortable: true },
     { label: "Role", field: "role", sortable: true },
     { label: "Posts", field: "postsCount", sortable: true },
@@ -21,7 +21,7 @@ export const userColumns: Column<User>[] = [
 
 export const postColumns: Column<Post>[] = [
     { label: "ID", field: "id", sortable: true },
-    { label: "Username", field: "username", sortable: true },
+    { label: "Author", field: "author", sortable: true },
     { label: "Category", field: "category", sortable: true },
     { label: "Duration", field: "duration", sortable: true },
     { label: "Likes", field: "likes", sortable: true },

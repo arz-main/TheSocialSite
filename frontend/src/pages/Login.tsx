@@ -8,7 +8,7 @@ import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/InputComponent";
 import { Label } from "../components/ui/LabelComponent";
 import Paths from "../routes/paths";
-import { findUser } from "../_mock/mockUsers";
+import { mockUsers } from "../_mock/mockUsers";
 
 
 export default function Login() {
@@ -20,7 +20,7 @@ export default function Login() {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		const user = findUser(email, password);
+		const user = mockUsers[0];
 
 		if (!user) {
 			alert("Invalid email or password");
@@ -34,7 +34,7 @@ export default function Login() {
 			case "admin":
 				navigate(Paths.admin.dashboard);
 				break;
-			case "artist":
+			case "user":
 			default:
 				navigate(Paths.home);
 				break;
