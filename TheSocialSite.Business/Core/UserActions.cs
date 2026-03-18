@@ -20,25 +20,10 @@ namespace TheSocialSite.Business.Core
 
         public UserData[] GetAllUsersActionExecution()
         {
-            if (loginData == null)
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Login data is required." };
-
-            if (string.IsNullOrWhiteSpace(loginData.UserIdentifier))
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Email or username is required." };
-
-            if (string.IsNullOrWhiteSpace(loginData.Password))
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Password is required." };
-
             using (var userContext = _dbSession.UserContext())
             {
                 return userContext.Users.ToArray();
             }
-
-            return new UserLoginValidationDto
-            {
-                UserIdentifier = loginData.UserIdentifier,
-                IsValid = true
-            };
         }
 
         public UserSignupValidationDto UserSignupValidationExecution(UserSignupDto userData)
