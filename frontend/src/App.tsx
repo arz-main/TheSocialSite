@@ -28,85 +28,75 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ResetPassword from "./pages/ResetPassword";
 import ScrollToTop from "./utils/ScrollToTop";
 
-import CourseRoadmap from "./pages/CourseRoadmap";
-import AdminCourseCreator from "./pages/AdminCourseCreator";
-import LessonPage from "./pages/LessonPage";
-
 import Paths from "./routes/paths";
 
 const App = () => {
-	return (
-		<div className="flex flex-col min-h-screen">
-			<ScrollToTop/>
-			<Navbar />
-			<div className="fixed bottom-4 right-4 z-50">
-				<ThemeToggle />
-			</div>
-			<main className="flex flex-col flex-1 pt-16">
-				<Routes>
-					{/* access to all users */}
-					<Route path={Paths.home} element={<Home />} />
-					<Route path={Paths.about} element={<About />} />
-					<Route path={Paths.explore} element={<Explore />} />
-					<Route path={`${Paths.explore}/user/:userId`} element={<UserProfile />} />
-					<Route path={Paths.practice} element={<Practice />} />
-					<Route path={Paths.roadmap} element={<Roadmap />} />
-					<Route path={Paths.login} element={<Login />} />
-					<Route path={Paths.signup} element={<SignUp />} />
-					<Route path={Paths.forgot_password} element={<ForgotPassword />} />
-					<Route path={Paths.reset_password} element={<ResetPassword />} />
-					<Route path={Paths.terms} element={<Terms />} />
-					<Route path={Paths.privacy} element={<Privacy />} />
+    return (
+        <div className="flex flex-col min-h-screen">
+            <ScrollToTop /> { /* To scroll to the top of visited page*/}
+            <Navbar />
+            {/* Theme toggle button fixed at top-right */}
+            <div className="fixed bottom-4 right-4 z-50">
+                <ThemeToggle />
+            </div>
+            <main className="flex flex-col flex-1 pt-16">
+                <Routes>
+                    {/* access to all users */}
+                    <Route path={Paths.home} element={<Home />} />
+                    <Route path={Paths.about} element={<About />} />
+                    <Route path={Paths.explore} element={<Explore />} />
+                    <Route path={`${Paths.explore}/user/:userId`} element={<UserProfile />} />
+                    <Route path={Paths.practice} element={<Practice />} />
+                    <Route path={Paths.roadmap} element={<Roadmap />} />
+                    <Route path={Paths.login} element={<Login />} />
+                    <Route path={Paths.signup} element={<SignUp />} />
+                    <Route path={Paths.forgot_password} element={<ForgotPassword />} />
+                    <Route path={Paths.reset_password} element={<ResetPassword />} />
+                    <Route path={Paths.terms} element={<Terms />} />
+                    <Route path={Paths.privacy} element={<Privacy />} />
 
-					<Route path="/roadmap/course/:courseId" element={<CourseRoadmap />} />
-					<Route path="/roadmap/course/:courseId/lesson/:lessonId" element={<LessonPage />} />
+                    {/* access to authenticated users */}
+                    <Route path={Paths.artist.statistics} element={
+                        <ProtectedRoute allowedRoles={["artist", "admin"]}>
+                            <Statistics />
+                        </ProtectedRoute>
+                    } />
+                    <Route path={Paths.artist.messages} element={
+                        <ProtectedRoute allowedRoles={["artist", "admin"]}>
+                            <Messages />
+                        </ProtectedRoute>
+                    } />
+                    <Route path={Paths.artist.edit_profile} element={
+                        <ProtectedRoute allowedRoles={["artist", "admin"]}>
+                            <EditProfile />
+                        </ProtectedRoute>
+                    } />
+                    <Route path={Paths.artist.profile} element={
+                        <ProtectedRoute allowedRoles={["artist", "admin"]}>
+                            <Profile />
+                        </ProtectedRoute>
+                    } />
 
-					{/* access to authenticated users */}
-					<Route path={Paths.artist.statistics} element={
-						<ProtectedRoute allowedRoles={["artist", "admin"]}>
-							<Statistics />
-						</ProtectedRoute>
-					} />
-					<Route path={Paths.artist.messages} element={
-						<ProtectedRoute allowedRoles={["artist", "admin"]}>
-							<Messages />
-						</ProtectedRoute>
-					} />
-					<Route path={Paths.artist.edit_profile} element={
-						<ProtectedRoute allowedRoles={["artist", "admin"]}>
-							<EditProfile />
-						</ProtectedRoute>
-					} />
-					<Route path={Paths.artist.profile} element={
-						<ProtectedRoute allowedRoles={["artist", "admin"]}>
-							<Profile />
-						</ProtectedRoute>
-					} />
+                    {/* admin only */}
+                    <Route path={Paths.admin.dashboard} element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminDashboard />
+                        </ProtectedRoute>
+                    } />
+                    {/* urmeaza sa fie adaugate toate rutele cand paginile sunt gata */}
 
-					{/* admin only */}
-					<Route path={Paths.admin.dashboard} element={
-						<ProtectedRoute allowedRoles={["admin"]}>
-							<AdminDashboard />
-						</ProtectedRoute>
-					} />
+                    {/* error pages */}
+                    <Route path={Paths.error.unauthorized} element={<Unauthorized />} />
+                    <Route path={Paths.error.forbidden} element={<Forbidden />} />
+                    <Route path={Paths.error.internal_server_error} element={<InternalServerError />} />
+                    <Route path={Paths.error.not_found} element={<NotFound />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </main>
+            <Footer />
+        </div>
 
-					<Route path={Paths.admin.course_creator} element={
-						<ProtectedRoute allowedRoles={["admin"]}>
-							<AdminCourseCreator />
-						</ProtectedRoute>
-					} />
-
-					{/* error pages */}
-					<Route path={Paths.error.unauthorized} element={<Unauthorized />} />
-					<Route path={Paths.error.forbidden} element={<Forbidden />} />
-					<Route path={Paths.error.internal_server_error} element={<InternalServerError />} />
-					<Route path={Paths.error.not_found} element={<NotFound />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</main>
-			<Footer />
-		</div>
-	);
+    );
 };
 
-export default App;			
+export default App;
