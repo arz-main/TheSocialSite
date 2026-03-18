@@ -1,4 +1,5 @@
-import type { Drawing, SearchByOption, SortByOption } from "../types/ExplorePageTypes";
+import type { SearchByOption, SortByOption } from "../types/ExplorePageTypes";
+import type { Post } from "../types/PostTypes";
 
 export const searchByOptions = [
 	{ value: "creator", label: "By Creator" },
@@ -14,20 +15,20 @@ export const sortByOptions = [
 	{ value: "category", label: "Category" },
 ];
 
-export function filterDrawings(
-	drawings: Drawing[],
+export function filterPosts(
+	posts: Post[],
 	searchQuery: string,
 	searchBy: SearchByOption
-): Drawing[] {
+): Post[] {
 	const query = searchQuery.trim().toLowerCase();
 
 	if (!query) {
-		return drawings;
+		return posts;
 	}
 
 	switch (searchBy) {
 		case "creator":
-			return drawings.filter((d) => d.username.toLowerCase().includes(query));
+			return posts.filter((p) => p.author.toLowerCase().includes(query));
 
 		case "reference":
 			// Empty for now
@@ -35,22 +36,22 @@ export function filterDrawings(
 
 		case "keywords":
 			// Search in username or category (can be extended)
-			return drawings.filter(
-				(d) =>
-					d.username.toLowerCase().includes(query) ||
-					d.category.toLowerCase().includes(query)
+			return posts.filter(
+				(p) =>
+					p.author.toLowerCase().includes(query) ||
+					p.category.toLowerCase().includes(query)
 			);
 
 		case "category":
-			return drawings.filter((d) => d.category.toLowerCase().includes(query));
+			return posts.filter((p) => p.category.toLowerCase().includes(query));
 
 		default:
-			return drawings;
+			return posts;
 	}
 }
 
-export function sortDrawings(drawings: Drawing[], sortBy: SortByOption): Drawing[] {
-	const sorted = [...drawings];
+export function sortPosts(posts: Post[], sortBy: SortByOption): Post[] {
+	const sorted = [...posts];
 
 	switch (sortBy) {
 		case "likes":

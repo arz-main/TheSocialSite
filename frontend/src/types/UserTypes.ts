@@ -1,26 +1,24 @@
-import type { Role } from "./RoleTypes";
-
-export interface SocialLinks {
-    pinterest?: string;
-    x?: string;
-    deviantart?: string;
-    youtube?: string;
-    discord?: string;
-}
-
+export type Role = "user" | "admin";
 export interface User {
     id: string;
     email: string;
-    password: string;
-    name: string;
+    username: string;
     role: Role;
-    avatar?: string;
-    bio?: string;
-    location?: string;
-    website?: string;
-    socialLinks?: SocialLinks;
-    followers: string[]; // Array of user IDs
-    following: string[]; // Array of user IDs
+    avatar: string;
+    bio: string;
+    location: string;
+    website: string;
+
+    socialLinks: {
+        pinterest?: string;
+        x?: string;
+        deviantart?: string;
+        youtube?: string;
+        discord?: string;
+    };
+
+    followers?: string[];
+    following?: string[];
     postsCount: number;
     joinedDate: string;
 }

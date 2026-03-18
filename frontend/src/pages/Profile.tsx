@@ -16,7 +16,7 @@ export default function ProfilePage() {
 
 	// In a real app, this would come from auth context
 	const currentUser = mockUsers[0]; // Using first user as the logged-in user
-	const currentUserPosts = mockPosts.filter(post => post.userId === currentUser.id);
+	const currentUserPosts = mockPosts.filter(post => post.author === currentUser.username);
 	const currentUserDrawings: Record<string, string> = Object.fromEntries(
 		currentUserPosts.map(post => [post.id, exploreImages[post.id]])
 	); 
@@ -46,7 +46,7 @@ export default function ProfilePage() {
 									🎨
 								</div>
 								<div className="flex-1">
-									<h1 className="mb-2">{currentUser.name}</h1>
+									<h1 className="mb-2">{currentUser.username}</h1>
 									<p className="text-muted-foreground mb-4">
 										Member since {currentUser.joinedDate}
 									</p>
@@ -55,10 +55,10 @@ export default function ProfilePage() {
 											{currentUser.postsCount} Posts
 										</BadgeUI>
 										<BadgeUI variant="secondary" className="text-sm">
-											{currentUser.followers.length} Followers
+											{currentUser.followers ? currentUser.followers.length : "0"} Followers
 										</BadgeUI>
 										<BadgeUI variant="secondary" className="text-sm">
-											{currentUser.following.length} Following
+											{currentUser.following ? currentUser.following.length : "0"} Following
 										</BadgeUI>
 									</div>
 								</div>

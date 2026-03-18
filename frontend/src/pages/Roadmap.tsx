@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import CourseCard from '../components/ui/RoadmapPageComponents';
 import { Heart, ChevronDown, BookOpen, Layers, GraduationCap, CheckCircle2 } from 'lucide-react';
-import { MOCK_COURSES, Course } from '../_mock/mockCourses';
+import { MOCK_COURSES, type Course } from '../_mock/mockCourses';
 
 type DifficultyFilter = 'All' | 'Beginner' | 'Intermediate' | 'Advanced';
 type ProgressFilter = 'All' | 'Not Started' | 'In Progress' | 'Completed';

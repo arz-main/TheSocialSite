@@ -17,10 +17,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs"
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { badges } from "../_mock/mockProfile";
-import { getUserById } from "../_mock/mockUsers";
 import { mockPosts } from "../_mock/mockPosts";
 import Paths from "../routes/paths";
 import { exploreImages } from "../_mock/mockExplorePage";
+import { mockUsers } from "../_mock/mockUsers";
 
 export default function UserProfile() {
     const { userId } = useParams<{ userId: string }>();
@@ -29,8 +29,9 @@ export default function UserProfile() {
     const [isFollowing, setIsFollowing] = useState(false);
 
     // Get user data from mockUsers
-    const user = userId ? getUserById(userId) : null; if (!user) { return <Navigate to={Paths.error.not_found} replace />; }
-    const currentUserPosts = mockPosts.filter(post => post.userId === userId);
+    const user = mockUsers[0];
+    if (!user) { return <Navigate to={Paths.error.not_found} replace />; }
+    const currentUserPosts = mockPosts.filter(post => post.author === userId);
     const currentUserDrawings = currentUserPosts.map(post => exploreImages[post.id]);
     // console.log(currentUserDrawings);
     
@@ -86,12 +87,12 @@ export default function UserProfile() {
                                 {user.avatar ? (
                                     <img
                                         src={user.avatar}
-                                        alt={user.name}
+                                        alt={user.username}
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl">
-                                        {user.name.charAt(0)}
+                                        {user.username.charAt(0)}
                                     </div>
                                 )}
                             </div>
@@ -99,7 +100,7 @@ export default function UserProfile() {
                             {/* User Info */}
                             <div className="flex-1">
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-2">
-                                    <h1 className="text-2xl font-bold">{user.name}</h1>
+                                    <h1 className="text-2xl font-bold">{user.username}</h1>
                                     <motion.div
                                         whileTap={{ scale: 0.95 }}
                                         whileHover={{ scale: 1.05 }}
@@ -144,10 +145,10 @@ export default function UserProfile() {
                                         {user.postsCount} Posts
                                     </BadgeUI>
                                     <BadgeUI variant="secondary" className="text-sm">
-                                        {user.followers.length} Followers
+                                        {user.followers?.length} Followers
                                     </BadgeUI>
                                     <BadgeUI variant="secondary" className="text-sm">
-                                        {user.following.length} Following
+                                        {user.following?.length} Following
                                     </BadgeUI>
                                 </div>
 
