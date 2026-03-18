@@ -472,10 +472,6 @@ export default function LessonPracticeModal({ lesson, courseTitle, onClose, onCo
                     </div>
                 </div>
 
-                {/* ── Right column: toolbar + canvas + footer ── */}
-                {/* This column must NEVER let the footer scroll off screen. */}
-                {/* Strategy: flex-col, overflow:hidden. Canvas area gets flex-1 */}
-                {/* and has overflow-y:auto so only the canvas scrolls, not the footer. */}
                 <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
                     {/* Toolbar — always visible */}
