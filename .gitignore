@@ -97,3 +97,9 @@ knip.jsonc
 *.cache
 private_key.pem
 public_key.pem
+/TheSocialSite.Api
+/TheSocialSite.Business
+/TheSocialSite.DataAccess
+/TheSocialSite.Domain
+*.json
+*.sln
