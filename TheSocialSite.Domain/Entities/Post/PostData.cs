@@ -15,15 +15,15 @@ namespace TheSocialSite.Domain.Entities.Post
         Draft,
         Flagged
     }
-        public class PostData
-        {
-            [Key]
-            [Required]
-            [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-            public string Id { get; set; }
+    public class PostData
+    {
+        [Key]
+        [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string Id { get; set; }
 
-            [Required]
-        public UserData Author { get; set; }
+        [Required]
+        public string Author { get; set; }
 
         [Required]
         [MaxLength(200)]
@@ -32,33 +32,33 @@ namespace TheSocialSite.Domain.Entities.Post
         [MaxLength(1000)]
         public string? Description { get; set; }
 
-            [Required]
+        [Required]
         public PostStatus Status { get; set; } = PostStatus.Draft;
 
-            [Required]
-            [MaxLength(500)]
-            public string ImageUrl { get; set; }
+        [Required]
+        [MaxLength(500)]
+        public string ImageUrl { get; set; }
 
-            [MaxLength(500)]
-            public string? ReferenceUrl { get; set; }
+        [MaxLength(500)]
+        public string? ReferenceUrl { get; set; }
 
-            [Required]
-            [MaxLength(50)]
-            public string Category { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public string Category { get; set; }
 
-            [Required]
+        [Required]
         public int? Duration { get; set; } // in seconds
 
-            [Required]
+        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-            [Required]
+        [Required]
         public int? Likes { get; set; } = 0;
 
-            [Required]
+        [Required]
         public int? Comments { get; set; } = 0;
 
-            [Required]
+        [Required]
         public bool? ShowWithReference { get; set; } = false;
     }
 }

@@ -12,8 +12,8 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20260317230637_AddPostDataFields")]
-    partial class AddPostDataFields
+    [Migration("20260321154154_AddPostContext")]
+    partial class AddPostContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,10 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Category")
                         .IsRequired()

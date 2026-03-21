@@ -5,7 +5,7 @@ using TheSocialSite.Business;
 using TheSocialSite.Business.Core;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Business.Structure;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.Response;
 
 namespace TheSocialSite.Api.Controllers
 {
@@ -30,16 +30,9 @@ namespace TheSocialSite.Api.Controllers
             var validation = _userAuthAction.UserLoginDataValidation(loginData);
 
             if (!validation.IsValid)
-                return BadRequest(validation.ErrorMessage);
+                return BadRequest(validation.Message);
 
-            // Generate token AFTER validation
-            var token = _jwtService.GenerateTokenAction(validation.UserIdentifier);
-
-            return Ok(new
-            {
-                token,
-                user = validation.UserIdentifier
-            });
+            return Ok(validation);
         }
 
         [HttpPost("signup")]
@@ -49,10 +42,10 @@ namespace TheSocialSite.Api.Controllers
             {
                 return BadRequest("No data provided");
             }
-            UserSignupValidationDto validationInfo = _userAuthAction.CreateUserAction(userData);
+            SignupActionResponse validationInfo = _userAuthAction.UserCreationAction(userData);
             if (!validationInfo.IsValid)
             {
-                return BadRequest(validationInfo.ErrorMessage);
+                return BadRequest(validationInfo.Message);
             }
             return Ok(new
             {

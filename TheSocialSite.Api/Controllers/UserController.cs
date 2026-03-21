@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TheSocialSite.Business.Interfaces;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.Response;
 namespace TheSocialSite.Api.Controllers
 {
     [Route("api/users")]
@@ -27,9 +27,9 @@ namespace TheSocialSite.Api.Controllers
         [HttpPost("create")]
         public IActionResult CreateUser([FromBody] UserSignupDto userData)
         {
-            var validation = _userAction.CreateUserAction(userData);
+            var validation = _userAction.UserCreationAction(userData);
             if (!validation.IsValid)
-                return BadRequest(validation.ErrorMessage);
+                return BadRequest(validation.Message);
 
             return Ok(new { message = "User created successfully" });
         }

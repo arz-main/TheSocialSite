@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Models.Post;
+using TheSocialSite.Domain.Models.Response;
 
 namespace TheSocialSite.Api.Controllers
 {
@@ -28,18 +29,18 @@ namespace TheSocialSite.Api.Controllers
         }
 
         [HttpPost("create")]
-        public IActionResult CreatePost([FromBody] CreatePostDto postData)
+        public IActionResult CreatePost([FromBody] PostCreationDto postData)
         {
             if (postData == null)
             {
                 return BadRequest("No data provided");
             }
-            PostValidationDto validationInfo = _postAction.CreatePostAction(postData);
+            ActionResponse validationInfo = _postAction.PostCreationAction(postData);
             if (!validationInfo.IsValid)
             {
-                return BadRequest(validationInfo.ErrorMessage);
+                return BadRequest(validationInfo.Message);
             }
-            return Ok($"Post creation successful. PostId: {validationInfo.PostId}");
+            return Ok(validationInfo);
         }
     }
 }

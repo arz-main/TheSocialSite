@@ -12,14 +12,7 @@ namespace TheSocialSite.DataAccess.Context
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(
-                "Server=localhost;Database=TheSocialSiteDb;Trusted_Connection=True;TrustServerCertificate=True;"
-            );
-        }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Ignore<UserData>();
-            // rest of your post config...
+            optionsBuilder.UseSqlServer(DbSession.ConnectionString);
         }
         public DbSet<PostData> Posts { get; set; }
     }

@@ -4,59 +4,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheSocialSite.DataAccess;
+using TheSocialSite.DataAccess.Context;
 using TheSocialSite.Domain.Entities.User;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.Response;
 
 namespace TheSocialSite.Business.Core
 {
     public class UserActions
     {
-        private readonly DbSession _dbSession;
-
-        public UserActions()
-        {
-            _dbSession = new DbSession();
-        }
+        public UserActions(){}
 
         public UserData[] GetAllUsersActionExecution()
         {
-            using (var userContext = _dbSession.UserContext())
+            using (var userContext = new UserContext())
             {
                 return userContext.Users.ToArray();
             }
         }
 
-        public UserSignupValidationDto UserSignupValidationExecution(UserSignupDto userData)
+        public SignupActionResponse UserSignupValidationExecution(UserSignupDto userData)
         {
             if (userData == null)
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Signup data is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Signup data is required." };
 
             if (string.IsNullOrWhiteSpace(userData.Email))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Email is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Email is required." };
 
             if (string.IsNullOrWhiteSpace(userData.Username))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Username is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Username is required." };
 
             if (string.IsNullOrWhiteSpace(userData.Password))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Password is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Password is required." };
 
             if (string.IsNullOrWhiteSpace(userData.ConfirmPassword))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Confirmation password is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Confirmation password is required." };
 
             if (userData.Password != userData.ConfirmPassword)
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Passwords do not match." };
+                return new SignupActionResponse { IsValid = false, Message = "Passwords do not match." };
 
-            return new UserSignupValidationDto { IsValid = true };
+            return new SignupActionResponse { IsValid = true };
         }
 
-        public UserSignupValidationDto CreateUserActionExecution(UserSignupDto userData)
+        public SignupActionResponse UserCreationActionExecution(UserSignupDto userData)
         {
             var validationResult = UserSignupValidationExecution(userData);
             if (!validationResult.IsValid)
             {
                 return validationResult;
             }
-            using (var userContext = _dbSession.UserContext())
+            using (var userContext = new UserContext())
             {
                 var newUser = new UserData
                 {
@@ -68,7 +64,7 @@ namespace TheSocialSite.Business.Core
                 userContext.SaveChanges();
             }
 
-            return new UserSignupValidationDto
+            return new SignupActionResponse
             {
                 IsValid = true,
                 Email = userData.Email,

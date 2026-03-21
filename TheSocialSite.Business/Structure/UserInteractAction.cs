@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TheSocialSite.Business.Core;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Entities.User;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.Response;
 
 
 namespace TheSocialSite.Business.Structure
@@ -17,9 +17,9 @@ namespace TheSocialSite.Business.Structure
         {
             return GetAllUsersActionExecution();
         }
-        public UserSignupValidationDto CreateUserAction(UserSignupDto userData)
+        public SignupActionResponse UserCreationAction(UserSignupDto userData)
         {
-            return CreateUserActionExecution(userData);
+            return UserCreationActionExecution(userData);
         }
     }
 }

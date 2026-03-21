@@ -14,6 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Connection string for db, set in DataAccess layer for use in contexts
+TheSocialSite.DataAccess.DbSession.ConnectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",

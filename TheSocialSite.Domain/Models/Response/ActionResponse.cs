@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheSocialSite.Domain.Models.Post
+namespace TheSocialSite.Domain.Models.Response
 {
-    public class PostValidationDto
+    public class ActionResponse
     {
-        public string PostId { get; set; }
         public bool IsValid { get; set; }
-        public string ErrorMessage { get; set; }
-
+        public string Message { get; set; }
     }
 }
