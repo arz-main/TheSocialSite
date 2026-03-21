@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TheSocialSite.DataAccess.Migrations.User
 {
     /// <inheritdoc />
-    public partial class AddUserDataFields : Migration
+    public partial class AddUserContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

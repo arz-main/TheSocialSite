@@ -5,16 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheSocialSite.Domain.Models.User
+namespace TheSocialSite.Domain.Models.Response
 {
-    public class UserSignupValidationDto
+    public class SignupActionResponse
     {
         public string Email { get; set; }
         public string? Username { get; set; }
-
-        [NotMapped] // this field is not stored in DB
-        public bool IsValid { get; set; } = true;
-        [NotMapped]
-        public string? ErrorMessage { get; set; }
+        public bool IsValid { get; set; }
+        public string? Message { get; set; }
     }
 }

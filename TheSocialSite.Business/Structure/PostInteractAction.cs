@@ -7,6 +7,7 @@ using TheSocialSite.Business.Core;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Entities.Post;
 using TheSocialSite.Domain.Models.Post;
+using TheSocialSite.Domain.Models.Response;
 
 namespace TheSocialSite.Business.Structure
 {
@@ -16,9 +17,9 @@ namespace TheSocialSite.Business.Structure
         {
             return GetAllPostsActionExecution();
         }
-        public PostValidationDto CreatePostAction(CreatePostDto postData)
+        public ActionResponse PostCreationAction(PostCreationDto postData)
         {
-            return CreatePostActionExecution(postData);
+            return PostCreationActionExecution(postData);
         }
     }
 }

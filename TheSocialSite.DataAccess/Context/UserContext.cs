@@ -8,14 +8,7 @@ namespace TheSocialSite.DataAccess.Context
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(
-                "Server=localhost;Database=TheSocialSiteDb;Trusted_Connection=True;TrustServerCertificate=True;"
-            );
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Ignore<PostData>();
+            optionsBuilder.UseSqlServer(DbSession.ConnectionString);
         }
         public DbSet<UserData> Users { get; set; }
     }

@@ -1,92 +1,90 @@
-﻿using System.Xml.Serialization;
+﻿using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Business.Structure;
-using TheSocialSite.DataAccess;
+using TheSocialSite.DataAccess.Context;
 using TheSocialSite.Domain.Entities.User;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.Response;
 
 namespace TheSocialSite.Business.Core
 {
     public class AuthActions
     {
-        private readonly DbSession _dbSession;
-        private readonly JwtServiceAction _jwtService;
-        public AuthActions()
-        {
-            _dbSession = new DbSession();
-            _jwtService = new JwtServiceAction();
+        private readonly IJwtServiceAction _jwtServiceAction;
+        public AuthActions(){
+            _jwtServiceAction = new JwtServiceAction();
         }
 
-        public UserLoginValidationDto UserLoginDataValidationExecution(UserLoginDto loginData)
+        public LoginActionResponse UserLoginDataValidationExecution(UserLoginDto loginData)
         {
             if (loginData == null)
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Login data is required." };
+                return new LoginActionResponse { IsValid = false, Message = "Login data is required." };
 
             if (string.IsNullOrWhiteSpace(loginData.UserIdentifier))
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Email or username is required." };
+                return new LoginActionResponse { IsValid = false, Message = "Email or username is required." };
 
             if (string.IsNullOrWhiteSpace(loginData.Password))
-                return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Password is required." };
+                return new LoginActionResponse { IsValid = false, Message = "Password is required." };
 
-            using (var userContext = _dbSession.UserContext())
+            using (var userContext = new UserContext())
             {
                 var user = userContext.Users
                     .FirstOrDefault(u => u.Username == loginData.UserIdentifier || u.Email == loginData.UserIdentifier);
 
                 if (user == null)
-                    return new UserLoginValidationDto { IsValid = false, ErrorMessage = "User not found." };
+                    return new LoginActionResponse { IsValid = false, Message = "User not found." };
 
                 if (!BCrypt.Net.BCrypt.Verify(loginData.Password, user.Password))
-                    return new UserLoginValidationDto { IsValid = false, ErrorMessage = "Invalid password." };
+                    return new LoginActionResponse { IsValid = false, Message = "Invalid password." };
 
-                // generate token while user is still in scope
-                var token = _jwtService.GenerateTokenAction(user.Username);
+                // generate session token
+                var token = _jwtServiceAction.GenerateTokenAction(user.Username, user.Id);
 
-                return new UserLoginValidationDto
+                return new LoginActionResponse
                 {
                     UserIdentifier = loginData.UserIdentifier,
                     IsValid = true,
+                    Message = "Login successful",
                     Token = token
                 };
             }
         }
 
-        public UserSignupValidationDto UserSignupValidationExecution(UserSignupDto userData)
+        public SignupActionResponse UserSignupValidationExecution(UserSignupDto userData)
         {
             if (userData == null)
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Signup data is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Signup data is required." };
 
             if (string.IsNullOrWhiteSpace(userData.Email))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Email is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Email is required." };
 
             if (string.IsNullOrWhiteSpace(userData.Username))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Username is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Username is required." };
 
             if (string.IsNullOrWhiteSpace(userData.Password))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Password is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Password is required." };
 
             if (string.IsNullOrWhiteSpace(userData.ConfirmPassword))
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Confirmation password is required." };
+                return new SignupActionResponse { IsValid = false, Message = "Confirmation password is required." };
 
             if (userData.Password != userData.ConfirmPassword)
-                return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Passwords do not match." };
+                return new SignupActionResponse { IsValid = false, Message = "Passwords do not match." };
 
-            return new UserSignupValidationDto { IsValid = true };
+            return new SignupActionResponse { IsValid = true };
         }
 
-        public UserSignupValidationDto UserCreationExecution(UserSignupDto userData)
+        public SignupActionResponse UserCreationExecution(UserSignupDto userData)
         {
             var validationInfo = UserSignupValidationExecution(userData);
             if (!validationInfo.IsValid)
                 return validationInfo;
 
-            using (var userContext = _dbSession.UserContext())
+            using (var userContext = new UserContext())
             {
                 // check for duplicate email/username before creating
                 var exists = userContext.Users
                     .Any(u => u.Email == userData.Email || u.Username == userData.Username);
 
                 if (exists)
-                    return new UserSignupValidationDto { IsValid = false, ErrorMessage = "Email or username already taken." };
+                    return new SignupActionResponse { IsValid = false, Message = "Email or username already taken." };
 
                 var user = new UserData
                 {
@@ -101,9 +99,10 @@ namespace TheSocialSite.Business.Core
                 userContext.SaveChanges();
             }
 
-            return new UserSignupValidationDto
+            return new SignupActionResponse
             {
                 IsValid = true,
+                Message = "User created successfully",
                 Email = userData.Email,
                 Username = userData.Username
             };

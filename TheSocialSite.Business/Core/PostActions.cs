@@ -7,40 +7,38 @@ using TheSocialSite.DataAccess;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Entities.Post;
 using TheSocialSite.Domain.Models.Post;
+using TheSocialSite.Domain.Models.Response;
+using TheSocialSite.DataAccess.Context;
 
 namespace TheSocialSite.Business.Core
 {
     public class PostActions
     {
-        private readonly DbSession _dbSession;
-        public PostActions()
-        {
-            _dbSession = new DbSession();
-        }
+        public PostActions() { }
         public PostData[] GetAllPostsActionExecution()
         {
-            using (var postContext = _dbSession.PostContext())
+            using (var postContext = new PostContext())
             {
                 return postContext.Posts.ToArray();
             }
         }
-        public PostValidationDto CreatePostActionExecution(CreatePostDto postData)
+        public ActionResponse PostCreationActionExecution(PostCreationDto postData)
         {
             if (postData == null)
             {
-                return new PostValidationDto
+                return new ActionResponse
                 {
                     IsValid = false,
-                    ErrorMessage = "No data provided"
+                    Message = "No data provided"
                 };
             }
-            PostData postEntity;
-            using (var postContext = _dbSession.PostContext())
+            using (var postContext = new PostContext())
             {
-                postEntity = new PostData
+                var postEntity = new PostData
                 {
                     Title = postData.Title,
                     Description = postData.Description,
+                    Author = postData.Author,
                     ImageUrl = postData.ImageUrl,
                     ReferenceUrl = postData.ReferenceUrl,
                     Category = postData.Category,
@@ -51,11 +49,10 @@ namespace TheSocialSite.Business.Core
                 postContext.Posts.Add(postEntity);
                 postContext.SaveChanges();
             };
-            return new PostValidationDto
+            return new ActionResponse
             {
-                PostId = postEntity.Id,
                 IsValid = true,
-                ErrorMessage = null
+                Message = "Post created successfully"
             };
         }
     }

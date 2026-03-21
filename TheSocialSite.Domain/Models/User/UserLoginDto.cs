@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheSocialSite.Domain.Models.User
+namespace TheSocialSite.Domain.Models.Response
 {
     public class UserLoginDto
     {
