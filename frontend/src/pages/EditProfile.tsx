@@ -7,7 +7,7 @@ import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/InputComponent";
 import { Label } from "../components/ui/LabelComponent";
 import { Textarea } from "../components/ui/TextArea";
-import Paths from "../routes/paths";
+import paths from "../routes/paths";
 
 export default function EditProfile() {
 	const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function EditProfile() {
 		// Save to localStorage
 		localStorage.setItem("profileData", JSON.stringify(profileData));
 		console.log("Update profile:", profileData);
-		navigate(Paths.artist.profile);
+		navigate(paths.artist.profile);
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -267,7 +267,7 @@ export default function EditProfile() {
 									whileTap={{ scale: 0.98 }}
 									transition={{ type: "spring", stiffness: 400, damping: 17 }}
 								>
-									<Link to={Paths.artist.profile} className="block">
+									<Link to={paths.artist.profile} className="block">
 										<Button variant="outline" className="w-full h-11" type="button">
 											Cancel
 										</Button>

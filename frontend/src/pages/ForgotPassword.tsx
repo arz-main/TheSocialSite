@@ -5,7 +5,7 @@ import { Mail } from "lucide-react";
 import { useState } from "react";
 import { Label } from "../components/ui/LabelComponent";
 import { Button } from "../components/ui/BasicButton";
-import Paths from "../routes/paths";
+import paths from "../routes/paths";
 import { LinkButton } from "../components/ui/LinkButton";
 
 export default function ForgotPassword() {
@@ -42,7 +42,7 @@ export default function ForgotPassword() {
                                 Visit the home page?
                             </p>
                         </div>
-                        <LinkButton to={Paths.home} variant="default" className="text-center">
+                        <LinkButton to={paths.home} variant="default" className="text-center">
                             Go to home page
                         </LinkButton>
                     </Card>
