@@ -10,11 +10,9 @@ namespace TheSocialSite.Domain.Models.Response
 {
     public class UserLoginDto
     {
-        [Required]
         [MaxLength(150)]
         public string UserIdentifier { get; set; } // can be email or username
 
-        [Required]
         [MaxLength(256)]
         public string Password { get; set; }
     }

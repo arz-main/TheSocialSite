@@ -13,13 +13,18 @@ namespace TheSocialSite.Business.Structure
 {
     public class PostInteractAction : PostActions, IPostInteractAction
     {
-        public PostData[] GetAllPostsAction()
+        public List<PostData> GetAllPostsAction()
         {
             return GetAllPostsActionExecution();
         }
-        public ActionResponse PostCreationAction(PostCreationDto postData)
+        public List<PostData> GetUserPostsAction(string id)
         {
-            return PostCreationActionExecution(postData);
+            return GetUserPostsActionExecution(id);
         }
+        public ActionResponse PostCreationAction(PostCreationDto postData, string userId, string username)
+        {
+            return PostCreationActionExecution(postData, userId, username);
+        }
+
     }
 }

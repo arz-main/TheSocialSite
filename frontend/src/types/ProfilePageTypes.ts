@@ -1,3 +1,5 @@
+import type { Post } from "./PostTypes";
+
 export interface Badge {
     id: string;
     name: string;
@@ -17,8 +19,8 @@ export interface Drawing {
 
 export interface TabsPageProps {
     badges: Badge[];
-    currentUserDrawings: Drawing[];
-    userDrawingImages: Record<string, string>;
+    userDrawings: Drawing[];
+    userPosts: Post[];
 
     // Add these for tab control and optional upload buttons
     activeTab?: string;

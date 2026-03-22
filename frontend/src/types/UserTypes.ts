@@ -1,4 +1,5 @@
-export type Role = "user" | "admin";
+import type { Role } from "../types/RolesTypes";
+
 export interface User {
     id: string;
     email: string;

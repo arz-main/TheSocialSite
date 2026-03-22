@@ -1,22 +1,31 @@
-const Paths = {
+const paths = {
 	home: "/",
 	about: "/about",
-	explore: "/explore",
-	practice: "/practice",
-	roadmap: "/roadmap",
 	login: "/login",
 	signup: "/signup",
-	forgot_password: "/forgot-password",
-	reset_password: "/reset-password",
 	terms: "/terms",
 	privacy: "/privacy",
-	error: {
-		unauthorized: "/unauthorized",
-		forbidden: "/forbidden",
-		not_found: "/not-found",
-		internal_server_error: "/internal-server-error",
+	practice: "/practice",
+	forgot_password: "/forgot-password",
+	reset_password: "/reset-password",
+	explore: {
+		page: "/explore",
+		user: "/explore/user/:userId", // for the app.tsx route
+		toUser: (userId: number | string) => `/explore/user/${userId}`,
 	},
-
+	roadmap: {
+		page: "/roadmap",
+		course: "/roadmap/course/:courseId", // for the app.tsx route
+		lesson: "/roadmap/course/:courseId/lesson/:lessonId", // for the app.tsx route
+		toCourse: (courseId: number | string) => `/roadmap/course/${courseId}`,
+		toLesson: (courseId: number | string, lessonId: number | string) => `/roadmap/course/${courseId}/lesson/${lessonId}`,
+	},
+	artist: {
+		profile: "/artist/profile",
+		edit_profile: "/artist/edit-profile",
+		statistics: "/artist/statistics",
+		messages: "/artist/messages",
+	},
 	admin: {
 		dashboard: "/admin",
 		manage_users: "/admin/manage-users",
@@ -26,16 +35,12 @@ const Paths = {
 		user_requests: "/admin/user-requests",
 		course_creator: "/admin/course-creator",
 	},
-
-	artist: {
-		profile: "/artist/profile",
-		edit_profile: "/artist/edit-profile",
-		statistics: "/artist/statistics",
-		messages: "/artist/messages",
+	error: {
+		unauthorized: "/unauthorized",
+		forbidden: "/forbidden",
+		not_found: "/not-found",
+		internal_server_error: "/internal-server-error",
 	},
-
-	course: (id: number | string) => `/roadmap/course/${id}`,
-	lesson: (courseId: number | string, lessonId: number | string) => `/roadmap/course/${courseId}/lesson/${lessonId}`,
 }
 
-export default Paths
+export default paths;

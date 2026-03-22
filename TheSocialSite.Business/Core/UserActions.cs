@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,11 +15,19 @@ namespace TheSocialSite.Business.Core
     {
         public UserActions(){}
 
-        public UserData[] GetAllUsersActionExecution()
+        public List<UserData> GetAllUsersActionExecution()
         {
             using (var userContext = new UserContext())
             {
-                return userContext.Users.ToArray();
+                return userContext.Users.ToList();
+            }
+        }
+
+        public UserData GetUserByIdActionExecution(string userId)
+        {
+            using (var userContext = new UserContext())
+            {
+                return userContext.Users.FirstOrDefault(u => u.Id == userId);
             }
         }
 
