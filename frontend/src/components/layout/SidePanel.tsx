@@ -13,7 +13,7 @@ import {
 	UserPlus,
 } from "lucide-react";
 import { Button } from "../ui/BasicButton";
-import Paths from "../../routes/paths";
+import paths from "../../routes/paths";
 
 interface SidebarProps {
 	isOpen: boolean;
@@ -24,18 +24,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 	const location = useLocation();
 
 	const navItems = [
-		{ path: Paths.home, label: "Home", icon: Home },
-		{ path: Paths.practice, label: "Practice", icon: Image },
-		{ path: Paths.explore, label: "Explore", icon: Compass },
-		{ path: Paths.artist.messages, label: "Messages", icon: MessageCircle },
-		{ path: Paths.artist.statistics, label: "Statistics", icon: BarChart3 },
-		{ path: Paths.artist.profile, label: "Profile", icon: User },
-		{ path: Paths.about, label: "About", icon: CircleQuestionMark },
+		{ path: paths.home, label: "Home", icon: Home },
+		{ path: paths.practice, label: "Practice", icon: Image },
+		{ path: paths.explore.page, label: "Explore", icon: Compass },
+		{ path: paths.artist.messages, label: "Messages", icon: MessageCircle },
+		{ path: paths.artist.statistics, label: "Statistics", icon: BarChart3 },
+		{ path: paths.artist.profile, label: "Profile", icon: User },
+		{ path: paths.about, label: "About", icon: CircleQuestionMark },
 	];
 
 	const authItems = [
-		{ path: Paths.login, label: "Log In", icon: LogIn },
-		{ path: Paths.signup, label: "Sign Up", icon: UserPlus },
+		{ path: paths.login, label: "Log In", icon: LogIn },
+		{ path: paths.signup, label: "Sign Up", icon: UserPlus },
 	];
 
 	return (
