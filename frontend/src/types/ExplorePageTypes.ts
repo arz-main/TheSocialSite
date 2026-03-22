@@ -10,12 +10,12 @@ export type Comment = {
 // --- Props ---
 export interface CommentsModalProps {
 	post: Post;
-	mockComments?: Record<string, Comment[]>;
+	comments?: Record<string, Comment[]>;
 	onClose: () => void;
 	likedDrawings: Set<string>;
 	toggleLike: (id: string) => void;
 	initialImageIndex?: number;
-	onUserClick?: (userId: string) => void;
+	onSubmitComment: (postId: string, text: string) => Promise<Comment>;
 }
 
 export interface PostCardProps {
@@ -27,7 +27,6 @@ export interface PostCardProps {
 	onOpenComments: (post: Post) => void;
 	formatDate: (d: string) => string;
 	formatDuration: (s: number) => string;
-	onUserClick: (userId: string) => void;
 }
 
 export interface DropDownProps {
