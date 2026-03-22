@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# SQL Server Management Studio Version 22
+VisualStudioVersion = 18.4.11612.150 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheSocialSite.Api", "TheSocialSite.Api\TheSocialSite.Api.csproj", "{4B35E383-C0BC-4DC9-BC8A-39A89C15A076}"
 EndProject
@@ -15,9 +15,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4B35E383-C0BC-4DC9-BC8A-39A89C15A076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -36,5 +33,11 @@ Global
 		{3794AC3B-14D7-4AEB-AFB2-3D1446D25A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3794AC3B-14D7-4AEB-AFB2-3D1446D25A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3794AC3B-14D7-4AEB-AFB2-3D1446D25A5F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F14A8383-27CE-41E6-9F83-3A9D088BFD3D}
 	EndGlobalSection
 EndGlobal

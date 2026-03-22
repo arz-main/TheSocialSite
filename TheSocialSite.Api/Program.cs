@@ -12,7 +12,34 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Enter your JWT token. Example: eyJhbGci..."
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // Connection string for db, set in DataAccess layer for use in contexts
 TheSocialSite.DataAccess.DbSession.ConnectionString =
@@ -21,9 +48,20 @@ TheSocialSite.DataAccess.DbSession.ConnectionString =
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
-        policy => policy.WithOrigins("https://localhost:5173", "http://localhost:5173")
+        policy => policy.WithOrigins(
+            "http://localhost:5173",
+            "https://localhost:5173",
+            "http://localhost:5174", 
+            "https://localhost:5174"   
+        )
                         .AllowAnyMethod()
                         .AllowAnyHeader());
+});
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

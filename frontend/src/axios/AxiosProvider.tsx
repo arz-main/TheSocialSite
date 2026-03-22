@@ -43,7 +43,21 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             axiosInstance.interceptors.response.eject(interceptor);
         };
     }, [axiosInstance, navigate]);
+    //This replaces having to manually set the Authorization header in every service call, 
+    //Axios attaches it automatically on every request from now on
+    useEffect(() => {
+        const interceptor = axiosInstance.interceptors.request.use((config) => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        });
 
+        return () => {
+            axiosInstance.interceptors.request.eject(interceptor);
+        };
+    }, [axiosInstance]);
     return (
         <AxiosContext.Provider value={{ axiosInstance }}>
             {children}
