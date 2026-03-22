@@ -10,7 +10,8 @@ namespace TheSocialSite.Business.Interfaces
 {
     public interface IUserInteractAction
     {
-        public UserData[] GetAllUsersAction();
+        public List<UserData> GetAllUsersAction();
+        public UserData GetUserByIdAction(string userId);
         public SignupActionResponse UserCreationAction(UserSignupDto userData);
     }
 }

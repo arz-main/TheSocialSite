@@ -10,6 +10,6 @@ namespace TheSocialSite.Business.Interfaces
 {
     public interface IJwtServiceAction
     {
-        public string GenerateTokenAction(string username, string id);
+        public string GenerateTokenAction(string id, string username, UserRole role);
     }
 }

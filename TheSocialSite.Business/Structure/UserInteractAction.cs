@@ -13,13 +13,17 @@ namespace TheSocialSite.Business.Structure
 {
     public class UserInteractAction : UserActions, IUserInteractAction
     {
-        public UserData[] GetAllUsersAction()
+        public List<UserData> GetAllUsersAction()
         {
             return GetAllUsersActionExecution();
         }
         public SignupActionResponse UserCreationAction(UserSignupDto userData)
         {
             return UserCreationActionExecution(userData);
+        }
+        public UserData GetUserByIdAction(string userId)
+        {
+            return GetUserByIdActionExecution(userId);
         }
     }
 }
