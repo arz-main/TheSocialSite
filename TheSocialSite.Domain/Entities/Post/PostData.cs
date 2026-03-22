@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Entities.Post
 {
@@ -15,50 +9,45 @@ namespace TheSocialSite.Domain.Entities.Post
         Draft,
         Flagged
     }
+
     public class PostData
     {
+        // --- Server managed, never set by user ---
         [Key]
-        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
 
-        [Required]
-        public string Author { get; set; }
+        public string? Author { get; set; }      // set from JWT
+        public string? AuthorId { get; set; }    // set from JWT
 
+        public PostStatus Status { get; set; } = PostStatus.Draft;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int Likes { get; set; } = 0;
+        public int Comments { get; set; } = 0;
+
+        // --- Required from user ---
         [Required]
         [MaxLength(200)]
         public string Title { get; set; }
 
-        [MaxLength(1000)]
-        public string? Description { get; set; }
-
-        [Required]
-        public PostStatus Status { get; set; } = PostStatus.Draft;
-
         [Required]
         [MaxLength(500)]
         public string ImageUrl { get; set; }
-
-        [MaxLength(500)]
-        public string? ReferenceUrl { get; set; }
 
         [Required]
         [MaxLength(50)]
         public string Category { get; set; }
 
         [Required]
-        public int? Duration { get; set; } // in seconds
+        public int Duration { get; set; } // in seconds
 
-        [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        // --- Optional from user ---
+        [MaxLength(1000)]
+        public string? Description { get; set; }
 
-        [Required]
-        public int? Likes { get; set; } = 0;
+        [MaxLength(500)]
+        public string? ReferenceUrl { get; set; }
 
-        [Required]
-        public int? Comments { get; set; } = 0;
-
-        [Required]
-        public bool? ShowWithReference { get; set; } = false;
+        public bool ShowWithReference { get; set; } = false;
     }
 }
