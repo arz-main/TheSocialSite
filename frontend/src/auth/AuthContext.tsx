@@ -1,50 +1,75 @@
-import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react"
+import { createContext, useEffect, useState, useRef } from "react";
+import type { ReactNode } from "react";
+import { jwtDecode } from "jwt-decode";
+import type { JwtPayload } from "../types/JwtTypes";
+import type { User } from "../types/UserTypes";
+import useAxios from "../hooks/useAxios";
+import { type AuthContextType } from "../types/AuthContextTypes";
 
-type User = {
-	name: string;
-	role: string;
-} | null;
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-type AuthContextType = {
-	user: User;
-	login: (username: string, role: string) => void;
-	logout: () => void;
-};
+export function AuthProvider({ children }: { children: ReactNode }) {
+    const [user, setUser] = useState<User | undefined>(undefined);
+    const [initializing, setInitializing] = useState(true);
+    const axiosInstance = useAxios()!;
+    const axiosRef = useRef(axiosInstance);
 
-type AuthProviderProps = {
-	children: ReactNode;
-};
+    // ── pure helpers, no cross-calling ──────────────────────────
+    const fetchUser = async (token: string): Promise<User> => {
+        const { sub: id } = jwtDecode<JwtPayload>(token);
+        const res = await axiosRef.current.get(`users/${id}`);
+        console.log(res.data);
+        setUser(res.data);
+        return res.data; // return it so login() can use it
+    };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+    const clearSession = () => {
+        setUser(undefined);
+        localStorage.removeItem("token");
+    };
 
-export function AuthProvider({ children }: AuthProviderProps) {
-	const [user, setUser] = useState(
-		JSON.parse(localStorage.getItem("user") as string) || null
-	);
+    // ── public actions ───────────────────────────────────────────
 
-	const login = (username: string, role: string) => {
-		const newUser = { username, role };
-		setUser(newUser);
-		localStorage.setItem("user", JSON.stringify(newUser));
-	};
+    const login = async (credential: string, password: string): Promise<User> => {
+        const res = await axiosRef.current.post("auth/login", {
+            UserIdentifier: credential,
+            Password: password,
+        });
+        const { token } = res.data;
+        localStorage.setItem("token", token);
+        const userData = await fetchUser(token);
+        return userData;
+    };
 
-	const logout = () => {
-		setUser(null);
-		localStorage.removeItem("user");
-	};
+    const logout = () => clearSession();
 
-	return (
-		<AuthContext.Provider value={{ user, login, logout }}>
-			{children}
-		</AuthContext.Provider>
-	);
-}
+    const signup = async (username: string, email: string, password: string) => {
+        await axiosRef.current.post("auth/signup", {
+            Username: username,
+            Email: email,
+            Password: password,
+            ConfirmPassword: password,
+        });
+        // signup just creates the user — caller must call login() after
+    };
 
-export function useAuth(): AuthContextType {
-	const context = useContext(AuthContext);
-	if (!context) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
-	return context;
+    // ── rehydrate session on startup ─────────────────────────────
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setInitializing(false);
+            return;
+        }
+
+        fetchUser(token)
+            .catch(() => clearSession())
+            .finally(() => setInitializing(false));
+    }, []);
+
+    return (
+        <AuthContext.Provider value={{ user, initializing, login, logout, signup }}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
