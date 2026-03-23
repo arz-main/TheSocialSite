@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { AxiosProvider } from './axios/AxiosProvider.tsx';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { PostProvider } from './context/PostContext.tsx';
-import { UserProvider } from './context/UserContext.tsx';
+import { UsersProvider } from './context/UsersContext.tsx';
 import App from './App.tsx';
 import './index.css';
 
@@ -13,11 +13,11 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
             <AxiosProvider>
                 <AuthProvider>
-                    <UserProvider>
+                    <UsersProvider>
                         <PostProvider>
                             <App />
                         </PostProvider>
-                    </UserProvider>
+                    </UsersProvider>
                 </AuthProvider>
             </AxiosProvider>
         </BrowserRouter>
