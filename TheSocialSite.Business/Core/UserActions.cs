@@ -71,5 +71,48 @@ namespace TheSocialSite.Business.Core
                 Username = userData.Username
             };
         }
+        public ActionResponse UpdateProfileExecution(string userId, UpdateProfileDto data)
+        {
+            using (var userContext = new UserContext())
+            {
+                var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
+                if (user == null)
+                    return new ActionResponse { IsValid = false, Message = "User not found." };
+
+                // Check username/email not taken by someone else
+                if (!string.IsNullOrWhiteSpace(data.Username) && data.Username != user.Username)
+                {
+                    var taken = userContext.Users.Any(u => u.Username == data.Username && u.Id != userId);
+                    if (taken) return new ActionResponse { IsValid = false, Message = "Username already taken." };
+                    user.Username = data.Username;
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.Email) && data.Email != user.Email)
+                {
+                    var taken = userContext.Users.Any(u => u.Email == data.Email && u.Id != userId);
+                    if (taken) return new ActionResponse { IsValid = false, Message = "Email already taken." };
+                    user.Email = data.Email;
+                }
+
+                if (data.Location != null) user.Location = data.Location;
+                if (data.Website != null) user.Website = data.Website;
+                if (data.Bio != null) user.Bio = data.Bio;
+                if (data.Avatar != null) user.Avatar = data.Avatar;
+
+                if (data.SocialLinks != null)
+                {
+                    user.SocialLinks ??= new UserSocialMedia();
+                    user.SocialLinks.Pinterest = data.SocialLinks.Pinterest;
+                    user.SocialLinks.Twitter = data.SocialLinks.Twitter;
+                    user.SocialLinks.DeviantArt = data.SocialLinks.DeviantArt;
+                    user.SocialLinks.YouTube = data.SocialLinks.YouTube;
+                    user.SocialLinks.Discord = data.SocialLinks.Discord;
+                }
+
+                userContext.SaveChanges();
+            }
+
+            return new ActionResponse { IsValid = true, Message = "Profile updated." };
+        }
     }
 }

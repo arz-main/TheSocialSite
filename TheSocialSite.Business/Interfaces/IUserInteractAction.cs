@@ -12,5 +12,6 @@ namespace TheSocialSite.Business.Interfaces
     {
         public UserData[] GetAllUsersAction();
         public SignupActionResponse UserCreationAction(UserSignupDto userData);
+        ActionResponse UpdateProfileAction(string userId, UpdateProfileDto data);
     }
 }

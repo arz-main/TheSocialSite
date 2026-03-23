@@ -24,7 +24,7 @@ namespace TheSocialSite.Domain.Entities.User
 
         [Required]
         [MaxLength(256)] // hashed password length
-        public string Password { get; set; }
+        public  string Password { get; set; }
 
         [Required]
         public UserRole Role { get; set; }
@@ -45,11 +45,8 @@ namespace TheSocialSite.Domain.Entities.User
         [MaxLength(150)]
         public string? Website { get; set; }
 
-        // i dont know how this works
-        //public UserSocialMedia? SocialLinks { get; set; }
-        //public ICollection<UserFollowData>? Followers { get; set; }
-        //public ICollection<UserFollowData>? Following { get; set; }
-
+        public UserSocialMedia? SocialLinks { get; set; }
+       
         public int PostsCount { get; set; }
 
         [Required]
