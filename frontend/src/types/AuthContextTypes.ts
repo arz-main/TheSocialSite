@@ -1,7 +1,7 @@
 import type { User } from "./UserTypes";
 
 export type AuthContextType = {
-    user: User | undefined;
+    user: User;
     initializing: boolean;
     login: (credential: string, password: string) => Promise<User>;
     logout: () => void;

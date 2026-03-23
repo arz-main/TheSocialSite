@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/InputComponent";
+import { Input } from "../components/ui/BasicInput";
 import { Label } from "../components/ui/LabelComponent";
 import { Button } from "../components/ui/BasicButton";
 import { Lock } from "lucide-react";

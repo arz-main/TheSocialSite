@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/InputComponent";
 import { Mail } from "lucide-react";
 import { useState } from "react";
 import { Label } from "../components/ui/LabelComponent";
 import { Button } from "../components/ui/BasicButton";
 import paths from "../routes/paths";
 import { LinkButton } from "../components/ui/LinkButton";
+import { Input } from "../components/ui/BasicInput";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState<string>("");
