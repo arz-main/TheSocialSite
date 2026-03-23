@@ -238,8 +238,8 @@ export function CommentsModal({
 							className="w-9 h-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all overflow-hidden"
 							onClick={() => { handleUserClick?.(post.authorId); onClose(); }}
 						>
-							{post.authorAvatar ? (
-								<img src={post.authorAvatar} alt={post.author} className="w-full h-full object-cover" />
+							{post?.userAvatar ? (
+								<img src={post.userAvatar} alt={post.author} className="w-full h-full object-cover" />
 							) : (
 								<User className="w-4 h-4 text-text/60" />
 							)}
