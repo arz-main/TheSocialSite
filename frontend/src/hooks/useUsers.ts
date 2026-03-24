@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
+import { UsersContext } from "../context/UsersContext";
 
-export const useUser = () => {
-    const ctx = useContext(UserContext);
+export const useUsers = () => {
+    const ctx = useContext(UsersContext);
     if (!ctx) throw new Error("useUser must be used within a UserProvider");
     return ctx;
 };

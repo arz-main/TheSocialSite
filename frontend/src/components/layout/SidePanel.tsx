@@ -1,5 +1,6 @@
-import { Link, useLocation } from "react-router";
-import { motion, AnimatePresence } from "motion/react";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
 	Home,
 	Image,
@@ -11,9 +12,13 @@ import {
 	LogIn,
 	CircleQuestionMark,
 	UserPlus,
+	Sun,
+	Moon,
+	Icon,
 } from "lucide-react";
 import { Button } from "../ui/BasicButton";
 import paths from "../../routes/paths";
+import switchTheme from "../../utils/ThemeUtil";
 
 interface SidebarProps {
 	isOpen: boolean;
@@ -22,6 +27,36 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
 	const location = useLocation();
+	const themes = ["light", "dark"];
+	const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
+
+	// Initialize theme
+	useEffect(() => {
+		const storedTheme = localStorage.getItem("theme");
+		if (storedTheme) {
+			const index = themes.indexOf(storedTheme);
+			if (index >= 0) {
+				setCurrentThemeIndex(index);
+				switchTheme(storedTheme);
+				return;
+			}
+		}
+		switchTheme(themes[0]);
+	}, []);
+
+	// Close sidebar on route change
+	useEffect(() => {
+		onClose();
+	}, [location.pathname]);
+
+	const handleToggle = () => {
+		const nextIndex = (currentThemeIndex + 1) % themes.length;
+		const nextTheme = themes[nextIndex];
+
+		setCurrentThemeIndex(nextIndex);
+		switchTheme(nextTheme);
+		localStorage.setItem("theme", nextTheme);
+	};
 
 	const navItems = [
 		{ path: paths.home, label: "Home", icon: Home },
@@ -48,7 +83,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.2 }}
-						className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-40"
+						className="fixed inset-0 bg-background-opposite/30 backdrop-blur-sm z-40"
 						onClick={onClose}
 					/>
 				)}
@@ -64,41 +99,27 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 						transition={{ type: "spring", stiffness: 300, damping: 30 }}
 						className="fixed left-0 top-0 bottom-0 w-72 bg-card border-r border-border z-50 flex flex-col"
 					>
-						{/* Header */}
-						<div className="p-6 border-b border-border flex items-center justify-between pt-22">
-							<Link to="/" onClick={onClose} className="flex items-center gap-2">
-								<span className="text-text text-xl tracking-tight">SketchFlow</span>
-							</Link>
-							<motion.button
-								onClick={onClose}
-								className="p-2 hover:bg-muted rounded-lg transition-colors"
-								whileTap={{ scale: 0.9 }}
-								transition={{ type: "spring", stiffness: 400, damping: 17 }}
-							>
-								<X className="text-text w-5 h-5" />
-							</motion.button>
-						</div>
-
-						{/* Navigation Links */}
-						<nav className="flex-1 p-4 overflow-y-auto">
-							<div className="space-y-1 gap-2">
+						{/* Navigation */}
+						<nav className="flex-1 p-4 pt-18 overflow-y-auto">
+							<div className="space-y-2">
 								{navItems.map((item) => {
-									const isActive = location.pathname === item.path;
+									const isActive = location.pathname.startsWith(item.path);
 									const Icon = item.icon;
 
 									return (
-										<Link className="text-text" key={item.path} to={item.path} onClick={onClose}>
+										<Link
+											className="text-text"
+											key={item.path}
+											to={item.path}
+											onClick={onClose}
+										>
 											<motion.div
 												className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-													? "bg-button text-white"
-													: "text-foreground hover:bg-muted"
+													? "bg-button text-text-opposite"
+													: "text-text hover:bg-primary/10 hover:text-primary"
 													}`}
 												whileTap={{ scale: 0.98 }}
-												transition={{
-													type: "spring",
-													stiffness: 400,
-													damping: 17,
-												}}
+												transition={{ type: "spring", stiffness: 400, damping: 17 }}
 											>
 												<Icon className="w-5 h-5" />
 												<span>{item.label}</span>
@@ -109,9 +130,34 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 							</div>
 						</nav>
 
-						{/* Auth Section */}
+						{/* Theme */}
 						<div className="p-4 border-t border-border">
-							<div className="mb-2 text-sm text-text px-">
+							<div className="mb-2 text-sm text-text-opaque px-1">
+								Theme
+							</div>
+
+							<motion.div
+								onClick={handleToggle}
+								whileTap={{ scale: 0.98 }}
+								transition={{ type: "spring", stiffness: 400, damping: 17 }}
+							>
+								<Button
+									variant="outline"
+									className="w-full justify-start gap-3"
+								>
+									{currentThemeIndex === 0 ? (
+										<Moon className="w-4 h-4" />
+									) : (
+										<Sun className="w-4 h-4" />
+									)}
+									Change Theme
+								</Button>
+							</motion.div>
+						</div>
+
+						{/* Auth */}
+						<div className="p-4 border-t border-border">
+							<div className="mb-2 text-sm text-text-opaque px-1">
 								Account
 							</div>
 							<div className="flex flex-col space-y-1">
@@ -119,14 +165,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 									const Icon = item.icon;
 
 									return (
-										<Link className="text-text" key={item.path} to={item.path} onClick={onClose}>
+										<Link
+											className="text-text"
+											key={item.path}
+											to={item.path}
+											onClick={onClose}
+										>
 											<motion.div
 												whileTap={{ scale: 0.98 }}
-												transition={{
-													type: "spring",
-													stiffness: 400,
-													damping: 17,
-												}}
+												transition={{ type: "spring", stiffness: 400, damping: 17 }}
 											>
 												<Button
 													variant="outline"

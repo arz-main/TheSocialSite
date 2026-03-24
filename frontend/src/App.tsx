@@ -2,14 +2,13 @@ import { Routes, Route } from "react-router-dom";
 import { } from "./axios/AxiosProvider";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
-import ThemeToggle from "./components/layout/ThemeToggle";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import LoadingScreen from "./components/ui/LoadingScreen";
 
 import Home from "./pages/Home";
-import Profile from "./pages/Profile"
+import ArtistProfile from "./pages/ArtistProfile";
+import OthersProfile from "./pages/OthersProfile";
 import EditProfile from "./pages/EditProfile";
-import UserProfile from "./pages/ArtistProfile";
 import Practice from "./pages/Practice";
 import Roadmap from "./pages/Roadmap";
 import About from "./pages/About";
@@ -44,16 +43,13 @@ const App = () => {
 		<div className="flex flex-col min-h-screen">
 			<ScrollToTop/>
 			<Navbar />
-			<div className="fixed bottom-4 right-4 z-50">
-				<ThemeToggle />
-			</div>
 			<main className="flex flex-col flex-1 pt-16">
 				<Routes>
 					{/* access to all users */}
 					<Route path={paths.home} element={<Home />} />
 					<Route path={paths.about} element={<About />} />
 					<Route path={paths.explore.page} element={<Explore />} />
-					<Route path={paths.explore.user} element={<UserProfile />} />
+					<Route path={paths.explore.user} element={<OthersProfile />} />
 					<Route path={paths.practice} element={<Practice />} />
 					<Route path={paths.roadmap.page} element={<Roadmap />} />
 					<Route path={paths.login} element={<Login />} />
@@ -84,7 +80,7 @@ const App = () => {
 					} />
 					<Route path={paths.artist.profile} element={
 						<ProtectedRoute allowedRoles={[Role.User, Role.Admin]}>
-							<Profile />
+							<ArtistProfile />
 						</ProtectedRoute>
 					} />
 

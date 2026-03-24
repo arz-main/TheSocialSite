@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { Mail, Lock, User as UserIcon, Eye, EyeOff } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/InputComponent";
+import { Input } from "../components/ui/BasicInput";
 import { Label } from "../components/ui/LabelComponent";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
