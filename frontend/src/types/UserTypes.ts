@@ -1,5 +1,6 @@
-export type Role = "user" | "admin";
-export interface User {
+import type { Role } from "../types/RolesTypes";
+
+export type User = {
     id: string;
     email: string;
     username: string;
@@ -21,4 +22,4 @@ export interface User {
     following?: string[];
     postsCount: number;
     joinedDate: string;
-}
+} | undefined;

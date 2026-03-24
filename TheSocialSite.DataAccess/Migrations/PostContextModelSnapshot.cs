@@ -29,7 +29,9 @@ namespace TheSocialSite.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Author")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Category")
@@ -37,8 +39,7 @@ namespace TheSocialSite.DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("Comments")
-                        .IsRequired()
+                    b.Property<int>("Comments")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -48,8 +49,7 @@ namespace TheSocialSite.DataAccess.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int?>("Duration")
-                        .IsRequired()
+                    b.Property<int>("Duration")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
@@ -57,16 +57,14 @@ namespace TheSocialSite.DataAccess.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int?>("Likes")
-                        .IsRequired()
+                    b.Property<int>("Likes")
                         .HasColumnType("int");
 
                     b.Property<string>("ReferenceUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<bool?>("ShowWithReference")
-                        .IsRequired()
+                    b.Property<bool>("ShowWithReference")
                         .HasColumnType("bit");
 
                     b.Property<int>("Status")

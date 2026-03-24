@@ -36,7 +36,7 @@ namespace TheSocialSite.Business.Core
                     return new LoginActionResponse { IsValid = false, Message = "Invalid password." };
 
                 // generate session token
-                var token = _jwtServiceAction.GenerateTokenAction(user.Username, user.Id);
+                var token = _jwtServiceAction.GenerateTokenAction(user.Id, user.Username, user.Role);
 
                 return new LoginActionResponse
                 {

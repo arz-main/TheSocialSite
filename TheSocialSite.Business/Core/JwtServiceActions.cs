@@ -5,13 +5,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TheSocialSite.Business.Interfaces;
+using TheSocialSite.Domain.Entities.User;
 
 public class JwtServiceActions
 {
     private readonly IConfiguration _configuration =
         new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-    public string GenerateTokenActionExecution(string username, string id)
+    public string GenerateTokenActionExecution(string id, string username, UserRole role)
     {
         var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]);
         var issuer = _configuration["JwtSettings:Issuer"];
@@ -19,8 +20,10 @@ public class JwtServiceActions
         var expires = DateTime.UtcNow.AddDays(double.Parse(_configuration["JwtSettings:ExpiryDays"]));
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(JwtRegisteredClaimNames.Jti, id)
+            new Claim(JwtRegisteredClaimNames.Sub, id),
+            new Claim(JwtRegisteredClaimNames.Name, username),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Role, role.ToString()), // keep this one as ClaimTypes, roles are special
         };
         var token = new JwtSecurityToken(
             issuer: issuer,

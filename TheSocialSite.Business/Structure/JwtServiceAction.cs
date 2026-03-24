@@ -11,9 +11,9 @@ namespace TheSocialSite.Business.Structure
 {
     public class JwtServiceAction : JwtServiceActions, IJwtServiceAction
     {
-        public string GenerateTokenAction(string username, string id)
+        public string GenerateTokenAction(string id, string username, UserRole role)
         {
-            return GenerateTokenActionExecution(username, id);
+            return GenerateTokenActionExecution(id, username, role);
         }
     }
 }

@@ -1,6 +1,8 @@
 import { Navigate } from "react-router";
-import type { Role } from "../../_mock/mockUsers";
-import Paths from "../../routes/paths";
+import type { Role } from "../../types/RolesTypes";
+import paths from "../../routes/paths";
+import { useAuth } from "../../hooks/useAuth";
+import LoadingScreen from "../ui/LoadingScreen";
 
 interface Props {
     children: React.ReactNode;
@@ -8,13 +10,11 @@ interface Props {
 }
 
 export default function ProtectedRoute({ children, allowedRoles }: Props) {
-    const raw = localStorage.getItem("currentUser");
-    if (!raw) return <Navigate to={Paths.login} replace />;
+    const { user, initializing } = useAuth();
 
-    const user = JSON.parse(raw);
-    if (!allowedRoles.includes(user.role)) {
-        return <Navigate to={Paths.error.unauthorized} replace />;
-    }
+    if (initializing) return <LoadingScreen />;
+    if (!user) return <Navigate to={paths.login} replace />;
+    if (!allowedRoles.includes(user.role as Role)) return <Navigate to={paths.error.unauthorized} replace />;
 
     return <>{children}</>;
 }

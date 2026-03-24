@@ -31,6 +31,17 @@ namespace TheSocialSite.Api.Controllers
             return Ok(users);
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetUser([FromRoute] string id)
+        {
+            var user = _userAction.GetUserByIdAction(id);
+            if (user == null)
+            {
+                return BadRequest("Could not find user");
+            }
+            return Ok(user);
+        }
+
         [HttpPost("create")]
         public IActionResult CreateUser([FromBody] UserSignupDto userData)
         {

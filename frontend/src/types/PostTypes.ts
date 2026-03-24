@@ -1,10 +1,15 @@
-export type PostStatus = "published" | "draft" | "flagged";
+export enum PostStatus {
+	published, 
+	draft,
+	flagged
+};
 
 export interface Post {
 	id: string;
 	title: string,
 	description: string,
 	author: string;
+	authorId: string;
 	status: PostStatus;
 	imageUrl: string;
 	referenceUrl?: string;

@@ -63,5 +63,5 @@ export const mockConversations: Conversation[] = [
 		messages: [
 			{ id: "m14", senderId: "charcoal.dreams", text: "The shading on that piece was incredible", createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString() },
 		],
-	},
+	}, 
 ];

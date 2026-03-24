@@ -5,9 +5,10 @@ import { motion } from "motion/react";
 import { Camera, Save, Palette } from "lucide-react";
 import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/InputComponent";
+import { Input } from "../components/ui/BasicInput";
 import { Label } from "../components/ui/LabelComponent";
 import { Textarea } from "../components/ui/TextArea";
+import paths from "../routes/paths";
 import Paths from "../routes/paths";
 import { useUserService } from "../hooks/useUserService";
 

@@ -1,91 +1,85 @@
 @import "tailwindcss";
 
 @theme {
-	/* Core */
-	--color-primary: var(--primary);
-	--color-primary-hover: var(--primary-hover);
-	--color-primary-soft: var(--primary-soft);
-
-	--color-secondary: var(--secondary);
-	--color-secondary-hover: var(--secondary-hover);
-	--color-secondary-soft: var(--secondary-soft);
-
-	--color-accent: var(--accent);
-	--color-accent-soft: var(--accent-soft);
-
-	/* Status */
-	--color-success: var(--success);
-	--color-warning: var(--warning);
-	--color-danger: var(--danger);
-	--color-info: var(--info);
-
-	/* Surfaces */
-	--color-background: var(--background);
-	--color-background-opposite: var(--background-opposite);
-	--color-card: var(--card);
-	--color-border: var(--border);
-
-	/* Text */
-	--color-text: var(--text);
-	--color-text-opposite: var(--text-opposite);
-	--color-text-opaque: var(--text-opaque);
-	--color-muted: var(--muted);
-
-	/* Interactive */
-	--color-button: var(--button);
-	--color-button-hover: var(--button-hover);
-
-	/* Utility */
-	--color-opposite: var(--opposite);
+    /* Core */
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-soft: var(--primary-soft);
+    --color-secondary: var(--secondary);
+    --color-secondary-hover: var(--secondary-hover);
+    --color-secondary-soft: var(--secondary-soft);
+    --color-accent: var(--accent);
+    --color-accent-soft: var(--accent-soft);
+    /* Status */
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-danger: var(--danger);
+    --color-info: var(--info);
+    /* Surfaces */
+    --color-background: var(--background);
+    --color-background-opposite: var(--background-opposite);
+    --color-card: var(--card);
+    --color-border: var(--border);
+    /* Text */
+    --color-text: var(--text);
+    --color-text-opposite: var(--text-opposite);
+    --color-text-opaque: var(--text-opaque);
+    --color-muted: var(--muted);
+    /* Interactive */
+    --color-button: var(--button);
+    --color-button-hover: var(--button-hover);
+    /* Utility */
+    --color-opposite: var(--opposite);
 }
 
 :root {
-	--primary: #C94A3D;
-	--primary-hover: #B63F33;
-	--primary-soft: #F2C6C1;
-	--secondary: #4AC2B1;
-	--secondary-hover: #3AA99A;
-	--secondary-soft: #CDEDEA;
-	--accent: #FFB703;
-	--accent-soft: #FFE3A3;
-	--muted: #5C5454;
-	--success: #2E8B57;
-	--warning: #E09F3E;
-	--danger: #B00020;
-	--info: #3A86FF;
-	--background: #F5F1E8;
-	--background-opposite: #1C1C1C;
-	--card: #FFF9EF;
-	--navbar: #FFFFFF;
-	--border: #E5DED3;
-	--text: #1C0D0C;
-	--text-opposite: #F0EDEB;
-	--text-opaque: #4A5565;
-	--button: #FF6C5C;
-	--button-hover: #E85A4F;
+    --primary: #C0392B;
+    --primary-hover: #A93226;
+    --primary-soft: #F5C6C2;
+    --secondary: #6C8EAD;
+    --secondary-hover: #5A7A99;
+    --secondary-soft: #D6E4EF;
+    --accent: #D4A04A;
+    --accent-soft: #F7E9C8;
+    --muted: #6B5650;
+    --success: #2E7D52;
+    --warning: #C47F17;
+    --danger: #B71C1C;
+    --info: #1565C0;
+    --background: #EDE5D8;
+    --background-opposite: #161B22;
+    --card: #FFF9F2;
+    --navbar: #FFF9F2;
+    --border: #E8DDD2;
+    --text: #2C1A18;
+    --text-opposite: #E6EDF3;
+    --text-opaque: #6B5650;
+    --button: #E8604C;
+    --button-hover: #CF4F3C;
 }
 
 .dark {
-	--primary: #4AC2B1;
-	--primary-hover: #38A89B;
-	--primary-soft: #1F3F3B;
-	--secondary: #C94A3D;
-	--secondary-hover: #A63C31;
-	--secondary-soft: #3A1F1C;
-	--accent: #FFB703;
-	--accent-soft: #3A2A00;
-	--muted: #c9b7b8;
-	--success: #3DDC97;
-	--warning: #F4A261;
-	--danger: #FF4D6D;
-	--info: #4895EF;
-	--background: #1C1C1C;
-	--background-opposite: #F5F1E8;
-	--card: #242424;
-	--border: #2E2E2E;
-	--text: #F0EDEB;
-	--text-opposite: #1C0D0C;
-	--text-opaque: #B5AA9A;
-	--button: #0093a3;
-	--button-hover: #17a5b0;
+    --primary: #4A9FD4;
+    --primary-hover: #3A8CBF;
+    --primary-soft: #1A3A4A;
+    --secondary: #C0392B;
+    --secondary-hover: #A93226;
+    --secondary-soft: #3A1F1C;
+    --accent: #FFB703;
+    --accent-soft: #2E2200;
+    --muted: #8B949E;
+    --success: #3DDC97;
+    --warning: #F4A261;
+    --danger: #FF4D6D;
+    --info: #4895EF;
+    --background: #161B22;
+    --background-opposite: #FAF6EF;
+    --card: #1E242C;
+    --navbar: #1E242C;
+    --border: #30363D;
+    --text: #E6EDF3;
+    --text-opposite: #2C1A18;
+    --text-opaque: #8B949E;
+    --button: #0288D1;
+    --button-hover: #0277B5;
 }

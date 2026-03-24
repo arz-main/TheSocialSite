@@ -10,6 +10,7 @@ import { StatPill, FilterSelect } from './RoadmapPageUIComponents';
 import { DIFF_STYLES, DIFFICULTY_COLORS, CIRCUMFERENCE } from '../../utils/RoadmapPageUtils';
 import type { Course, Lesson, Chapter } from '../../_mock/mockCourses';
 import type { DifficultyFilter, ProgressFilter, SortOption, RoadmapStats } from '../../types/RoadmapPageTypes';
+import paths from '../../routes/paths';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Roadmap page components
@@ -23,7 +24,7 @@ export function HeroSlicedStrip({ courses }: { courses: Course[] }) {
             {picks.map((c, i) => (
                 <button
                     key={c.id}
-                    onClick={() => navigate(`/roadmap/course/${c.id}`)}
+                    onClick={() => navigate(paths.roadmap.toCourse(c.id))}
                     className="flex-1 relative overflow-hidden rounded-xl group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     style={{ transform: `skewX(${i % 2 === 0 ? -4 : 4}deg)` }}
                 >
@@ -54,7 +55,7 @@ export function RoadmapHero({ courses, stats }: { courses: Course[]; stats: Road
                 <div className="flex-1 min-w-0">
                     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
                         <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-2.5">Your Learning Journey</p>
-                        <h1 className="text-4xl font-black text-text mb-2.5 leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
+                        <h1 className="text-4xl font-black text-text mb-2.5 leading-tight">
                             Learning Paths
                         </h1>
                         <p className="text-muted text-sm leading-relaxed max-w-md mb-6">
@@ -237,7 +238,7 @@ export function CourseBanner({ course, chapters, totalLessons, progressPct, isFu
                 style={{ background: 'radial-gradient(circle at 100% 50%, var(--primary) 0%, transparent 70%)' }} />
             <div className="relative flex items-stretch">
                 <div className="flex-1 px-8 py-6">
-                    <button onClick={() => navigate('/roadmap')}
+                    <button onClick={() => navigate(paths.roadmap.page)}
                         className="flex items-center gap-2 text-muted hover:text-primary text-xs font-black uppercase tracking-widest mb-4 group w-fit transition-colors">
                         <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> Learning Paths
                     </button>
@@ -256,7 +257,7 @@ export function CourseBanner({ course, chapters, totalLessons, progressPct, isFu
                                     </span>
                                 )}
                             </div>
-                            <h1 className="text-3xl font-black text-text leading-tight mb-1" style={{ fontFamily: 'Georgia, serif' }}>{course.title}</h1>
+                            <h1 className="text-3xl font-black text-text leading-tight mb-1">{course.title}</h1>
                             <p className="text-sm text-muted leading-relaxed max-w-lg">{course.description}</p>
                         </div>
                     </div>
@@ -366,7 +367,7 @@ export function LessonRow({ lesson, index, isDone, courseId, onMarkDone, onPract
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06, duration: 0.22 }}
-            onClick={() => { if (lesson.type !== 'practice') navigate(`/roadmap/course/${courseId}/lesson/${lesson.id}`); }}
+            onClick={() => { if (lesson.type !== 'practice') navigate(paths.roadmap.toLesson(courseId, lesson.id)); }}
             className={`group relative rounded-2xl border-2 p-5 transition-all duration-200
                 ${lesson.type !== 'practice' ? 'cursor-pointer' : ''}
                 ${isDone ? 'border-primary/20 bg-primary/[0.03]'
@@ -451,4 +452,4 @@ export function EmptyChapterState() {
             <p className="text-sm text-muted">Pick a chapter on the left to view its lessons</p>
         </motion.div>
     );
-}
+} 

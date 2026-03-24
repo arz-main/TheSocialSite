@@ -8,8 +8,7 @@ namespace TheSocialSite.Domain.Entities.User
     public enum UserRole
     {
         User,
-        Admin,
-        Moderator
+        Admin
     }
     public class UserData
     {

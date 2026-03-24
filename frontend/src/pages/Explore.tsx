@@ -1,13 +1,16 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router";
 import { CommentsModal, Dropdown, PostCard } from "../components/ui/ExplorePageComponents";
 import type { SearchByOption, SortByOption } from "../types/ExplorePageTypes";
 import { getSearchPlaceholder, searchByOptions, sortByOptions, filterPosts, sortPosts } from "../utils/ExplorePageUtils";
-import Paths from "../routes/paths";
+import paths from "../routes/paths";
 import { Button } from "../components/ui/BasicButton";
 import type { Post } from "../types/PostTypes";
+import useAxios from "../hooks/useAxios";
+import LoadingScreen from "../components/ui/LoadingScreen";
+import ErrorScreen from "../components/ui/ErrorScreen";
 
 const PAGE_SIZE = 9;
 
@@ -18,9 +21,35 @@ export default function ExplorePage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchBy, setSearchBy] = useState<SearchByOption>("creator");
     const [sortBy, setSortBy] = useState<SortByOption>("relevance");
-    const [openedDrawing, setOpenedDrawing] = useState<Post | null>(null);
+    const [openedPost, setOpenedPost] = useState<Post | null>(null);
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string>();
+    const axiosInstance = useAxios();
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                setLoading(true);
+                const response = await axiosInstance.get<Post[]>("/posts");
+
+                if (typeof response.data === "string") {
+                    throw new Error("Got HTML instead of JSON — backend may be down");
+                }
+                console.log(response.data);
+                setPosts(response.data);
+            } catch (err) {
+                console.error(err);
+                setError("Failed to load posts");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPosts();
+    }, [axiosInstance]);
 
     const formatDate = (dateString: string) => {
         const diffHours = Math.floor(
@@ -45,13 +74,9 @@ export default function ExplorePage() {
         });
     }, []);
 
-    const handleUserClick = (userId: string) => {
-        navigate(`${Paths.explore}/user/${userId}`);
-    };
-
     const filteredPosts = useMemo(() => {
-        return filterPosts(mockPosts, searchQuery, searchBy);
-    }, [searchQuery, searchBy]);
+        return filterPosts(posts, searchQuery, searchBy);
+    }, [posts, searchQuery, searchBy]);
 
     const sortedPosts = useMemo(() => {
         return sortPosts(filteredPosts, sortBy);
@@ -73,6 +98,9 @@ export default function ExplorePage() {
         setSearchQuery(val);
         setVisibleCount(PAGE_SIZE);
     };
+
+    if (loading) return <LoadingScreen />
+    if (error) return <ErrorScreen />;
 
     return (
         <>
@@ -138,10 +166,9 @@ export default function ExplorePage() {
                                         pageSize={PAGE_SIZE}
                                         isLiked={likedDrawings.has(post.id)}
                                         onToggleLike={toggleLike}
-                                        onOpenComments={setOpenedDrawing}
+                                        onOpenComments={setOpenedPost}
                                         formatDate={formatDate}
                                         formatDuration={formatDuration}
-                                        onUserClick={handleUserClick}
                                     />
                                 ))
                             ) : (
@@ -172,15 +199,14 @@ export default function ExplorePage() {
 
             {/* Comments Modal */}
             <AnimatePresence>
-                {openedDrawing && (
+                {openedPost && (
                     <CommentsModal
-                        post={openedDrawing}
-                        // mockComments={mockComments}
-                        onClose={() => setOpenedDrawing(null)}
+                        post={openedPost}
+                        //onSubmitComment={ }
+                        onClose={() => setOpenedPost(null)}
                         likedDrawings={likedDrawings}
                         toggleLike={toggleLike}
                         initialImageIndex={0}
-                        onUserClick={handleUserClick}
                     />
                 )}
             </AnimatePresence>

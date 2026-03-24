@@ -1,7 +1,7 @@
 import React, { createContext, useMemo, useEffect } from "react";
 import axios, { type AxiosInstance, AxiosError, type AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import Paths from "../routes/paths";
+import paths from "../routes/paths";
 
 export const AxiosContext = createContext<{ axiosInstance: AxiosInstance } | undefined>(undefined);
 
@@ -10,7 +10,7 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const axiosInstance = useMemo(() => {
         return axios.create({
-            baseURL: "https://localhost:7037/api",
+            baseURL: "http://localhost:5000/api",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -18,19 +18,29 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, []);
 
     useEffect(() => {
-        const interceptor = axiosInstance.interceptors.response.use(
+        const requestInterceptor = axiosInstance.interceptors.request.use(
+            (config) => {
+                const token = localStorage.getItem("token");
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
+                return config;
+            }
+        );
+
+        const responseInterceptor = axiosInstance.interceptors.response.use(
             (response: AxiosResponse) => response,
             (error: AxiosError) => {
                 if (error.response) {
                     switch (error.response.status) {
                         case 401:
-                            navigate(Paths.error.unauthorized);
+                            navigate(paths.error.unauthorized);
                             break;
                         case 403:
-                            navigate(Paths.error.forbidden);
+                            navigate(paths.error.forbidden);
                             break;
                         case 500:
-                            navigate(Paths.error.internal_server_error);
+                            navigate(paths.error.internal_server_error);
                             break;
                     }
                 }
@@ -38,9 +48,9 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
         );
 
-        // cleanup (VERY important)
         return () => {
-            axiosInstance.interceptors.response.eject(interceptor);
+            axiosInstance.interceptors.request.eject(requestInterceptor);
+            axiosInstance.interceptors.response.eject(responseInterceptor);
         };
     }, [axiosInstance, navigate]);
     //This replaces having to manually set the Authorization header in every service call, 

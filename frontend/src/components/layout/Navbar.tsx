@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom";
-import Paths from "../../routes/paths";
+import paths from "../../routes/paths";
 import WebsiteLogo from "../ui/SiteLogo";
 import { Menu } from "lucide-react";
 import { motion } from "motion/react";
@@ -36,8 +36,8 @@ const Navbar = () => {
 				</div>
 				<div className="flex gap-2">
 					<Link
-						to={Paths.home}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.home)
+						to={paths.home}
+						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.home)
 							? 'bg-primary text-white'
 							: 'text-text hover:text-white hover:bg-primary'
 							}`}
@@ -45,8 +45,8 @@ const Navbar = () => {
 						Home
 					</Link>
 					<Link
-						to={Paths.practice}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.practice)
+						to={paths.practice}
+						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.practice)
 							? 'bg-primary text-white'
 							: 'text-text hover:text-white hover:bg-primary'
 							}`}
@@ -55,8 +55,8 @@ const Navbar = () => {
 					</Link>
 
 					<Link
-						to={Paths.roadmap}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.roadmap)
+						to={paths.roadmap.page}
+						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.roadmap.page)
 							? 'bg-primary text-white'
 							: 'text-text hover:text-white hover:bg-primary'
 							}`}
@@ -65,8 +65,8 @@ const Navbar = () => {
 					</Link>
 
 					<Link
-						to={Paths.explore}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.explore)
+						to={paths.explore.page}
+						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.explore.page)
 							? 'bg-primary text-white'
 							: 'text-text hover:text-white hover:bg-primary'
 							}`}
@@ -74,13 +74,13 @@ const Navbar = () => {
 						Explore
 					</Link>
 					<Link
-						to={Paths.about}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(Paths.about)
+						to={paths.artist.profile}
+						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.artist.profile)
 							? 'bg-primary text-white'
 							: 'text-text hover:text-white hover:bg-primary'
 							}`}
 					>
-						About
+						Profile
 					</Link>
 				</div>
 			</nav>
