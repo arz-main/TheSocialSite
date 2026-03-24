@@ -31,6 +31,7 @@ namespace TheSocialSite.Api.Controllers
             return Ok(users);
         }
 
+
         [HttpGet("{id}")]
         public IActionResult GetUser([FromRoute] string id)
         {
