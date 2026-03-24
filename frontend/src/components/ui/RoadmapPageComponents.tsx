@@ -55,7 +55,7 @@ export function RoadmapHero({ courses, stats }: { courses: Course[]; stats: Road
                 <div className="flex-1 min-w-0">
                     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
                         <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-2.5">Your Learning Journey</p>
-                        <h1 className="text-4xl font-black text-text mb-2.5 leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
+                        <h1 className="text-4xl font-black text-text mb-2.5 leading-tight">
                             Learning Paths
                         </h1>
                         <p className="text-muted text-sm leading-relaxed max-w-md mb-6">
@@ -257,7 +257,7 @@ export function CourseBanner({ course, chapters, totalLessons, progressPct, isFu
                                     </span>
                                 )}
                             </div>
-                            <h1 className="text-3xl font-black text-text leading-tight mb-1" style={{ fontFamily: 'Georgia, serif' }}>{course.title}</h1>
+                            <h1 className="text-3xl font-black text-text leading-tight mb-1">{course.title}</h1>
                             <p className="text-sm text-muted leading-relaxed max-w-lg">{course.description}</p>
                         </div>
                     </div>
@@ -452,4 +452,4 @@ export function EmptyChapterState() {
             <p className="text-sm text-muted">Pick a chapter on the left to view its lessons</p>
         </motion.div>
     );
-}
+} 

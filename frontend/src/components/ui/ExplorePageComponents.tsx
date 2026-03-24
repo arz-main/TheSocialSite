@@ -425,7 +425,7 @@ export function PostCard({
 			transition={{ delay: 0.04 * (index % pageSize), duration: 0.3 }}
 		>
 			<Card className="bg-card overflow-hidden hover:shadow-xl transition-shadow">
-				<div className="p-4 flex items-center gap-3">
+				<div className="p-3 flex items-center gap-3">
 					<div
 						className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all"
 						onClick={() => handleUserClick?.(post.authorId)}

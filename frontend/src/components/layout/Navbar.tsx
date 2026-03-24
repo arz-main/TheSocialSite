@@ -74,13 +74,13 @@ const Navbar = () => {
 						Explore
 					</Link>
 					<Link
-						to={paths.about}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.about)
+						to={paths.artist.profile}
+						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.artist.profile)
 							? 'bg-primary text-white'
 							: 'text-text hover:text-white hover:bg-primary'
 							}`}
 					>
-						About
+						Profile
 					</Link>
 				</div>
 			</nav>

@@ -103,7 +103,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 						<nav className="flex-1 p-4 pt-18 overflow-y-auto">
 							<div className="space-y-2">
 								{navItems.map((item) => {
-									const isActive = location.pathname.startsWith(item.path);
+									const isActive = item.path === paths.home
+										? location.pathname === paths.home
+										: location.pathname.startsWith(item.path);
 									const Icon = item.icon;
 
 									return (
@@ -193,4 +195,4 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 			</AnimatePresence>
 		</>
 	);
-}
+} 
