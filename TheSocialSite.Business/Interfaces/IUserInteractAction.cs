@@ -13,5 +13,6 @@ namespace TheSocialSite.Business.Interfaces
         public List<UserData> GetAllUsersAction();
         public UserData GetUserByIdAction(string userId);
         public SignupActionResponse UserCreationAction(UserSignupDto userData);
+        ActionResponse UpdateProfileAction(string userId, UpdateProfileDto data);
     }
 }

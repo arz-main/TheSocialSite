@@ -9,16 +9,12 @@ namespace TheSocialSite.Domain.Entities.User
 {
     public class UserSocialMedia
     {
-        [MaxLength(100)]
-        public string? Twitter { get; set; }
+        public bool HasSocialLinks { get; set; } = true;
 
-        [MaxLength(100)]
-        public string? Facebook { get; set; }
-
-        [MaxLength(100)]
-        public string? Instagram { get; set; }
-
-        [MaxLength(100)]
-        public string? LinkedIn { get; set; }
+        [MaxLength(200)] public string? Pinterest { get; set; }
+        [MaxLength(200)] public string? Twitter { get; set; }
+        [MaxLength(200)] public string? DeviantArt { get; set; }
+        [MaxLength(200)] public string? YouTube { get; set; }
+        [MaxLength(100)] public string? Discord { get; set; }
     }
 }

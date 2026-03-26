@@ -12,8 +12,8 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations.User
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20260322190116_AddUserContext")]
-    partial class AddUserContext
+    [Migration("20260322170527_AddSocialLinks")]
+    partial class AddSocialLinks
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,6 +74,44 @@ namespace TheSocialSite.DataAccess.Migrations.User
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
+                {
+                    b.OwnsOne("TheSocialSite.Domain.Entities.User.UserSocialMedia", "SocialLinks", b1 =>
+                        {
+                            b1.Property<string>("UserDataId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("DeviantArt")
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)");
+
+                            b1.Property<string>("Discord")
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
+
+                            b1.Property<string>("Pinterest")
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)");
+
+                            b1.Property<string>("Twitter")
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)");
+
+                            b1.Property<string>("YouTube")
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)");
+
+                            b1.HasKey("UserDataId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserDataId");
+                        });
+
+                    b.Navigation("SocialLinks");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheSocialSite.DataAccess.Context;
 
@@ -11,9 +12,11 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations.User
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20260323133546_AddUserContext")]
+    partial class AddUserContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,47 +74,6 @@ namespace TheSocialSite.DataAccess.Migrations.User
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
-                {
-                    b.OwnsOne("TheSocialSite.Domain.Entities.User.UserSocialMedia", "SocialLinks", b1 =>
-                        {
-                            b1.Property<string>("UserDataId")
-                                .HasColumnType("nvarchar(450)");
-
-                            b1.Property<string>("DeviantArt")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.Property<string>("Discord")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<bool>("HasSocialLinks")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("Pinterest")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.Property<string>("Twitter")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.Property<string>("YouTube")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.HasKey("UserDataId");
-
-                            b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserDataId");
-                        });
-
-                    b.Navigation("SocialLinks");
                 });
 #pragma warning restore 612, 618
         }

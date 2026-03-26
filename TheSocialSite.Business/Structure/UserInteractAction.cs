@@ -21,6 +21,10 @@ namespace TheSocialSite.Business.Structure
         {
             return UserCreationActionExecution(userData);
         }
+        public ActionResponse UpdateProfileAction(string userId, UpdateProfileDto data)
+        {
+            return UpdateProfileExecution(userId, data);
+        }
         public UserData GetUserByIdAction(string userId)
         {
             return GetUserByIdActionExecution(userId);

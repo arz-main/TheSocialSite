@@ -12,7 +12,7 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20260322190050_AddPostContext")]
+    [Migration("20260323133523_AddPostContext")]
     partial class AddPostContext
     {
         /// <inheritdoc />
