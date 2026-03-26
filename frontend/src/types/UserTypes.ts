@@ -22,4 +22,4 @@ export type User = {
     following?: string[];
     postsCount: number;
     joinedDate: string;
-} | undefined;
+};

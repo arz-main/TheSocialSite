@@ -8,13 +8,11 @@ import {
 	User,
 	Compass,
 	MessageCircle,
-	X,
 	LogIn,
 	CircleQuestionMark,
 	UserPlus,
 	Sun,
 	Moon,
-	Icon,
 } from "lucide-react";
 import { Button } from "../ui/BasicButton";
 import paths from "../../routes/paths";
