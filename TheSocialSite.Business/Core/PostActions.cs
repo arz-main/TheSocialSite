@@ -33,11 +33,11 @@ namespace TheSocialSite.Business.Core
             }
         }
 
-        public ActionResponse PostCreationActionExecution(PostCreationDto postData, string userId, string username)
+        public DefaultActionResponse PostCreationActionExecution(PostCreationDto postData, string userId, string username)
         {
             if (postData == null)
             {
-                return new ActionResponse
+                return new DefaultActionResponse
                 {
                     IsValid = false,
                     Message = "No data provided"
@@ -62,7 +62,7 @@ namespace TheSocialSite.Business.Core
                 postContext.Posts.Add(postEntity);
                 postContext.SaveChanges();
             };
-            return new ActionResponse
+            return new DefaultActionResponse
             {
                 IsValid = true,
                 Message = "Post created successfully"

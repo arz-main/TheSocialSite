@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheSocialSite.Domain.Models.Response
 {
-    public class ActionResponse
+    public class DefaultActionResponse
     {
         public bool IsValid { get; set; }
         public string Message { get; set; }

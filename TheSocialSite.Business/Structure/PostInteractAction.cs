@@ -21,7 +21,7 @@ namespace TheSocialSite.Business.Structure
         {
             return GetUserPostsActionExecution(id);
         }
-        public ActionResponse PostCreationAction(PostCreationDto postData, string userId, string username)
+        public DefaultActionResponse PostCreationAction(PostCreationDto postData, string userId, string username)
         {
             return PostCreationActionExecution(postData, userId, username);
         }

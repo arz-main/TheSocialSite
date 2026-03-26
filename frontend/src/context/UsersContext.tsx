@@ -28,8 +28,24 @@ export function UsersProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
+        const getAllUsers = useCallback(async (): Promise<User[]> => {
+        try {
+            setLoading(true);
+            setError(null);
+            const { data } = await axios.get<User[]>("/users"); // API returns array of users
+            // Cache all users
+            data.forEach(user => cache.current.set(user.id, user));
+            return data;
+        } catch {
+            setError("Failed to load users");
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     return (
-        <UsersContext.Provider value={{ loading, error, getUser }}>
+        <UsersContext.Provider value={{ getAllUsers, loading, error, getUser }}>
             {children}
         </UsersContext.Provider>
     );

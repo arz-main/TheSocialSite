@@ -53,7 +53,7 @@ namespace TheSocialSite.Api.Controllers
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             var username = User.FindFirstValue(JwtRegisteredClaimNames.Name);
             Console.WriteLine(userId);
-            ActionResponse validationInfo = _postAction.PostCreationAction(postData, userId, username);
+            DefaultActionResponse validationInfo = _postAction.PostCreationAction(postData, userId, username);
             if (!validationInfo.IsValid)
             {
                 return BadRequest(validationInfo.Message);
