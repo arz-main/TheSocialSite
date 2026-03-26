@@ -2,7 +2,9 @@ import { createContext, useCallback, useRef, useState } from "react";
 import { type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import { type User } from "../types/UserTypes";
-import type { UsersContextType } from "../types/UsersContextTypes";
+import type {
+    UpdateProfilePayload, UsersContextType
+} from "../types/UsersContextTypes";
 
 export const UsersContext = createContext<UsersContextType | undefined>(undefined);
 
@@ -12,6 +14,21 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    async function updateProfile(userId: string, data: UpdateProfilePayload): Promise<void> {
+        try {
+            setLoading(true);
+            setError(null);
+            await axios.put(`/users/${userId}`, data);
+        } catch (err) {
+            setError("Failed to update profile");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // ─── User Fetching ─────────────────────────────────────────────────────
+
     const getUser = useCallback(async (userId: string): Promise<User> => {
         if (cache.current.has(userId)) return cache.current.get(userId)!;
         try {
@@ -20,32 +37,31 @@ export function UsersProvider({ children }: { children: ReactNode }) {
             const { data } = await axios.get<User>(`/users/${userId}`);
             cache.current.set(userId, data);
             return data;
-        } catch {
+        } catch (err) {
             setError("Failed to load user");
-            throw error;
+            throw err;
         } finally {
             setLoading(false);
         }
     }, []);
 
-        const getAllUsers = useCallback(async (): Promise<User[]> => {
+    const getAllUsers = useCallback(async (): Promise<User[]> => {
         try {
             setLoading(true);
             setError(null);
-            const { data } = await axios.get<User[]>("/users"); // API returns array of users
-            // Cache all users
+            const { data } = await axios.get<User[]>("/users");
             data.forEach(user => cache.current.set(user.id, user));
             return data;
-        } catch {
+        } catch (err) {
             setError("Failed to load users");
-            throw error;
+            throw err;
         } finally {
             setLoading(false);
         }
     }, []);
 
     return (
-        <UsersContext.Provider value={{ getAllUsers, loading, error, getUser }}>
+        <UsersContext.Provider value={{ getUser, getAllUsers, updateProfile, loading, error, }}>
             {children}
         </UsersContext.Provider>
     );

@@ -6,8 +6,8 @@ import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/BasicInput";
 import { Label } from "../components/ui/LabelComponent";
-import Paths from "../routes/paths";
-import { useUserService } from "../hooks/useUserService";
+import paths from "../routes/paths";
+import { useAuth } from "../hooks/useAuth";
 
 export default function SignupPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +22,7 @@ export default function SignupPage() {
     });
 
     const navigate = useNavigate();
-    const { signup } = useUserService();
+    const { signup } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,9 +35,8 @@ export default function SignupPage() {
 
         setLoading(true);
         try {
-            await signup(formData);
-            // Redirect to login after successful signup
-            navigate(Paths.login);
+            await signup(formData.username, formData.email, formData.password);
+            navigate(paths.login);
         } catch (err: any) {
             setError(err.response?.data ?? "Could not create account. Please try again.");
         } finally {
@@ -65,7 +64,6 @@ export default function SignupPage() {
                 <Card className="p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
 
-                        {/* Error banner */}
                         {error && (
                             <div className="p-3 rounded-lg bg-destructive/10 text-danger text-sm">
                                 {error}
@@ -127,9 +125,9 @@ export default function SignupPage() {
                                 className="mt-1 rounded border-border" required />
                             <label htmlFor="terms" className="text-sm">
                                 I agree to the{" "}
-                                <Link to={Paths.terms} className="text-primary hover:underline">Terms of Service</Link>
+                                <Link to={paths.terms} className="text-primary hover:underline">Terms of Service</Link>
                                 {" "}and{" "}
-                                <Link to={Paths.privacy} className="text-primary hover:underline">Privacy Policy</Link>
+                                <Link to={paths.privacy} className="text-primary hover:underline">Privacy Policy</Link>
                             </label>
                         </div>
 
@@ -142,8 +140,8 @@ export default function SignupPage() {
                     </form>
 
                     <div className="mt-6 text-center text-sm">
-                        <span>Already have an account? </span>
-                        <Link to={Paths.login} className="text-primary hover:underline">Log in</Link>
+                        <span>Already have an account?</span>
+                        <Link to={paths.login} className="text-primary hover:underline">Log in</Link>
                     </div>
                 </Card>
             </motion.div>
