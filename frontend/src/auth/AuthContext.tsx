@@ -9,7 +9,7 @@ import { type AuthContextType } from "../types/AuthContextTypes";
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User>(undefined);
+    const [user, setUser] = useState<User | undefined>(undefined);
     const [initializing, setInitializing] = useState(true);
     const axios = useAxios()!;
 
