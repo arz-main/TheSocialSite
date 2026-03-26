@@ -1,4 +1,4 @@
-import { useAxios } from "./useAxios";
+import useAxios from "./useAxios";
 
 export type SocialLinks = {
     pinterest?: string;
