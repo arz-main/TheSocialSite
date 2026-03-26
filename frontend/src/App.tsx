@@ -40,10 +40,10 @@ const App = () => {
 	const { initializing } = useAuth();
 	if (initializing) return <LoadingScreen />;
 	return (
-		<div className="flex flex-col min-h-screen">
-			<ScrollToTop/>
+		<div className="flex flex-col h-screen overflow-hidden">
+			<ScrollToTop />
 			<Navbar />
-			<main className="flex flex-col flex-1 pt-16">
+			<main className="flex flex-col flex-1 min-h-0 pt-16 overflow-y-auto">
 				<Routes>
 					{/* access to all users */}
 					<Route path={paths.home} element={<Home />} />

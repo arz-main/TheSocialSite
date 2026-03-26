@@ -4,12 +4,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using TheSocialSite.Business.Core;
 using TheSocialSite.DataAccess;
 using TheSocialSite.DataAccess.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -83,6 +84,8 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseCors("AllowFrontend");
+
+app.MapHub<MessageAction>("/messages");
 
 // Make sure these are in the right order
 app.UseAuthentication();

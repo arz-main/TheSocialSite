@@ -13,6 +13,6 @@ namespace TheSocialSite.Business.Interfaces
     {
         public List<PostData> GetAllPostsAction();
         public List<PostData> GetUserPostsAction(string id);
-        public ActionResponse PostCreationAction(PostCreationDto postData, string userId, string username);
+        public DefaultActionResponse PostCreationAction(PostCreationDto postData, string userId, string username);
     }
 }
