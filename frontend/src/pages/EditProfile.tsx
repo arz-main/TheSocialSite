@@ -10,7 +10,7 @@ import { Textarea } from "../components/ui/TextArea";
 import paths from "../routes/paths";
 import { useUsers } from "../hooks/useUsers";
 import { useAuth } from "../hooks/useAuth";
-import type { UpdateProfilePayload, SocialLinks } from "../types/UsersContextTypes";
+import type { UpdateUserPayload, SocialLinks } from "../types/UserTypes";
 
 type ProfileForm = {
     username: string;
@@ -41,7 +41,7 @@ const defaultForm: ProfileForm = {
 export default function EditProfile() {
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { getUser, updateProfile } = useUsers();
+    const { getUser, updateUser } = useUsers();
     const [profileData, setProfileData] = useState<ProfileForm>(defaultForm);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -77,7 +77,7 @@ export default function EditProfile() {
         setSaving(true);
         setError(null);
         try {
-            const payload: UpdateProfilePayload = {
+            const payload: UpdateUserPayload = {
                 username: profileData.username,
                 email: profileData.email,
                 bio: profileData.bio,
@@ -86,7 +86,7 @@ export default function EditProfile() {
                 avatar: profileData.avatar ?? undefined,
                 socialLinks: profileData.socialLinks
             };
-            await updateProfile(user.id, payload);
+            await updateUser(user.id, payload);
             navigate(paths.artist.profile);
         } catch (err: any) {
             setError(err.message ?? "Failed to save profile.");

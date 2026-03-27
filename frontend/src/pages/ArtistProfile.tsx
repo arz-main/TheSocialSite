@@ -301,6 +301,7 @@ export default function ArtistProfile() {
                         likedDrawings={likedPosts}
                         toggleLike={handleToggleLike}
                         initialImageIndex={0}
+                        onSubmitComment={}
                     />
                 )}
             </AnimatePresence>

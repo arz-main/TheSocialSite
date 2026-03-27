@@ -1,8 +1,4 @@
-export enum PostStatus {
-	published, 
-	draft,
-	flagged
-};
+export type PostStatus = "Published" | "Draft" | "Flagged";
 
 export interface Post {
 	id: string;

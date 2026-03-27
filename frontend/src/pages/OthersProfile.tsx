@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { ExternalLink, MapPin, CalendarDays } from "lucide-react";
 import {
@@ -28,7 +28,6 @@ export default function OthersProfile() {
     const [openedPost, setOpenedPost] = useState<any>(null);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
 
-    const navigate = useNavigate();
     const { getUser } = useUsers();
     const { fetchUserPosts } = usePost();
 
@@ -307,6 +306,7 @@ export default function OthersProfile() {
                         likedDrawings={likedPosts}
                         toggleLike={handleToggleLike}
                         initialImageIndex={0}
+                        onSubmitComment={}
                     />
                 )}
             </AnimatePresence>

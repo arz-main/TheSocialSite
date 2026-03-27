@@ -1,38 +1,4 @@
-import type { User } from "./UserTypes";
-
-// ─── Types ─────────────────────────────────────────────────────────────────
-
-export type SocialLinks = {
-    pinterest?: string;
-    twitter?: string;
-    deviantArt?: string;
-    youTube?: string;
-    discord?: string;
-};
-
-export type ProfileData = {
-    id: string;
-    username: string;
-    email: string;
-    avatar: string | null;
-    bio: string | null;
-    location: string | null;
-    website: string | null;
-    postsCount: number;
-    joinedDate: string;
-    socialLinks: SocialLinks | null;
-};
-
-export type UpdateProfilePayload = {
-    username?: string;
-    email?: string;
-    location?: string;
-    website?: string;
-    bio?: string;
-    avatar?: string;
-    socialLinks?: SocialLinks;
-};
-
+import type { UpdateUserPayload, User } from "./UserTypes";
 
 // UsersContextTypes.ts
 export type UsersContextType = {
@@ -40,5 +6,5 @@ export type UsersContextType = {
     error: string | null;
     getUser: (userId: string) => Promise<User>;
     getAllUsers: () => Promise<User[]>;
-    updateProfile(userId: string, data: UpdateProfilePayload): Promise<void>;
+    updateUser(userId: string, data: UpdateUserPayload): Promise<void>;
 };
