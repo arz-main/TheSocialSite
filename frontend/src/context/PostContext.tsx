@@ -24,20 +24,20 @@ export function PostProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const fetchAllPosts = useCallback(() =>
+    const getAllPosts = useCallback(() =>
         request(async () => {
             const { data } = await axios.get<Post[]>("/posts");
             return data;
         }), []);
 
-    const fetchUserPosts = useCallback((userId: string | undefined) =>
+    const getUserPosts = useCallback((userId: string | undefined) =>
         request(async () => {
             const { data } = await axios.get<Post[]>(`/posts/user/${userId}`);
             return data;
         }), []);
 
     return (
-        <PostContext.Provider value={{ loading, error, fetchAllPosts, fetchUserPosts }}>
+        <PostContext.Provider value={{ loading, error, getAllPosts, getUserPosts }}>
             {children}
         </PostContext.Provider>
     );

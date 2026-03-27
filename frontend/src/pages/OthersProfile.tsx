@@ -29,7 +29,7 @@ export default function OthersProfile() {
     const [userPosts, setUserPosts] = useState<Post[]>([]);
 
     const { getUser } = useUsers();
-    const { fetchUserPosts } = usePost();
+    const { getUserPosts } = usePost();
 
     const { userId } = useParams();
 
@@ -42,7 +42,7 @@ export default function OthersProfile() {
         });
 
         // fetch posts
-        fetchUserPosts(userId).then(data => {
+        getUserPosts(userId).then(data => {
             if (data) setUserPosts(data);
         });
 
@@ -306,7 +306,7 @@ export default function OthersProfile() {
                         likedDrawings={likedPosts}
                         toggleLike={handleToggleLike}
                         initialImageIndex={0}
-                        onSubmitComment={}
+                        // onSubmitComment={}
                     />
                 )}
             </AnimatePresence>

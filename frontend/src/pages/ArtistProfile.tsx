@@ -29,12 +29,12 @@ export default function ArtistProfile() {
 
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { fetchUserPosts } = usePost();
+    const { getUserPosts } = usePost();
 
     useEffect(() => {
         if (user?.id)
-            fetchUserPosts(user.id)
-                .then(data => { if (data) setUserPosts(data); console.log(data); });
+            getUserPosts(user.id)
+                .then(data => { if (data) setUserPosts(data); });
     }, [user?.id]);
 
     const handleToggleLike = (postId: string) => {
@@ -301,7 +301,7 @@ export default function ArtistProfile() {
                         likedDrawings={likedPosts}
                         toggleLike={handleToggleLike}
                         initialImageIndex={0}
-                        onSubmitComment={}
+                        // onSubmitComment={}
                     />
                 )}
             </AnimatePresence>

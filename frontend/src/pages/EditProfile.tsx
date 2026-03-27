@@ -11,6 +11,8 @@ import paths from "../routes/paths";
 import { useUsers } from "../hooks/useUsers";
 import { useAuth } from "../hooks/useAuth";
 import type { UpdateUserPayload, SocialLinks } from "../types/UserTypes";
+import LoadingScreen from "../components/ui/LoadingScreen";
+import ErrorScreen from "../components/ui/ErrorScreen";
 
 type ProfileForm = {
     username: string;
@@ -106,8 +108,9 @@ export default function EditProfile() {
         });
     };
 
-    if (loading) return <div className="p-8 text-center text-muted-foreground">Loading profile...</div>;
-
+    if (loading) return <LoadingScreen/>
+    if (error) return <ErrorScreen/>
+    
     return (
         <div className="bg-background text-text">
             <div className="p-6">
