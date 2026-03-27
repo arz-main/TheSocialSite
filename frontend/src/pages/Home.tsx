@@ -156,7 +156,7 @@ const Home = () => {
 			`}</style>
 
 			{/* Outer wrapper — position:relative so absolute sketches are scoped here */}
-			<div className="relative flex flex-col flex-1 bg-background text-primary overflow-x-hidden">
+			<div className="relative bg-background text-primary overflow-x-hidden">
 
 				{/* Floating sketches rendered behind all content */}
 				{FLOAT_SLOTS.map((slot, i) => <FloatingSketch key={i} {...slot} index={i} />)}

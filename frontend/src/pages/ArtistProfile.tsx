@@ -22,7 +22,7 @@ import paths from "../routes/paths";
 import { Card } from "../components/ui/Card";
 
 export default function ArtistProfile() {
-    const [activeTab, setActiveTab] = useState("drawings");
+    const [activeTab, setActiveTab] = useState("posts");
     const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
     const [openedPost, setOpenedPost] = useState<any>(null);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
@@ -34,7 +34,7 @@ export default function ArtistProfile() {
     useEffect(() => {
         if (user?.id)
             fetchUserPosts(user.id)
-                .then(data => { if (data) setUserPosts(data) });
+                .then(data => { if (data) setUserPosts(data); console.log(data); });
     }, [user?.id]);
 
     const handleToggleLike = (postId: string) => {
@@ -57,7 +57,7 @@ export default function ArtistProfile() {
     const earnedBadges = user.badges ? user.badges.filter((b: any) => b.earned) : [];
     const rankBadge = user.level || "Advanced Sketcher";
     const streak = user.streak ?? 15;
-    const drawingsCount = userPosts.length || 387;
+    const postsCount = userPosts.length || 387;
 
     return (
         <div className="flex flex-col flex-1 bg-background text-text">
@@ -179,7 +179,7 @@ export default function ArtistProfile() {
                             {/* Stats pills row */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
-                                    <span className="text-2xl font-bold">{drawingsCount}</span>
+                                    <span className="text-2xl font-bold">{postsCount}</span>
                                     <span className="text-xs text-muted">Drawings</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
@@ -206,7 +206,7 @@ export default function ArtistProfile() {
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
                             <TabsList className="w-full grid grid-cols-3 h-12">
                                 <TabsTrigger value="drawings" className="h-full text-sm font-semibold">
-                                    My Drawings <span className="ml-1.5 text-xs opacity-60">{drawingsCount}</span>
+                                    My Posts <span className="ml-1.5 text-xs opacity-60">{postsCount}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="badges" className="h-full text-sm font-semibold">
                                     Badges <span className="ml-1.5 text-xs opacity-60">{earnedBadges.length || 4}</span>
@@ -217,7 +217,7 @@ export default function ArtistProfile() {
                             </TabsList>
 
                             <div className="mt-5">
-                                <TabsContent value="drawings">
+                                <TabsContent value="posts">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
                                         {userPosts.length === 0 ? (
                                             <Card className="p-20 text-center">
@@ -306,4 +306,4 @@ export default function ArtistProfile() {
             </AnimatePresence>
         </div>
     );
-} 
+}

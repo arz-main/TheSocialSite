@@ -1,4 +1,3 @@
-// src/pages/EditProfile.tsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion } from "motion/react";
@@ -9,16 +8,27 @@ import { Input } from "../components/ui/BasicInput";
 import { Label } from "../components/ui/LabelComponent";
 import { Textarea } from "../components/ui/TextArea";
 import paths from "../routes/paths";
-import Paths from "../routes/paths";
-import { useUserService } from "../hooks/useUserService";
+import { useUsers } from "../hooks/useUsers";
+import { useAuth } from "../hooks/useAuth";
+import type { UpdateProfilePayload, SocialLinks } from "../types/UsersContextTypes";
 
-const DEFAULT_PROFILE = {
+type ProfileForm = {
+    username: string;
+    email: string;
+    bio: string;
+    location: string;
+    website: string;
+    avatar: string | null;
+    socialLinks: SocialLinks;
+};
+
+const defaultForm: ProfileForm = {
     username: "",
     email: "",
     bio: "",
     location: "",
     website: "",
-    avatar: null as string | null,
+    avatar: null,
     socialLinks: {
         pinterest: "",
         twitter: "",
@@ -30,15 +40,16 @@ const DEFAULT_PROFILE = {
 
 export default function EditProfile() {
     const navigate = useNavigate();
-    const [profileData, setProfileData] = useState(DEFAULT_PROFILE);
+    const { user } = useAuth();
+    const { getUser, updateProfile } = useUsers();
+    const [profileData, setProfileData] = useState<ProfileForm>(defaultForm);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { getProfile, updateProfile } = useUserService();
 
-    // Load profile from backend when page opens
     useEffect(() => {
-        getProfile()
+        if (!user?.id) return;
+        getUser(user.id)
             .then(data => {
                 setProfileData({
                     username: data.username ?? "",
@@ -49,23 +60,24 @@ export default function EditProfile() {
                     avatar: data.avatar ?? null,
                     socialLinks: {
                         pinterest: data.socialLinks?.pinterest ?? "",
-                        twitter: data.socialLinks?.twitter ?? "",
-                        deviantArt: data.socialLinks?.deviantArt ?? "",
-                        youTube: data.socialLinks?.youTube ?? "",
+                        twitter: data.socialLinks?.x ?? "",
+                        deviantArt: data.socialLinks?.deviantart ?? "",
+                        youTube: data.socialLinks?.youtube ?? "",
                         discord: data.socialLinks?.discord ?? ""
                     }
                 });
             })
-            .catch(() => setError("Could not load profile. Are you logged in?"))
+            .catch(() => setError("Could not load profile."))
             .finally(() => setLoading(false));
-    }, []);
+    }, [user?.id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user?.id) return;
         setSaving(true);
         setError(null);
         try {
-            await updateProfile({
+            const payload: UpdateProfilePayload = {
                 username: profileData.username,
                 email: profileData.email,
                 bio: profileData.bio,
@@ -73,9 +85,9 @@ export default function EditProfile() {
                 website: profileData.website,
                 avatar: profileData.avatar ?? undefined,
                 socialLinks: profileData.socialLinks
-            });
-            navigate(Paths.artist.profile);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            };
+            await updateProfile(user.id, payload);
+            navigate(paths.artist.profile);
         } catch (err: any) {
             setError(err.message ?? "Failed to save profile.");
         } finally {
@@ -87,7 +99,7 @@ export default function EditProfile() {
         setProfileData({ ...profileData, [e.target.name]: e.target.value });
     };
 
-    const handleSocialChange = (platform: string, value: string) => {
+    const handleSocialChange = (platform: keyof SocialLinks, value: string) => {
         setProfileData({
             ...profileData,
             socialLinks: { ...profileData.socialLinks, [platform]: value }
@@ -97,8 +109,8 @@ export default function EditProfile() {
     if (loading) return <div className="p-8 text-center text-muted-foreground">Loading profile...</div>;
 
     return (
-        <div className="flex flex-col flex-1 bg-background text-text">
-            <div className="flex flex-1 p-6">
+        <div className="bg-background text-text">
+            <div className="p-6">
                 <motion.div
                     className="px-6 md:px-12 lg:px-16 w-full max-w-5xl mx-auto"
                     initial={{ opacity: 0, y: 20 }}
@@ -108,7 +120,6 @@ export default function EditProfile() {
                     <Card className="w-full p-8">
                         <form onSubmit={handleSubmit} className="space-y-8">
 
-                            {/* Error banner */}
                             {error && (
                                 <div className="p-3 rounded-lg bg-destructive/10 text-danger text-sm">
                                     {error}
@@ -133,7 +144,7 @@ export default function EditProfile() {
                                             whileHover={{ scale: 1.1 }}
                                             transition={{ type: "spring", stiffness: 400, damping: 17 }}
                                         >
-                                            <Camera color={"white"} className="w-4 h-4" />
+                                            <Camera color="white" className="w-4 h-4" />
                                         </motion.button>
                                     </div>
                                 </div>
@@ -144,12 +155,14 @@ export default function EditProfile() {
                                 <div className="space-y-2">
                                     <Label htmlFor="username">Username</Label>
                                     <Input id="username" name="username" type="text"
-                                        value={profileData.username} onChange={handleChange} required className="bg-background" />
+                                        value={profileData.username} onChange={handleChange}
+                                        required className="bg-background" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="email">Email</Label>
                                     <Input id="email" name="email" type="email"
-                                        value={profileData.email} onChange={handleChange} required className="bg-background" />
+                                        value={profileData.email} onChange={handleChange}
+                                        required className="bg-background" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="location">Location</Label>
@@ -170,7 +183,8 @@ export default function EditProfile() {
                                 <Label htmlFor="bio">Bio</Label>
                                 <Textarea id="bio" name="bio"
                                     value={profileData.bio} onChange={handleChange}
-                                    rows={4} placeholder="Tell us about yourself..." className="bg-background" />
+                                    rows={4} placeholder="Tell us about yourself..."
+                                    className="bg-background" />
                                 <p className="text-sm text-muted-foreground">
                                     {profileData.bio.length}/500 characters
                                 </p>
@@ -178,45 +192,52 @@ export default function EditProfile() {
 
                             {/* Social Links */}
                             <div className="space-y-4">
-                                <Label className="text-lg font-semibold">Social Links (Optional)</Label>
-                                <p className="text-sm text-muted-foreground -mt-2">
-                                    Add your social media profiles. Leave blank to hide.
-                                </p>
+                                <div>
+                                    <Label className="text-lg font-semibold">Social Links (Optional)</Label>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                        Add your social media profiles. Leave blank to hide.
+                                    </p>
+                                </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <Label htmlFor="pinterest">Pinterest</Label>
                                         <Input id="pinterest" type="url"
-                                            value={profileData.socialLinks.pinterest}
-                                            onChange={(e) => handleSocialChange("pinterest", e.target.value)}
-                                            placeholder="https://pinterest.com/username" className="bg-background" />
+                                            value={profileData.socialLinks.pinterest ?? ""}
+                                            onChange={e => handleSocialChange("pinterest", e.target.value)}
+                                            placeholder="https://pinterest.com/username"
+                                            className="bg-background" />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="twitter">X (Twitter)</Label>
                                         <Input id="twitter" type="url"
-                                            value={profileData.socialLinks.twitter}
-                                            onChange={(e) => handleSocialChange("twitter", e.target.value)}
-                                            placeholder="https://x.com/username" className="bg-background" />
+                                            value={profileData.socialLinks.twitter ?? ""}
+                                            onChange={e => handleSocialChange("twitter", e.target.value)}
+                                            placeholder="https://x.com/username"
+                                            className="bg-background" />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="deviantArt">DeviantArt</Label>
                                         <Input id="deviantArt" type="url"
-                                            value={profileData.socialLinks.deviantArt}
-                                            onChange={(e) => handleSocialChange("deviantArt", e.target.value)}
-                                            placeholder="https://deviantart.com/username" className="bg-background" />
+                                            value={profileData.socialLinks.deviantArt ?? ""}
+                                            onChange={e => handleSocialChange("deviantArt", e.target.value)}
+                                            placeholder="https://deviantart.com/username"
+                                            className="bg-background" />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="youTube">YouTube</Label>
                                         <Input id="youTube" type="url"
-                                            value={profileData.socialLinks.youTube}
-                                            onChange={(e) => handleSocialChange("youTube", e.target.value)}
-                                            placeholder="https://youtube.com/@username" className="bg-background" />
+                                            value={profileData.socialLinks.youTube ?? ""}
+                                            onChange={e => handleSocialChange("youTube", e.target.value)}
+                                            placeholder="https://youtube.com/@username"
+                                            className="bg-background" />
                                     </div>
                                     <div className="space-y-2 md:col-span-2">
                                         <Label htmlFor="discord">Discord</Label>
                                         <Input id="discord" type="text"
-                                            value={profileData.socialLinks.discord}
-                                            onChange={(e) => handleSocialChange("discord", e.target.value)}
-                                            placeholder="username#1234" className="bg-background" />
+                                            value={profileData.socialLinks.discord ?? ""}
+                                            onChange={e => handleSocialChange("discord", e.target.value)}
+                                            placeholder="username#1234"
+                                            className="bg-background" />
                                         <p className="text-xs text-muted-foreground">
                                             Your Discord username (e.g., username#1234)
                                         </p>
@@ -225,7 +246,7 @@ export default function EditProfile() {
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex gap-4 pt-4 text-text">
+                            <div className="flex gap-4 pt-4">
                                 <motion.div className="flex-1"
                                     whileTap={{ scale: 0.98 }}
                                     transition={{ type: "spring", stiffness: 400, damping: 17 }}>
@@ -236,8 +257,8 @@ export default function EditProfile() {
                                 </motion.div>
                                 <motion.div whileTap={{ scale: 0.98 }}
                                     transition={{ type: "spring", stiffness: 400, damping: 17 }}>
-                                    <Link to={Paths.artist.profile} className="block">
-                                        <Button variant="outline" className="w-full h-11" type="button">
+                                    <Link to={paths.artist.profile} className="block">
+                                        <Button variant="outline" className="h-11" type="button">
                                             Cancel
                                         </Button>
                                     </Link>

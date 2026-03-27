@@ -6,8 +6,8 @@ import { Button } from "../components/ui/BasicButton";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/BasicInput";
 import { Label } from "../components/ui/LabelComponent";
-import Paths from "../routes/paths";
-import { useUserService } from "../hooks/useUserService";
+import paths from "../routes/paths";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
@@ -17,30 +17,16 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
-    const { login } = useUserService();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
-
         try {
-            const response = await login({
-                userIdentifier: email,
-                password: password
-            });
-
-            // Save the token so all future requests are authenticated
-            localStorage.setItem("token", response.token);
-
-            // Save basic user info for displaying in the UI
-            localStorage.setItem("currentUser", JSON.stringify({
-                userIdentifier: response.userIdentifier,
-            }));
-
-            navigate(Paths.home);
+            await login(email, password);
+            navigate(paths.home);
         } catch (err: any) {
-            // Axios throws on 4xx/5xx, the backend sends the message as plain text
             setError(err.response?.data ?? "Invalid email or password.");
         } finally {
             setLoading(false);
@@ -63,7 +49,6 @@ export default function Login() {
                 <Card className="p-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
 
-                        {/* Error banner */}
                         {error && (
                             <div className="p-3 rounded-lg bg-destructive/10 text-danger text-sm">
                                 {error}
@@ -114,7 +99,7 @@ export default function Login() {
                                 <input type="checkbox" className="rounded border-border" />
                                 <span>Remember me</span>
                             </label>
-                            <Link to={Paths.forgot_password} className="text-sm text-primary hover:underline">
+                            <Link to={paths.forgot_password} className="text-sm text-primary hover:underline">
                                 Forgot password?
                             </Link>
                         </div>
@@ -131,7 +116,7 @@ export default function Login() {
 
                     <div className="mt-6 text-center text-sm">
                         <span className="text-muted-foreground">Don't have an account? </span>
-                        <Link to={Paths.signup} className="text-primary hover:underline">
+                        <Link to={paths.signup} className="text-primary hover:underline">
                             Sign up
                         </Link>
                     </div>
