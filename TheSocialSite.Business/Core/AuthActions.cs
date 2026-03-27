@@ -91,7 +91,7 @@ namespace TheSocialSite.Business.Core
                     Email = userData.Email,
                     Username = userData.Username,
                     Password = BCrypt.Net.BCrypt.HashPassword(userData.Password),
-                    Role = UserRole.User,
+                    Role = Role.User,
                     JoinedDate = DateTime.UtcNow
                 };
 

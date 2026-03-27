@@ -9,11 +9,11 @@ using TheSocialSite.DataAccess.Context;
 
 #nullable disable
 
-namespace TheSocialSite.DataAccess.Migrations.User
+namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20260322171334_AddSocialLinksFlag")]
-    partial class AddSocialLinksFlag
+    [Migration("20260327172236_AddUserContext")]
+    partial class AddUserContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,7 +78,7 @@ namespace TheSocialSite.DataAccess.Migrations.User
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
                 {
-                    b.OwnsOne("TheSocialSite.Domain.Entities.User.UserSocialMedia", "SocialLinks", b1 =>
+                    b.OwnsOne("TheSocialSite.Domain.Entities.User.UserSocialLinks", "SocialLinks", b1 =>
                         {
                             b1.Property<string>("UserDataId")
                                 .HasColumnType("nvarchar(450)");

@@ -7,6 +7,7 @@ using TheSocialSite.Business.Core;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Entities.User;
 using TheSocialSite.Domain.Models.Response;
+using TheSocialSite.Domain.Models.User;
 
 
 namespace TheSocialSite.Business.Structure
@@ -21,9 +22,9 @@ namespace TheSocialSite.Business.Structure
         {
             return UserCreationActionExecution(userData);
         }
-        public ActionResponse UpdateProfileAction(string userId, UpdateProfileDto data)
+        public DefaultActionResponse UserUpdateAction(string userId, UserUpdateDto data)
         {
-            return UpdateProfileExecution(userId, data);
+            return UserUpdateActionExecution(userId, data);
         }
         public UserData GetUserByIdAction(string userId)
         {

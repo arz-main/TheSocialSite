@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TheSocialSite.Domain.Entities.User
 {
-    public class UserSocialMedia
+    public class UserSocialLinks
     {
         public bool HasSocialLinks { get; set; } = true;
 

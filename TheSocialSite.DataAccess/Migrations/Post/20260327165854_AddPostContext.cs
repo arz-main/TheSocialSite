@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TheSocialSite.DataAccess.Migrations
+namespace TheSocialSite.DataAccess.Migrations.Post
 {
     /// <inheritdoc />
     public partial class AddPostContext : Migration

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheSocialSite.Domain.Models.Response
+namespace TheSocialSite.Domain.Models.User
 {
     public class UserUpdateDto
     {
@@ -15,10 +15,10 @@ namespace TheSocialSite.Domain.Models.Response
         [MaxLength(150)] public string? Website { get; set; }
         [MaxLength(500)] public string? Bio { get; set; }
         [MaxLength(250)] public string? Avatar { get; set; } // URL to image
-        public UserSocialMediaDto? SocialLinks { get; set; }
+        public UserSocialLinksDto? SocialLinks { get; set; }
     }
 
-    public class UserSocialMediaDto
+    public class UserSocialLinksDto
     {
         public string? Pinterest { get; set; }
         public string? Twitter { get; set; }

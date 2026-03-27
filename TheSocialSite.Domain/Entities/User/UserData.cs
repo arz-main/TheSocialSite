@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheSocialSite.Domain.Entities.User
 {
-    public enum UserRole
+    public enum Role
     {
         User,
         Admin
@@ -26,7 +26,7 @@ namespace TheSocialSite.Domain.Entities.User
         public  string Password { get; set; }
 
         [Required]
-        public UserRole Role { get; set; }
+        public Role Role { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -44,7 +44,7 @@ namespace TheSocialSite.Domain.Entities.User
         [MaxLength(150)]
         public string? Website { get; set; }
 
-        public UserSocialMedia? SocialLinks { get; set; }
+        public UserSocialLinks? SocialLinks { get; set; }
        
         public int PostsCount { get; set; }
 

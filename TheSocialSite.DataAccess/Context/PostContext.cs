@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheSocialSite.Domain.Entities.Post;
-using TheSocialSite.Domain.Entities.User;
+
 namespace TheSocialSite.DataAccess.Context
 {
     public class PostContext : DbContext

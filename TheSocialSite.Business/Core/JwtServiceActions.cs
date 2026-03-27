@@ -12,7 +12,7 @@ public class JwtServiceActions
     private readonly IConfiguration _configuration =
         new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-    public string GenerateTokenActionExecution(string id, string username, UserRole role)
+    public string GenerateTokenActionExecution(string id, string username, Role role)
     {
         var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]);
         var issuer = _configuration["JwtSettings:Issuer"];

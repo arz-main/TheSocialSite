@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Text.Json.Serialization;
 using TheSocialSite.Business.Core;
 using TheSocialSite.DataAccess;
 using TheSocialSite.DataAccess.Context;
@@ -53,18 +54,16 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy => policy.WithOrigins(
             "http://localhost:5173",
-            "https://localhost:5173",
-            "http://localhost:5174", 
-            "https://localhost:5174"   
-        )
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+            "https://localhost:5173")
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-        options.JsonSerializerOptions.ReferenceHandler =
-            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.ReferenceHandler =
+        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

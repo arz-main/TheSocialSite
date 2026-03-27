@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TheSocialSite.DataAccess.Migrations.User
+namespace TheSocialSite.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddUserContext : Migration
@@ -24,6 +24,12 @@ namespace TheSocialSite.DataAccess.Migrations.User
                     Bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Website = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    SocialLinks_HasSocialLinks = table.Column<bool>(type: "bit", nullable: true),
+                    SocialLinks_Pinterest = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    SocialLinks_Twitter = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    SocialLinks_DeviantArt = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    SocialLinks_YouTube = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    SocialLinks_Discord = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     PostsCount = table.Column<int>(type: "int", nullable: false),
                     JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
