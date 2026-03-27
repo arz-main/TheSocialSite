@@ -18,9 +18,13 @@ namespace TheSocialSite.Business
         {
             return new PostInteractAction();
         }
-        public IJwtServiceAction JwtService()
+        public IJwtInteractAction JwtInteractAction()
         {
-            return new JwtServiceAction();
+            return new JwtInteractAction();
+        }
+        public ISocialMediaInteractAction SocialMediaInteractAction()
+        {
+            return new SocialMediaInteractAction();
         }
     }
 }

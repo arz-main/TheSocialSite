@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using TheSocialSite.Business;
-using TheSocialSite.Business.Core;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Business.Structure;
 using TheSocialSite.Domain.Models.Response;
@@ -13,11 +12,9 @@ namespace TheSocialSite.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IJwtServiceAction _jwtService;
         private readonly IUserAuthAction _userAuthAction;
         public AuthController()
         {
-            _jwtService = new JwtServiceAction();
             _userAuthAction = new BusinessLogic().UserAuthAction();
         }
 

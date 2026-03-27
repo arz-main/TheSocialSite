@@ -30,5 +30,9 @@ namespace TheSocialSite.Business.Structure
         {
             return GetUserByIdActionExecution(userId);
         }
+        public DefaultActionResponse UserDeleteAction(string userId)
+        {
+            return UserDeleteActionExecution(userId);
+        }
     }
 }

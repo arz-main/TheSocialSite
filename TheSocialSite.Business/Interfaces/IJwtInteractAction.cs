@@ -8,7 +8,7 @@ using TheSocialSite.Domain.Models.Response;
 
 namespace TheSocialSite.Business.Interfaces
 {
-    public interface IJwtServiceAction
+    public interface IJwtInteractAction
     {
         public string GenerateTokenAction(string id, string username, Role role);
     }

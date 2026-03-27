@@ -6,7 +6,7 @@ using TheSocialSite.Domain.Models.Response;
 
 namespace TheSocialSite.Business.Core
 {
-    public class MessageAction : Hub
+    public class MessageActions : Hub
     {
         // Called when a user opens a conversation
         public async Task JoinConversation(string conversationId)

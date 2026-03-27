@@ -1,13 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheSocialSite.DataAccess;
-using TheSocialSite.DataAccess.Context;
+﻿using TheSocialSite.DataAccess.Context;
 using TheSocialSite.Domain.Entities.User;
-
 using TheSocialSite.Domain.Models.Response;
 using TheSocialSite.Domain.Models.User;
 
@@ -112,7 +104,7 @@ namespace TheSocialSite.Business.Core
 
                 if (data.SocialLinks != null)
                 {
-                    user.SocialLinks ??= new UserSocialLinks();
+                    user.SocialLinks ??= new SocialMedia();
                     user.SocialLinks.Pinterest = data.SocialLinks.Pinterest;
                     user.SocialLinks.Twitter = data.SocialLinks.Twitter;
                     user.SocialLinks.DeviantArt = data.SocialLinks.DeviantArt;
@@ -124,6 +116,20 @@ namespace TheSocialSite.Business.Core
             }
 
             return new DefaultActionResponse { IsValid = true, Message = "Profile updated." };
+        }
+
+        public DefaultActionResponse UserDeleteActionExecution(string userId)
+        {
+            using (var userContext = new UserContext())
+            {
+                var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
+                if (user == null)
+                    return new DefaultActionResponse { IsValid = false, Message = "User not found." };
+                userContext.Remove(user);
+                userContext.SaveChanges();
+            }
+            return new DefaultActionResponse { IsValid = true, Message = "User deleted." };
+
         }
     }
 }

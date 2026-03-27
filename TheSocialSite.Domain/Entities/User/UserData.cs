@@ -44,7 +44,7 @@ namespace TheSocialSite.Domain.Entities.User
         [MaxLength(150)]
         public string? Website { get; set; }
 
-        public UserSocialLinks? SocialLinks { get; set; }
+        public SocialMedia? SocialLinks { get; set; }
        
         public int PostsCount { get; set; }
 

@@ -7,7 +7,7 @@ using System.Text;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Entities.User;
 
-public class JwtServiceActions
+public class JwtActions
 {
     private readonly IConfiguration _configuration =
         new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
