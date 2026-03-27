@@ -2,8 +2,7 @@ import { createContext, useCallback, useRef, useState } from "react";
 import { type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import { type User } from "../types/UserTypes";
-import type { UsersContextType } from "../types/UsersContextTypes";
-import type { UpdateUserPayload } from "../types/UserTypes";
+import type { UpdateUserPayload, UsersContextType } from "../types/UserTypes";
 
 export const UsersContext = createContext<UsersContextType | undefined>(undefined);
 
@@ -18,6 +17,7 @@ export function UsersProvider({ children }: { children: ReactNode }) {
             setLoading(true);
             setError(null);
             await axios.put(`/users/${userId}`, data);
+            cache.current.delete(userId); // force fresh fetch next time
         } catch (err) {
             setError("Failed to update profile");
             throw err;
@@ -59,8 +59,22 @@ export function UsersProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
+    async function deleteUser(userId: string): Promise<void> {
+        try {
+            setLoading(true);
+            setError(null);
+            await axios.delete(`/users/${userId}`);
+            cache.current.delete(userId); // clear from cache
+        } catch (err) {
+            setError("Failed to delete account");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
-        <UsersContext.Provider value={{ getUser, getAllUsers, updateUser, loading, error, }}>
+        <UsersContext.Provider value={{ deleteUser, getUser, getAllUsers, updateUser, loading, error, }}>
             {children}
         </UsersContext.Provider>
     );

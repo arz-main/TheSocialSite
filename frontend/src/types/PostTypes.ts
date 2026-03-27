@@ -16,3 +16,10 @@ export interface Post {
 	comments: number;
 	showWithReference: boolean;
 }
+
+export type PostsContextType = {
+    loading: boolean;
+    error: string | null;
+    getAllPosts: () => Promise<Post[] | null >;
+    getUserPosts: (userId: string | undefined ) => Promise<Post[] | null>;
+};

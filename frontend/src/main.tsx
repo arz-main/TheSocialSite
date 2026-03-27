@@ -3,11 +3,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import { AxiosProvider } from './providers/AxiosProvider.tsx';
 import { AuthProvider } from './providers/AuthProvider.tsx';
-import { PostProvider } from './context/PostContext.tsx';
-import { UsersProvider } from './context/UsersContext.tsx';
+import { PostsProvider } from './providers/PostsProvider.tsx';
+import { UsersProvider } from './providers/UsersProvider.tsx';
 import App from './App.tsx';
 import './index.css';
 import { SignalRProvider } from './providers/SignalRProvider.tsx';
+import { SocialMediaProvider } from './providers/SocialMediaProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -16,9 +17,11 @@ createRoot(document.getElementById('root')!).render(
                 <SignalRProvider>
                     <AuthProvider>
                         <UsersProvider>
-                            <PostProvider>
-                                <App />
-                            </PostProvider>
+                            <PostsProvider>
+                                <SocialMediaProvider>
+                                    <App />
+                                </SocialMediaProvider>
+                            </PostsProvider>
                         </UsersProvider>
                     </AuthProvider>
                 </SignalRProvider>

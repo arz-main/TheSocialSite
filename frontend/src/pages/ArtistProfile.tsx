@@ -8,16 +8,17 @@ import {
     FaDeviantart,
     FaYoutube,
     FaDiscord,
-    FaGlobe,
 } from "react-icons/fa";
 import { Badge as BadgeUI } from "../components/ui/Badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
-import { usePost } from "../hooks/usePost";
+import { usePosts } from "../hooks/usePosts";
 import { CommentsModal, PostCard } from "../components/ui/ExplorePageComponents";
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
 import { useAuth } from "../hooks/useAuth";
+import { useSocialMedia } from "../hooks/useSocialMedia";
 import type { Post } from "../types/PostTypes";
+import type { SocialMediaDto } from "../types/SocialMediaTypes";
 import paths from "../routes/paths";
 import { Card } from "../components/ui/Card";
 
@@ -26,15 +27,24 @@ export default function ArtistProfile() {
     const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
     const [openedPost, setOpenedPost] = useState<any>(null);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
+    const [socialMedia, setSocialMedia] = useState<SocialMediaDto | null>(null);
 
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { getUserPosts } = usePost();
+    const { getUserPosts } = usePosts();
+    const { getSocialMedia } = useSocialMedia();
 
     useEffect(() => {
-        if (user?.id)
-            getUserPosts(user.id)
-                .then(data => { if (data) setUserPosts(data); });
+        if (!user?.id) return;
+
+        getUserPosts(user.id)
+            .then(data => { if (data) setUserPosts(data); });
+
+        getSocialMedia(user.id)
+            .then(data => {
+                console.log("social response:", data); // remove after debugging
+                if (data) setSocialMedia(data);
+            });
     }, [user?.id]);
 
     const handleToggleLike = (postId: string) => {
@@ -53,7 +63,7 @@ export default function ArtistProfile() {
     if (!user) return null;
 
     const bio = user.bio || DUMMY_BIO;
-    const hasSocialLinks = user.socialLinks && Object.values(user.socialLinks).some(Boolean);
+    const hasSocialLinks = !!socialMedia && Object.values(socialMedia).some(v => v && v !== user.id);
     const earnedBadges = user.badges ? user.badges.filter((b: any) => b.earned) : [];
     const rankBadge = user.level || "Advanced Sketcher";
     const streak = user.streak ?? 15;
@@ -128,42 +138,37 @@ export default function ArtistProfile() {
                             {/* Social icon buttons */}
                             {hasSocialLinks && (
                                 <div className="flex flex-wrap gap-2 mt-3">
-                                    {user.socialLinks!.x && (
-                                        <a href={user.socialLinks!.x} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.twitter && (
+                                        <a href={socialMedia!.twitter} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaTwitter className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.pinterest && (
-                                        <a href={user.socialLinks!.pinterest} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.pinterest && (
+                                        <a href={socialMedia!.pinterest} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaPinterest className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.deviantart && (
-                                        <a href={user.socialLinks!.deviantart} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.deviantArt && (
+                                        <a href={socialMedia!.deviantArt} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaDeviantart className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.youtube && (
-                                        <a href={user.socialLinks!.youtube} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.youTube && (
+                                        <a href={socialMedia!.youTube} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaYoutube className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.discord && (
-                                        <button onClick={() => navigator.clipboard.writeText(user.socialLinks!.discord!)}
-                                            title={`Copy: ${user.socialLinks!.discord}`}
+                                    {socialMedia!.discord && (
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(socialMedia!.discord!)}
+                                            title={`Copy: ${socialMedia!.discord}`}
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaDiscord className="w-4 h-4" />
                                         </button>
-                                    )}
-                                    {user.website && (
-                                        <a href={user.website} target="_blank" rel="noopener noreferrer"
-                                            className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
-                                            <FaGlobe className="w-4 h-4" />
-                                        </a>
                                     )}
                                 </div>
                             )}
@@ -301,7 +306,6 @@ export default function ArtistProfile() {
                         likedDrawings={likedPosts}
                         toggleLike={handleToggleLike}
                         initialImageIndex={0}
-                        // onSubmitComment={}
                     />
                 )}
             </AnimatePresence>

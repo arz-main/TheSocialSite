@@ -2,11 +2,11 @@ import { createContext, useState, useCallback } from "react";
 import { type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import { type Post } from "../types/PostTypes";
-import { type PostContextType } from "../types/PostContextTypes";
+import { type PostsContextType } from "../types/PostTypes";
 
-export const PostContext = createContext<PostContextType | undefined>(undefined);
+export const PostsContext = createContext<PostsContextType | undefined>(undefined);
 
-export function PostProvider({ children }: { children: ReactNode }) {
+export function PostsProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const axios = useAxios()!;
@@ -37,8 +37,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
         }), []);
 
     return (
-        <PostContext.Provider value={{ loading, error, getAllPosts, getUserPosts }}>
+        <PostsContext.Provider value={{ loading, error, getAllPosts, getUserPosts }}>
             {children}
-        </PostContext.Provider>
+        </PostsContext.Provider>
     );
 }
