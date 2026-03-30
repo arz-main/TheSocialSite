@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheSocialSite.Domain.Entities.Post;
-using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Models.Post
 {

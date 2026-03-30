@@ -1,7 +1,7 @@
 
 import { type AxiosInstance } from "axios";
 import { useContext } from "react";
-import { AxiosContext } from "../axios/AxiosProvider";
+import { AxiosContext } from "../providers/AxiosProvider";
 
 function useAxios(): AxiosInstance {
     const context = useContext(AxiosContext);

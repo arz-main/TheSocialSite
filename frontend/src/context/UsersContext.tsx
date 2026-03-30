@@ -2,9 +2,8 @@ import { createContext, useCallback, useRef, useState } from "react";
 import { type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import { type User } from "../types/UserTypes";
-import type {
-    UpdateProfilePayload, UsersContextType
-} from "../types/UsersContextTypes";
+import type { UsersContextType } from "../types/UsersContextTypes";
+import type { UpdateUserPayload } from "../types/UserTypes";
 
 export const UsersContext = createContext<UsersContextType | undefined>(undefined);
 
@@ -14,7 +13,7 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    async function updateProfile(userId: string, data: UpdateProfilePayload): Promise<void> {
+    async function updateUser(userId: string, data: UpdateUserPayload): Promise<void> {
         try {
             setLoading(true);
             setError(null);
@@ -61,7 +60,7 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     }, []);
 
     return (
-        <UsersContext.Provider value={{ getUser, getAllUsers, updateProfile, loading, error, }}>
+        <UsersContext.Provider value={{ getUser, getAllUsers, updateUser, loading, error, }}>
             {children}
         </UsersContext.Provider>
     );

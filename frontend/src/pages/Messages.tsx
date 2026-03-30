@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { ChatView, EmptyState, ConversationItem } from "../components/ui/MessagesPageComponents";
 import { Card } from "../components/ui/Card";
 import { useUsers } from "../hooks/useUsers";
-import { SignalRContext } from "../signalR/SignalRProvider";
+import { SignalRContext } from "../providers/SignalRProvider";
 import type { User } from "../types/UserTypes";
 import type { Conversation, ChatMessage } from "../types/MessagesPageTypes";
 import { useAuth } from "../hooks/useAuth";

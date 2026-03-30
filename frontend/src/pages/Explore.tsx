@@ -1,22 +1,19 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
-import { useNavigate } from "react-router";
 import { CommentsModal, Dropdown, PostCard } from "../components/ui/ExplorePageComponents";
 import type { SearchByOption, SortByOption } from "../types/ExplorePageTypes";
 import { getSearchPlaceholder, searchByOptions, sortByOptions, filterPosts, sortPosts } from "../utils/ExplorePageUtils";
-import paths from "../routes/paths";
 import { Button } from "../components/ui/BasicButton";
 import type { Post } from "../types/PostTypes";
-import useAxios from "../hooks/useAxios";
 import LoadingScreen from "../components/ui/LoadingScreen";
 import ErrorScreen from "../components/ui/ErrorScreen";
+import { usePost } from "../hooks/usePost";
 
 const PAGE_SIZE = 9;
 
 // --- Main Page ---
 export default function ExplorePage() {
-    const navigate = useNavigate();
     const [likedDrawings, setLikedDrawings] = useState<Set<string>>(new Set());
     const [searchQuery, setSearchQuery] = useState("");
     const [searchBy, setSearchBy] = useState<SearchByOption>("creator");
@@ -27,29 +24,27 @@ export default function ExplorePage() {
 
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string>();
-    const axiosInstance = useAxios();
+    const [error, setError] = useState<string>("");
+
+    const { getAllPosts } = usePost();
 
     useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                setLoading(true);
-                const response = await axiosInstance.get<Post[]>("/posts");
+        setLoading(true);
+        setError(""); // reset
 
-                if (typeof response.data === "string") {
-                    throw new Error("Got HTML instead of JSON — backend may be down");
+        getAllPosts()
+            .then(data => {
+                if (!data) {
+                    throw new Error("Failed to load posts");
                 }
-                console.log(response.data);
-                setPosts(response.data);
-            } catch (err) {
+                setPosts(data);
+            })
+            .catch(err => {
                 console.error(err);
-                setError("Failed to load posts");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPosts();
-    }, [axiosInstance]);
+                setError(err.message || "Failed to load posts");
+            })
+            .finally(() => setLoading(false));
+    }, [getAllPosts]);
 
     const formatDate = (dateString: string) => {
         const diffHours = Math.floor(
@@ -104,8 +99,9 @@ export default function ExplorePage() {
 
     return (
         <>
-            <section className="flex flex-col flex-1 w-full p-6 bg-background">
+            <section className="flex flex-col flex-1 w-full h-screen bg-background text-text p-6">
                 <motion.div
+                    className="flex-1 flex flex-col" // <-- makes this fill available height
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
@@ -156,9 +152,9 @@ export default function ExplorePage() {
 
                     <>
                         {/* Cards Grid */}
-                        <div className="bg-background grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {visiblePosts.length > 0 ? (
-                                visiblePosts.map((post: Post, index: number) => (
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {posts.length > 0 ? (
+                                visiblePosts.map((post, index) => (
                                     <PostCard
                                         key={post.id}
                                         post={post}
@@ -172,12 +168,11 @@ export default function ExplorePage() {
                                     />
                                 ))
                             ) : (
+                                // <-- Empty state message for API success but no posts
                                 <div className="col-span-3 text-center py-16 text-text opacity-50">
-                                    {searchBy === "reference" ? (
-                                        <>No reference search available yet</>
-                                    ) : (
-                                        <>No results found matching "{searchQuery}"</>
-                                    )}
+                                    {searchQuery
+                                        ? `No results found matching "${searchQuery}"`
+                                        : "No posts available at the moment. Check back later!"}
                                 </div>
                             )}
                         </div>
@@ -202,11 +197,11 @@ export default function ExplorePage() {
                 {openedPost && (
                     <CommentsModal
                         post={openedPost}
-                        //onSubmitComment={ }
                         onClose={() => setOpenedPost(null)}
                         likedDrawings={likedDrawings}
                         toggleLike={toggleLike}
                         initialImageIndex={0}
+                    //onSubmitComment={ }
                     />
                 )}
             </AnimatePresence>

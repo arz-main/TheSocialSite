@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children, allowedRoles }: Props) {
 
     if (initializing) return <LoadingScreen />;
     if (!user) return <Navigate to={paths.login} replace />;
-    if (!allowedRoles.includes(user.role as Role)) return <Navigate to={paths.error.unauthorized} replace />;
+    if (!allowedRoles.includes(user.role)) return <Navigate to={paths.error.unauthorized} replace />;
 
     return <>{children}</>;
 }

@@ -181,7 +181,7 @@ const Home = () => {
 						<h1 className="hero-word text-text text-5xl md:text-6xl font-black tracking-tight leading-tight mb-1">Master Your Art</h1>
 						<h1 className="hero-word text-text text-5xl md:text-6xl font-black tracking-tight leading-tight mb-1">Through</h1>
 						<div className="hero-word relative inline-block">
-							<h1 className="text-primary text-5xl md:text-6xl font-black tracking-tight leading-tight mb-4">Daily Practice</h1>
+							<h1 className="text-primary text-5xl md:text-6xl font-black tracking-tight leading-tight mb-4">SketchFlow</h1>
 							<svg viewBox="0 0 280 12" className="absolute -bottom-1 left-0 w-full" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M4 8 Q40 2 80 8 Q120 14 160 8 Q200 2 240 8 Q260 11 276 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-primary" />
 							</svg>

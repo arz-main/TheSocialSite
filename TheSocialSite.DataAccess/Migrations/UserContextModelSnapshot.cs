@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheSocialSite.DataAccess.Context;
 
 #nullable disable
 
-namespace TheSocialSite.DataAccess.Migrations.User
+namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20260322170527_AddSocialLinks")]
-    partial class AddSocialLinks
+    partial class UserContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,7 +75,7 @@ namespace TheSocialSite.DataAccess.Migrations.User
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
                 {
-                    b.OwnsOne("TheSocialSite.Domain.Entities.User.UserSocialMedia", "SocialLinks", b1 =>
+                    b.OwnsOne("TheSocialSite.Domain.Entities.User.UserSocialLinks", "SocialLinks", b1 =>
                         {
                             b1.Property<string>("UserDataId")
                                 .HasColumnType("nvarchar(450)");
@@ -90,6 +87,9 @@ namespace TheSocialSite.DataAccess.Migrations.User
                             b1.Property<string>("Discord")
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)");
+
+                            b1.Property<bool>("HasSocialLinks")
+                                .HasColumnType("bit");
 
                             b1.Property<string>("Pinterest")
                                 .HasMaxLength(200)

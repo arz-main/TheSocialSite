@@ -23,3 +23,36 @@ export type User = {
     postsCount: number;
     joinedDate: string;
 };
+
+
+export type SocialLinks = {
+    pinterest?: string;
+    twitter?: string;
+    deviantArt?: string;
+    youTube?: string;
+    discord?: string;
+};
+
+export type ProfileData = {
+    id: string;
+    username: string;
+    email: string;
+    avatar: string | null;
+    bio: string | null;
+    location: string | null;
+    website: string | null;
+    postsCount: number;
+    joinedDate: string;
+    socialLinks: SocialLinks | null;
+};
+
+export type UpdateUserPayload = {
+    username?: string;
+    email?: string;
+    location?: string;
+    website?: string;
+    bio?: string;
+    avatar?: string;
+    socialLinks?: SocialLinks;
+};
+

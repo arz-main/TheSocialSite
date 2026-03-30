@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { } from "./axios/AxiosProvider";
+import { } from "./providers/AxiosProvider";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
@@ -34,7 +34,6 @@ import LessonPage from "./pages/LessonPage";
 
 import paths from "./routes/paths";
 import { useAuth } from "./hooks/useAuth"
-import { Role } from "./types/RolesTypes";
 
 const App = () => {
 	const { initializing } = useAuth();
@@ -64,35 +63,35 @@ const App = () => {
 
 					{/* access to authenticated users */}
 					<Route path={paths.artist.statistics} element={
-						<ProtectedRoute allowedRoles={[Role.User, Role.Admin]}>
+						<ProtectedRoute allowedRoles={["User", "Admin"]}>
 							<Statistics />
 						</ProtectedRoute>
 					} />
 					<Route path={paths.artist.messages} element={
-						<ProtectedRoute allowedRoles={[Role.User, Role.Admin]}>
+						<ProtectedRoute allowedRoles={["User", "Admin"]}>
 							<Messages />
 						</ProtectedRoute>
 					} />
 					<Route path={paths.artist.edit_profile} element={
-						<ProtectedRoute allowedRoles={[Role.User, Role.Admin]}>
+						<ProtectedRoute allowedRoles={["User", "Admin"]}>
 							<EditProfile />
 						</ProtectedRoute>
 					} />
 					<Route path={paths.artist.profile} element={
-						<ProtectedRoute allowedRoles={[Role.User, Role.Admin]}>
+						<ProtectedRoute allowedRoles={["User", "Admin"]}>
 							<ArtistProfile />
 						</ProtectedRoute>
 					} />
 
 					{/* admin only */}
 					<Route path={paths.admin.dashboard} element={
-						<ProtectedRoute allowedRoles={[Role.Admin]}>
+						<ProtectedRoute allowedRoles={["Admin"]}>
 							<AdminDashboard />
 						</ProtectedRoute>
 					} />
 
 					<Route path={paths.admin.course_creator} element={
-						<ProtectedRoute allowedRoles={[Role.Admin]}>
+						<ProtectedRoute allowedRoles={["Admin"]}>
 							<AdminCourseCreator />
 						</ProtectedRoute>
 					} />

@@ -1,7 +1,6 @@
 ﻿// UserContext.cs
 using Microsoft.EntityFrameworkCore;
 using TheSocialSite.Domain.Entities.User;
-
 namespace TheSocialSite.DataAccess.Context
 {
     public class UserContext : DbContext

@@ -1,4 +1,4 @@
-import { Role } from "./RolesTypes";
+import type { Role } from "./RolesTypes";
 
 export type JwtPayload = {
     sub: string;
