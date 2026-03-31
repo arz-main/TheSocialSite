@@ -22,6 +22,46 @@ namespace TheSocialSite.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.User.SocialMedia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DeviantArt")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Discord")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Pinterest")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Twitter")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("YouTube")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("SocialMedia");
+                });
+
             modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
                 {
                     b.Property<string>("Id")
@@ -56,8 +96,9 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.Property<int>("PostsCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -73,44 +114,19 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.User.SocialMedia", b =>
+                {
+                    b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "User")
+                        .WithOne("SocialLinks")
+                        .HasForeignKey("TheSocialSite.Domain.Entities.User.SocialMedia", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
                 {
-                    b.OwnsOne("TheSocialSite.Domain.Entities.User.UserSocialLinks", "SocialLinks", b1 =>
-                        {
-                            b1.Property<string>("UserDataId")
-                                .HasColumnType("nvarchar(450)");
-
-                            b1.Property<string>("DeviantArt")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.Property<string>("Discord")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<bool>("HasSocialLinks")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("Pinterest")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.Property<string>("Twitter")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.Property<string>("YouTube")
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
-
-                            b1.HasKey("UserDataId");
-
-                            b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserDataId");
-                        });
-
                     b.Navigation("SocialLinks");
                 });
 #pragma warning restore 612, 618

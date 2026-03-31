@@ -6,4 +6,5 @@ export type AuthContextType = {
     login: (credential: string, password: string) => Promise<User>;
     logout: () => void;
     signup: (username: string, email: string, password: string) => Promise<void>;
+    refreshUser(): Promise<void>;
 };

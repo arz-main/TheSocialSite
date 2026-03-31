@@ -32,7 +32,6 @@ namespace TheSocialSite.Api.Controllers
             return Ok(users);
         }
 
-
         [HttpGet("{id}")]
         public IActionResult GetUser([FromRoute] string id)
         {
@@ -73,6 +72,24 @@ namespace TheSocialSite.Api.Controllers
                 return BadRequest(result.Message);
 
             return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteUser([FromRoute] string id)
+        {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (userId == null)
+                return Unauthorized();
+
+            if (userId != id)
+                return Forbid();
+
+            var result = _userAction.UserDeleteAction(userId);
+
+            if (!result.IsValid)
+                return BadRequest(result.Message);
+
+            return Ok(result.Message);
         }
     }
 }

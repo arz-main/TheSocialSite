@@ -15,15 +15,6 @@ namespace TheSocialSite.Domain.Models.User
         [MaxLength(150)] public string? Website { get; set; }
         [MaxLength(500)] public string? Bio { get; set; }
         [MaxLength(250)] public string? Avatar { get; set; } // URL to image
-        public UserSocialLinksDto? SocialLinks { get; set; }
-    }
-
-    public class UserSocialLinksDto
-    {
-        public string? Pinterest { get; set; }
-        public string? Twitter { get; set; }
-        public string? DeviantArt { get; set; }
-        public string? YouTube { get; set; }
-        public string? Discord { get; set; }
+        public SocialMediaDto? SocialLinks { get; set; }
     }
 }

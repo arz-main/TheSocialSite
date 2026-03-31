@@ -8,7 +8,7 @@ import { Button } from "../components/ui/BasicButton";
 import type { Post } from "../types/PostTypes";
 import LoadingScreen from "../components/ui/LoadingScreen";
 import ErrorScreen from "../components/ui/ErrorScreen";
-import { usePost } from "../hooks/usePost";
+import { usePosts } from "../hooks/usePosts";
 
 const PAGE_SIZE = 9;
 
@@ -26,7 +26,7 @@ export default function ExplorePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>("");
 
-    const { getAllPosts } = usePost();
+    const { getAllPosts } = usePosts();
 
     useEffect(() => {
         setLoading(true);

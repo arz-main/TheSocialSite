@@ -54,8 +54,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         fetchUser(token).catch(clearSession).finally(() => setInitializing(false));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+    const refreshUser = async (): Promise<void> => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        await fetchUser(token);
+    };
     return (
-        <AuthContext.Provider value={{ user, initializing, login, logout, signup }}>
+        <AuthContext.Provider value={{ user, initializing, refreshUser, login, logout, signup }}>
             {children}
         </AuthContext.Provider>
     );

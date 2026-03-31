@@ -1,4 +1,16 @@
+// UserTypes.ts
 import type { Role } from "../types/RolesTypes";
+
+export type UsersContextType = {
+    loading: boolean;
+    error: string | null;
+    getUser: (userId: string) => Promise<User>;
+    getAllUsers: () => Promise<User[]>;
+    updateUser: (userId: string, data: UpdateUserPayload) => Promise<void>;
+    deleteUser: (userId: string) => Promise<void>;
+};
+
+export type UpdateUserPayload = Omit<EditProfileForm, "socialMedia">;
 
 export type User = {
     id: string;
@@ -9,50 +21,43 @@ export type User = {
     bio: string;
     location: string;
     website: string;
-
-    socialLinks: {
-        pinterest?: string;
-        x?: string;
-        deviantart?: string;
-        youtube?: string;
-        discord?: string;
-    };
-
+    socialLinks: SocialLinks;
     followers?: string[];
     following?: string[];
     postsCount: number;
     joinedDate: string;
 };
-
-
+// UserTypes.ts
 export type SocialLinks = {
-    pinterest?: string;
     twitter?: string;
-    deviantArt?: string;
-    youTube?: string;
+    pinterest?: string;
+    deviantArt?: string;  // was deviantart
+    youTube?: string;  // was youtube
     discord?: string;
 };
 
-export type ProfileData = {
-    id: string;
+export interface EditProfileForm {
     username: string;
     email: string;
+    bio: string;
+    location: string;
+    website: string;
     avatar: string | null;
-    bio: string | null;
-    location: string | null;
-    website: string | null;
-    postsCount: number;
-    joinedDate: string;
-    socialLinks: SocialLinks | null;
-};
+    socialMedia: SocialLinks;
+}
 
-export type UpdateUserPayload = {
-    username?: string;
-    email?: string;
-    location?: string;
-    website?: string;
-    bio?: string;
-    avatar?: string;
-    socialLinks?: SocialLinks;
+export const defaultEditProfileForm: EditProfileForm = {
+    username: "",
+    email: "",
+    bio: "",
+    location: "",
+    website: "",
+    avatar: null,
+    socialMedia: {
+        twitter: "",
+        pinterest: "",
+        deviantArt: "",
+        youTube: "",
+        discord: "",
+    },
 };
-

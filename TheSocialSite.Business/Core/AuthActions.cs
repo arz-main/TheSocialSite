@@ -8,9 +8,9 @@ namespace TheSocialSite.Business.Core
 {
     public class AuthActions
     {
-        private readonly IJwtServiceAction _jwtServiceAction;
+        private readonly IJwtInteractAction _jwtServiceAction;
         public AuthActions(){
-            _jwtServiceAction = new JwtServiceAction();
+            _jwtServiceAction = new JwtInteractAction();
         }
 
         public LoginActionResponse UserLoginDataValidationExecution(UserLoginDto loginData)

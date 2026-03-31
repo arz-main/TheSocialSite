@@ -13,7 +13,7 @@ import {
 import { Badge as BadgeUI } from "../components/ui/Badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
-import { usePost } from "../hooks/usePost";
+import { usePosts } from "../hooks/usePosts";
 import { CommentsModal, PostCard } from "../components/ui/ExplorePageComponents";
 import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
 import type { Post } from "../types/PostTypes";
@@ -29,7 +29,7 @@ export default function OthersProfile() {
     const [userPosts, setUserPosts] = useState<Post[]>([]);
 
     const { getUser } = useUsers();
-    const { getUserPosts } = usePost();
+    const { getUserPosts } = usePosts();
 
     const { userId } = useParams();
 
@@ -133,8 +133,8 @@ export default function OthersProfile() {
                             {/* Social icon buttons */}
                             {hasSocialLinks && (
                                 <div className="flex flex-wrap gap-2 mt-3">
-                                    {user.socialLinks!.x && (
-                                        <a href={user.socialLinks!.x} target="_blank" rel="noopener noreferrer"
+                                    {user.socialLinks!.twitter && (
+                                        <a href={user.socialLinks!.twitter} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaTwitter className="w-4 h-4" />
                                         </a>
@@ -145,14 +145,14 @@ export default function OthersProfile() {
                                             <FaPinterest className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.deviantart && (
-                                        <a href={user.socialLinks!.deviantart} target="_blank" rel="noopener noreferrer"
+                                    {user.socialLinks!.deviantArt && (
+                                        <a href={user.socialLinks!.deviantArt} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaDeviantart className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.youtube && (
-                                        <a href={user.socialLinks!.youtube} target="_blank" rel="noopener noreferrer"
+                                    {user.socialLinks!.youTube && (
+                                        <a href={user.socialLinks!.youTube} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaYoutube className="w-4 h-4" />
                                         </a>

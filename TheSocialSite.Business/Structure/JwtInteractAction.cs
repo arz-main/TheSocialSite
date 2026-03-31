@@ -9,7 +9,7 @@ using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Business.Structure
 {
-    public class JwtServiceAction : JwtServiceActions, IJwtServiceAction
+    public class JwtInteractAction : JwtActions, IJwtInteractAction
     {
         public string GenerateTokenAction(string id, string username, Role role)
         {
