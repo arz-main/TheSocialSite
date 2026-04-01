@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
 import { ChatView, EmptyState, ConversationItem } from "../components/MessagesPageComponents";
 import { useUsers } from "../hooks/useUsers";
@@ -15,7 +15,7 @@ function buildConversationId(userIdA: string, userIdB: string): string {
 export default function MessagesPage() {
 	const { connection } = useContext(SignalRContext)!;
 	const { getAllUsers } = useUsers();
-	const { user: currentUser } = useAuth();
+	const { currentUser } = useAuth();
 
 	const [users, setUsers] = useState<User[]>([]);
 	const [conversations, setConversations] = useState<{ [userId: string]: Conversation }>({});
@@ -33,66 +33,66 @@ export default function MessagesPage() {
 
 	useEffect(() => {
 		if (!connection || !currentUser) return;
-		const handler = (
-			conversationId: string,
-			senderId: string,
-			message: string,
-			messageId: string
-		) => {
-			if (senderId === currentUser.id) return;
+
+		const handler = (conversationId: string, senderId: string, message: string, messageId: string) => {
 			const otherUserId = conversationId.split("_").find(id => id !== currentUser.id)!;
 			const participant = users.find(u => u.id === otherUserId);
 			if (!participant) return;
-			const newMessage: ChatMessage = {
-				id: messageId,
-				senderId,
-				text: message,
-				createdAt: new Date().toISOString(),
-			};
+
 			setConversations(prev => {
-				const prevConvo = prev[otherUserId];
+				const prevConvo = prev[otherUserId] || {
+					conversationId,
+					participant,
+					messages: [],
+					lastMessage: "",
+					lastMessageAt: "",
+					unreadCount: 0,
+				};
+
+				if (prevConvo.messages.some(m => m.id === messageId)) return prev;
+
+				const newMessage: ChatMessage = {
+					id: messageId,
+					senderId,
+					text: message,
+					createdAt: new Date().toISOString(),
+				};
+
 				return {
 					...prev,
 					[otherUserId]: {
-						conversationId,
-						participant,
-						messages: [...(prevConvo?.messages || []), newMessage],
+						...prevConvo,
+						messages: [...prevConvo.messages, newMessage],
 						lastMessage: message,
 						lastMessageAt: newMessage.createdAt,
-						unreadCount: selectedUserId === otherUserId ? 0 : (prevConvo?.unreadCount || 0) + 1,
+						unreadCount: selectedUserId === otherUserId ? 0 : (prevConvo.unreadCount ?? 0) + 1,
 					},
 				};
 			});
 		};
+
 		connection.on("ReceiveMessage", handler);
 		return () => connection.off("ReceiveMessage", handler);
 	}, [connection, currentUser, users, selectedUserId]);
 
-	const handleSelectUser = (userId: string) => {
+	const handleSelectUser = async (userId: string) => {
 		setSelectedUserId(userId);
 		setConversations(prev => {
 			if (!prev[userId]) return prev;
 			return { ...prev, [userId]: { ...prev[userId], unreadCount: 0 } };
 		});
+
+		if (!connection || !currentUser) return;
+		const conversationId = buildConversationId(currentUser.id, userId);
+		try {
+			await connection.invoke("JoinConversation", conversationId);
+		} catch (err) {
+			console.error("Failed to join conversation:", err);
+		}
 	};
 
-	const handleMessageSent = (message: ChatMessage) => {
-		if (!selectedUserId || !currentUser) return;
-		setConversations(prev => {
-			const prevConvo = prev[selectedUserId];
-			const participant = users.find(u => u.id === selectedUserId)!;
-			return {
-				...prev,
-				[selectedUserId]: {
-					conversationId: prevConvo?.conversationId || buildConversationId(currentUser.id, selectedUserId),
-					participant: prevConvo?.participant || participant,
-					messages: [...(prevConvo?.messages || []), message],
-					lastMessage: message.text,
-					lastMessageAt: message.createdAt,
-					unreadCount: prevConvo?.unreadCount || 0,
-				},
-			};
-		});
+	const handleMessageSent = (msg: ChatMessage) => {
+		console.log("Message sent:", msg.text);
 	};
 
 	const filteredUsers = users.filter(u =>
@@ -100,67 +100,32 @@ export default function MessagesPage() {
 	);
 
 	return (
-		<section
-			className="flex flex-col w-full overflow-hidden bg-background"
-			style={{ height: "calc(100vh - 4rem)" }}
-		>
-			<motion.div
-				initial={{ opacity: 0, y: 8 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.2 }}
-				className="flex-1 flex flex-col p-4 min-h-0"
-			>
-				{/* Outer card */}
-				<div
-					className="flex-1 grid min-h-0 overflow-hidden rounded-2xl"
-					style={{
-						gridTemplateColumns: "288px 1fr",
-						border: "1px solid var(--border)",
-						background: "var(--card)",
-						boxShadow: "0 1px 3px 0 rgba(0,0,0,0.06)",
-					}}
-				>
+		<section className="flex flex-col w-full h-screen overflow-hidden bg-background">
+			<div className="flex-1 flex p-4 min-h-0">
+				<div className="flex-1 grid grid-cols-[288px_1fr] min-h-0 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+
 					{/* Sidebar */}
-					<div
-						className="flex flex-col min-h-0 border-r"
-						style={{ borderColor: "var(--border)", background: "var(--card)" }}
-					>
+					<div className="flex flex-col min-h-0 border-r border-border">
+
 						{/* Search header */}
-						<div
-							className="p-3 shrink-0 border-b"
-							style={{ borderColor: "var(--border)" }}
-						>
-							<p className="text-sm font-medium mb-2.5 px-1" style={{ color: "var(--text)" }}>
-								Messages
-							</p>
+						<div className="p-3 shrink-0 border-b border-border">
+							<p className="text-sm font-medium mb-2.5 px-1 text-text">Messages</p>
 							<div className="relative">
-								<Search
-									className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5"
-									style={{ color: "var(--text-opaque)" }}
-								/>
+								<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
 								<input
 									type="text"
 									value={searchQuery}
 									onChange={e => setSearchQuery(e.target.value)}
 									placeholder="Search conversations…"
-									className="w-full rounded-full pl-8 pr-4 py-1.5 text-xs outline-none transition-colors duration-150"
-									style={{
-										background: "var(--background)",
-										color: "var(--text)",
-										border: "1px solid var(--border)",
-									}}
-									onFocus={e => (e.target.style.borderColor = "var(--primary)")}
-									onBlur={e => (e.target.style.borderColor = "var(--border)")}
+									className="w-full rounded-full pl-10 pr-4 py-1.5 text-xs border border-border bg-background text-text placeholder:text-muted outline-none focus:border-primary transition-colors"
 								/>
 							</div>
 						</div>
 
 						{/* User list */}
-						<div className="flex-1 overflow-y-auto min-h-0 p-1.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+						<div className="flex-1 overflow-y-auto min-h-0 p-1.5 scrollbar-hide bg-card">
 							{filteredUsers.length === 0 ? (
-								<p className="text-center text-xs mt-6" style={{ color: "var(--text-opaque)" }}>
-									No users found
-								</p>
+								<p className="text-center text-xs mt-6 text-muted">No users found</p>
 							) : (
 								filteredUsers.map((user, i) => {
 									const convo: Conversation = conversations[user.id] || {
@@ -174,8 +139,8 @@ export default function MessagesPage() {
 									return (
 										<ConversationItem
 											key={user.id}
-											conversation={convo}
 											index={i}
+											conversation={convo}
 											isSelected={selectedUserId === user.id}
 											onClick={() => handleSelectUser(user.id)}
 										/>
@@ -186,23 +151,21 @@ export default function MessagesPage() {
 					</div>
 
 					{/* Chat panel */}
-					<div className="flex flex-col flex-1 min-h-0" style={{ background: "var(--background)" }}>
+					<div className="flex flex-col flex-1 min-h-0 bg-background">
 						<AnimatePresence mode="wait">
 							{selectedUserId ? (
 								<ChatView
 									key={selectedUserId}
 									connection={connection}
 									currentUserId={currentUser!.id}
-									conversation={
-										conversations[selectedUserId] || {
-											conversationId: buildConversationId(currentUser!.id, selectedUserId),
-											participant: users.find(u => u.id === selectedUserId)!,
-											messages: [],
-											lastMessage: "",
-											lastMessageAt: "",
-											unreadCount: 0,
-										}
-									}
+									conversation={conversations[selectedUserId] || {
+										conversationId: buildConversationId(currentUser!.id, selectedUserId),
+										participant: users.find(u => u.id === selectedUserId)!,
+										messages: [],
+										lastMessage: "",
+										lastMessageAt: "",
+										unreadCount: 0,
+									}}
 									onMessageSent={handleMessageSent}
 								/>
 							) : (
@@ -210,8 +173,9 @@ export default function MessagesPage() {
 							)}
 						</AnimatePresence>
 					</div>
+
 				</div>
-			</motion.div>
+			</div>
 		</section>
 	);
 }

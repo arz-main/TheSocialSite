@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -14,6 +14,7 @@ import {
 	UserPlus,
 	Sun,
 	Moon,
+	Map,
 } from "lucide-react";
 import { Button } from "../components/BasicButton";
 import paths from "../routes/paths";
@@ -25,20 +26,32 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
 	const location = useLocation();
-	const { theme, setTheme } = useTheme();
+
+	const { resolvedTheme, setTheme } = useTheme();
+
+	// hydration fix
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	// Close sidebar on route change
 	useEffect(() => {
 		onClose();
 	}, [location.pathname]);
 
+	// prevent hydration mismatch
+	if (!mounted) return null;
+
 	const navItems = [
 		{ path: paths.home, label: "Home", icon: Home },
 		{ path: paths.practice, label: "Practice", icon: Image },
+		{ path: paths.roadmap.page, label: "Roadmap", icon: Map },
 		{ path: paths.explore.page, label: "Explore", icon: Compass },
+		{ path: paths.artist.profile, label: "Profile", icon: User },
 		{ path: paths.artist.messages, label: "Messages", icon: MessageCircle },
 		{ path: paths.artist.statistics, label: "Statistics", icon: BarChart3 },
-		{ path: paths.artist.profile, label: "Profile", icon: User },
 		{ path: paths.about, label: "About", icon: CircleQuestionMark },
 	];
 
@@ -77,9 +90,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 						<nav className="flex-1 p-4 pt-18 overflow-y-auto">
 							<div className="space-y-2">
 								{navItems.map((item) => {
-									const isActive = item.path === paths.home
-										? location.pathname === paths.home
-										: location.pathname.startsWith(item.path);
+									const isActive =
+										item.path === paths.home
+											? location.pathname === paths.home
+											: location.pathname.startsWith(item.path);
+
 									const Icon = item.icon;
 
 									return (
@@ -95,7 +110,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 													: "text-text hover:bg-primary/10 hover:text-primary"
 													}`}
 												whileTap={{ scale: 0.98 }}
-												transition={{ type: "spring", stiffness: 400, damping: 17 }}
+												transition={{
+													type: "spring",
+													stiffness: 400,
+													damping: 17,
+												}}
 											>
 												<Icon className="w-5 h-5" />
 												<span>{item.label}</span>
@@ -111,18 +130,32 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 							<div className="mb-2 text-sm text-text-opaque px-1">
 								Theme
 							</div>
+
 							<motion.div
-								onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+								onClick={() =>
+									setTheme(
+										resolvedTheme === "dark" ? "light" : "dark"
+									)
+								}
 								whileTap={{ scale: 0.98 }}
-								transition={{ type: "spring", stiffness: 400, damping: 17 }}
+								transition={{
+									type: "spring",
+									stiffness: 400,
+									damping: 17,
+								}}
 							>
-								<Button variant="outline" className="w-full justify-start gap-3">
-									{theme === "dark" ? (
+								<Button
+									variant="outline"
+									className="w-full justify-start gap-3"
+								>
+									{resolvedTheme === "dark" ? (
 										<Sun className="w-4 h-4" />
 									) : (
 										<Moon className="w-4 h-4" />
 									)}
-									{theme === "dark" ? "Light Mode" : "Dark Mode"}
+									{resolvedTheme === "dark"
+										? "Light Mode"
+										: "Dark Mode"}
 								</Button>
 							</motion.div>
 						</div>
@@ -145,7 +178,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 										>
 											<motion.div
 												whileTap={{ scale: 0.98 }}
-												transition={{ type: "spring", stiffness: 400, damping: 17 }}
+												transition={{
+													type: "spring",
+													stiffness: 400,
+													damping: 17,
+												}}
 											>
 												<Button
 													variant="outline"
@@ -165,4 +202,4 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 			</AnimatePresence>
 		</>
 	);
-} 
+}

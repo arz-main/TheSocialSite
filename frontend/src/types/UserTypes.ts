@@ -6,7 +6,7 @@ export type UsersContextType = {
     error: string | null;
     getUser: (userId: string) => Promise<User>;
     getAllUsers: () => Promise<User[]>;
-    updateUser: (userId: string, data: UpdateUserPayload) => Promise<void>;
+    updateUser: (userId: string, data: UpdateUserPayload) => Promise<UpdateUserPayload>;
     deleteUser: (userId: string) => Promise<void>;
 };
 
@@ -27,6 +27,7 @@ export type User = {
     postsCount: number;
     joinedDate: string;
 };
+
 // UserTypes.ts
 export type SocialLinks = {
     twitter?: string;
@@ -44,6 +45,7 @@ export interface EditProfileForm {
     website: string;
     avatar: string | null;
     socialMedia: SocialLinks;
+    role? : string;
 }
 
 export const defaultEditProfileForm: EditProfileForm = {

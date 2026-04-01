@@ -10,11 +10,18 @@ interface Props {
 }
 
 export default function ProtectedRoute({ children, allowedRoles }: Props) {
-    const { user, initializing } = useAuth();
+    const { currentUser, initializing } = useAuth();
 
+    // Wait for auth state
     if (initializing) return <LoadingScreen />;
-    if (!user) return <Navigate to={paths.login} replace />;
-    if (!allowedRoles.includes(user.role)) return <Navigate to={paths.error.unauthorized} replace />;
+    // Not logged in
+    if (!currentUser) return <Navigate to={paths.login} replace />;
+
+    // Normalize role strings to lowercase to prevent mismatch
+    const normalizedAllowed = allowedRoles.map(r => r.toLowerCase());
+    if (!normalizedAllowed.includes(currentUser.role.toLowerCase() as Role)) {
+        return <Navigate to={paths.error.unauthorized} replace />;
+    }
 
     return <>{children}</>;
 }

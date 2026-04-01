@@ -26,7 +26,7 @@ const socialPlatforms: { key: keyof EditProfileForm["socialMedia"]; label: strin
 
 export default function EditProfile() {
     const navigate = useNavigate();
-    const { user, logout, refreshUser } = useAuth();
+    const { currentUser, logout, refreshToken } = useAuth();
     const { getUser, updateUser, deleteUser } = useUsers();
     const { getSocialMedia, createSocialMedia, updateSocialMedia } = useSocialMedia();
 
@@ -42,14 +42,14 @@ export default function EditProfile() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (!user?.id) return;
+        if (!currentUser?.id) return;
 
         const fetchData = async () => {
             try {
-                const userData = await getUser(user.id);
+                const userData = await getUser(currentUser.id);
                 if (!userData) throw new Error("User not found");
 
-                const social = await getSocialMedia(user.id);
+                const social = await getSocialMedia(currentUser.id);
                 const socialExists = !!social && Object.values(social).some(val => val !== "");
 
                 setHasSocialRecord(socialExists);
@@ -76,7 +76,7 @@ export default function EditProfile() {
         };
 
         fetchData();
-    }, [user?.id]);
+    }, [currentUser?.id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -114,14 +114,14 @@ export default function EditProfile() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user?.id) return;
+        if (!currentUser?.id) return;
 
         setSaving(true);
         setError(null);
         setSuccess(false);
 
         try {
-            await updateUser(user.id, {
+            await updateUser(currentUser.id, {
                 username: form.username,
                 email:    form.email,
                 bio:      form.bio,
@@ -131,7 +131,7 @@ export default function EditProfile() {
             });
 
             const socialPayload: SocialMediaDto = {
-                userId: user.id,
+                userId: currentUser.id,
                 ...form.socialMedia,
             };
 
@@ -142,7 +142,7 @@ export default function EditProfile() {
                 setHasSocialRecord(true);
             }
 
-            await refreshUser();
+            await refreshToken();
             setSuccess(true);
             navigate(paths.artist.profile);
         } catch (err) {
@@ -153,11 +153,11 @@ export default function EditProfile() {
     };
 
     const handleDelete = async () => {
-        if (!user?.id) return;
+        if (!currentUser?.id) return;
         setDeleting(true);
         setError(null);
         try {
-            await deleteUser(user.id);
+            await deleteUser(currentUser.id);
             logout();
             navigate(paths.home);
         } catch (err) {
@@ -217,7 +217,7 @@ export default function EditProfile() {
                                 <Label className="mb-4 block">Profile Picture</Label>
                                 <div className="flex items-center gap-6">
                                     <div className="relative">
-                                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-5xl overflow-hidden">
+                                        <div className="w-24 h-24 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-5xl overflow-hidden">
                                             {form.avatar
                                                 ? <img src={form.avatar} alt="avatar" className="w-full h-full object-cover" />
                                                 : <Palette />

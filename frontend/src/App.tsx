@@ -70,9 +70,9 @@ const App = () => {
 
 					{/* admin only */}
 					<Route path={paths.admin.dashboard} element={
-						// <ProtectedRoute allowedRoles={["Admin", "User"]}>
+						<ProtectedRoute allowedRoles={["Admin"]}>
 							<AdminDashboard />
-						
+						</ProtectedRoute>
 					} />
 
 					<Route path={paths.admin.course_creator} element={

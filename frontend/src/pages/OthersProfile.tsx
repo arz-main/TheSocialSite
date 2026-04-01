@@ -262,7 +262,7 @@ export default function OthersProfile() {
                                                                 <div className="flex-1">
                                                                     <div className="flex items-center gap-2 mb-1">
                                                                         <h4 className="font-semibold">{badge.name}</h4>
-                                                                        <BadgeUI variant="default" className="text-xs border border-2">Earned</BadgeUI>
+                                                                        <BadgeUI variant="default" className="text-xs border">Earned</BadgeUI>
                                                                     </div>
                                                                     <p className="text-sm text-muted-foreground mb-2">{badge.description}</p>
                                                                     {badge.earnedDate && <p className="text-xs text-muted-foreground">{formatDate(badge.earnedDate)}</p>}

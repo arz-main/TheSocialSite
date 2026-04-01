@@ -17,9 +17,23 @@ export interface Post {
 	showWithReference: boolean;
 }
 
+export interface UpdatePostPayload {
+	title?: string;
+	description?: string;
+	status?: PostStatus;
+	imageUrl?: string;
+	referenceUrl?: string;
+	category?: string;
+	duration?: number;
+	showWithReference?: boolean;
+}
+
 export type PostsContextType = {
-    loading: boolean;
-    error: string | null;
-    getAllPosts: () => Promise<Post[] | null >;
-    getUserPosts: (userId: string | undefined ) => Promise<Post[] | null>;
+	loading: boolean;
+	error: string | null;
+	getAllPosts: () => Promise<Post[] | null>;
+	getUserPosts: (userId: string) => Promise<Post[]>;
+	getPost: (postId: string) => Promise<Post>;
+	updatePost: (postId: string, data: UpdatePostPayload) => Promise<void>;
+	deletePost: (postId: string) => Promise<void>;
 };

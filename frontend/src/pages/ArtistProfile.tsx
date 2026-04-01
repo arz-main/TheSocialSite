@@ -30,22 +30,21 @@ export default function ArtistProfile() {
     const [socialMedia, setSocialMedia] = useState<SocialMediaDto | null>(null);
 
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { currentUser } = useAuth();
     const { getUserPosts } = usePosts();
     const { getSocialMedia } = useSocialMedia();
 
     useEffect(() => {
-        if (!user?.id) return;
+        if (!currentUser?.id) return;
 
-        getUserPosts(user.id)
+        getUserPosts(currentUser.id)
             .then(data => { if (data) setUserPosts(data); });
 
-        getSocialMedia(user.id)
+        getSocialMedia(currentUser.id)
             .then(data => {
-                console.log("social response:", data); // remove after debugging
                 if (data) setSocialMedia(data);
             });
-    }, [user?.id]);
+    }, [currentUser?.id]);
 
     const handleToggleLike = (postId: string) => {
         setLikedPosts(prev => {
@@ -60,13 +59,13 @@ export default function ArtistProfile() {
     const DUMMY_BIO =
         "Digital artist and illustrator passionate about character design and anatomy studies. Always learning, always creating.";
 
-    if (!user) return null;
+    if (!currentUser) return null;
 
-    const bio = user.bio || DUMMY_BIO;
-    const hasSocialLinks = !!socialMedia && Object.values(socialMedia).some(v => v && v !== user.id);
-    const earnedBadges = user.badges ? user.badges.filter((b: any) => b.earned) : [];
-    const rankBadge = user.level || "Advanced Sketcher";
-    const streak = user.streak ?? 15;
+    const bio = currentUser.bio || DUMMY_BIO;
+    const hasSocialLinks = !!socialMedia && Object.values(socialMedia).some(v => v && v !== currentUser.id);
+    const earnedBadges = currentUser.badges ? currentUser.badges.filter((b: any) => b.earned) : [];
+    const rankBadge = currentUser.level || "Advanced Sketcher";
+    const streak = currentUser.streak ?? 15;
     const postsCount = userPosts.length || 387;
 
     return (
@@ -88,8 +87,8 @@ export default function ArtistProfile() {
                             {/* Avatar overlapping banner */}
                             <div className="absolute -top-14 left-8 w-28 h-28 rounded-full bg-card ring-4 ring-card overflow-hidden shadow-lg">
                                 <ImageWithFallback
-                                    src={user?.avatar}
-                                    alt={user?.username}
+                                    src={currentUser?.avatar}
+                                    alt={currentUser?.username}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
@@ -107,8 +106,8 @@ export default function ArtistProfile() {
 
                             {/* Name & handle */}
                             <div className="mt-8">
-                                <h1 className="text-2xl font-bold leading-tight">{user.username}</h1>
-                                <p className="text-sm text-muted mt-0.5">@{(user.username || "artist").toLowerCase().replace(/\s/g, "")}</p>
+                                <h1 className="text-2xl font-bold leading-tight">{currentUser.username}</h1>
+                                <p className="text-sm text-muted mt-0.5">@{(currentUser.username || "artist").toLowerCase().replace(/\s/g, "")}</p>
                             </div>
 
                             {/* Bio */}
@@ -116,22 +115,22 @@ export default function ArtistProfile() {
 
                             {/* Meta row */}
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-sm text-muted">
-                                {user.location && (
+                                {currentUser.location && (
                                     <span className="flex items-center gap-1.5">
                                         <MapPin className="w-4 h-4 shrink-0" />
-                                        {user.location}
+                                        {currentUser.location}
                                     </span>
                                 )}
-                                {user.website && (
-                                    <a href={user.website} target="_blank" rel="noopener noreferrer"
+                                {currentUser.website && (
+                                    <a href={currentUser.website} target="_blank" rel="noopener noreferrer"
                                         className="flex items-center gap-1.5 text-primary hover:underline transition-colors">
                                         <ExternalLink className="w-4 h-4 shrink-0" />
-                                        {user.website.replace(/^https?:\/\//, '')}
+                                        {currentUser.website.replace(/^https?:\/\//, '')}
                                     </a>
                                 )}
                                 <span className="flex items-center gap-1.5">
                                     <CalendarDays className="w-4 h-4 shrink-0" />
-                                    Joined {formatDate(user.joinedDate)}
+                                    Joined {formatDate(currentUser.joinedDate)}
                                 </span>
                             </div>
 
@@ -252,9 +251,9 @@ export default function ArtistProfile() {
 
                                 <TabsContent value="badges">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                                        {user.badges && user.badges.filter((b: any) => b.earned).length > 0 ? (
+                                        {currentUser.badges && currentUser.badges.filter((b: any) => b.earned).length > 0 ? (
                                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                {user.badges.filter((b: any) => b.earned).map((badge: any, index: number) => (
+                                                {currentUser.badges.filter((b: any) => b.earned).map((badge: any, index: number) => (
                                                     <motion.div key={badge.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index, duration: 0.3 }}>
                                                         <Card className="p-5 hover:shadow-lg transition-all">
                                                             <div className="flex items-start gap-4">
@@ -262,7 +261,7 @@ export default function ArtistProfile() {
                                                                 <div className="flex-1">
                                                                     <div className="flex items-center gap-2 mb-1">
                                                                         <h4 className="font-semibold">{badge.name}</h4>
-                                                                        <BadgeUI variant="default" className="text-xs border border-2">Earned</BadgeUI>
+                                                                        <BadgeUI variant="default" className="text-xs border">Earned</BadgeUI>
                                                                     </div>
                                                                     <p className="text-sm text-muted-foreground mb-2">{badge.description}</p>
                                                                     {badge.earnedDate && <p className="text-xs text-muted-foreground">{formatDate(badge.earnedDate)}</p>}

@@ -1,92 +1,91 @@
-import { useState } from "react"
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import paths from "../routes/paths";
 import WebsiteLogo from "../components/SiteLogo";
-import { Menu } from "lucide-react";
-import { motion } from "motion/react";
-import { Sidebar }  from "./SidePanel";
-
+import { Menu, Home, Image, Compass, Map } from "lucide-react";
+import { motion } from "framer-motion";
+import { Sidebar } from "./SidePanel";
 
 const Navbar = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const location = useLocation();
 
-	// Helper function to check if link is active
 	const isActive = (path: string) => {
-		return location.pathname === path || location.pathname.startsWith(path + '/');
+		return (
+			location.pathname === path ||
+			location.pathname.startsWith(path + "/")
+		);
 	};
+
+	const navItems = [
+		{ path: paths.home, label: "Home", icon: Home },
+		{ path: paths.practice, label: "Practice", icon: Image },
+		{ path: paths.roadmap.page, label: "Roadmap", icon: Map },
+		{ path: paths.explore.page, label: "Explore", icon: Compass },
+	];
 
 	return (
 		<>
-			<Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-			<nav className="fixed top-0 left-0 w-full h-16 bg-card shadow-sm flex items-center justify-between px-8 z-50 border-b border-border">
-				{/* Left: hamburger + logo */}
+			<Sidebar
+				isOpen={sidebarOpen}
+				onClose={() => setSidebarOpen(false)}
+			/>
+
+			<nav className="fixed top-0 left-0 w-full h-16 bg-card shadow-sm flex items-center justify-between px-4 md:px-8 z-50 border-b border-border">
+				{/* Left */}
 				<div className="flex items-center gap-4">
 					<motion.button
-						onClick={() => setSidebarOpen(prev => prev ? false : true)}
+						onClick={() => setSidebarOpen((prev) => !prev)}
 						className="group flex justify-center items-center w-10 h-10 rounded-lg transition-colors hover:bg-primary"
 						whileTap={{ scale: 0.9 }}
 						transition={{ type: "spring", stiffness: 400, damping: 17 }}
-						aria-label="Open sidebar"
 					>
-						<Menu className="text-text transition-colors group-hover:text-white" />
+						<Menu className="text-text group-hover:text-white" />
 					</motion.button>
 
 					<WebsiteLogo />
 				</div>
-				<div className="flex gap-2">
-					<Link
-						to={paths.home}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.home)
-							? 'bg-primary text-white'
-							: 'text-text hover:text-white hover:bg-primary'
-							}`}
-					>
-						Home
-					</Link>
-					<Link
-						to={paths.practice}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.practice)
-							? 'bg-primary text-white'
-							: 'text-text hover:text-white hover:bg-primary'
-							}`}
-					>
-						Practice
-					</Link>
 
-					<Link
-						to={paths.roadmap.page}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.roadmap.page)
-							? 'bg-primary text-white'
-							: 'text-text hover:text-white hover:bg-primary'
+				{/* ✅ Desktop nav (text) */}
+				<div className="hidden md:flex gap-2">
+					{navItems.map((item) => (
+						<Link
+							key={item.path}
+							to={item.path}
+							className={`py-2 px-4 rounded-xl font-semibold transition-all ${
+								isActive(item.path)
+									? "bg-primary text-white"
+									: "text-text hover:text-white hover:bg-primary"
 							}`}
-					>
-						Roadmap
-					</Link>
+						>
+							{item.label}
+						</Link>
+					))}
+				</div>
 
-					<Link
-						to={paths.explore.page}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.explore.page)
-							? 'bg-primary text-white'
-							: 'text-text hover:text-white hover:bg-primary'
-							}`}
-					>
-						Explore
-					</Link>
-					<Link
-						to={paths.artist.profile}
-						className={`py-2 px-4 rounded-xl font-semibold transition-all ${isActive(paths.artist.profile)
-							? 'bg-primary text-white'
-							: 'text-text hover:text-white hover:bg-primary'
-							}`}
-					>
-						Profile
-					</Link>
+				{/* ✅ Mobile nav (icons) */}
+				<div className="flex md:hidden gap-1">
+					{navItems.map((item) => {
+						const Icon = item.icon;
+
+						return (
+							<Link
+								key={item.path}
+								to={item.path}
+								className={`p-2 rounded-lg transition-all ${
+									isActive(item.path)
+										? "bg-primary text-white"
+										: "text-text hover:bg-primary hover:text-white"
+								}`}
+							>
+								<Icon className="w-5 h-5" />
+							</Link>
+						);
+					})}
 				</div>
 			</nav>
 		</>
 	);
-
 };
 
 export default Navbar;

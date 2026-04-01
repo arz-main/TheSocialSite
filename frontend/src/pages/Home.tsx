@@ -116,7 +116,7 @@ const MarqueeStrip = () => (
 			{[...words, ...words].map((w, i) => (
 				<span key={i} className="text-white font-black tracking-[0.3em] text-sm flex items-center gap-10">
 					{w}
-					<span className="inline-block w-2 h-2 rounded-full bg-white opacity-60 mx-[-1.5rem]" />
+					<span className="inline-block w-2 h-2 rounded-full bg-white opacity-60 -mx-6" />
 				</span>
 			))}
 		</div>
@@ -162,7 +162,7 @@ const Home = () => {
 				{FLOAT_SLOTS.map((slot, i) => <FloatingSketch key={i} {...slot} index={i} />)}
 
 				{/* ── HERO ──────────────────────────────────────────────── */}
-				<section className="relative w-full flex flex-col items-center gap-3 p-6 pb-20 bg-background overflow-hidden min-h-[520px] justify-center">
+				<section className="relative w-full flex flex-col items-center gap-3 p-6 pb-20 bg-background overflow-hidden min-h-130 justify-center">
 					<DotGrid className="text-primary opacity-[0.06]" />
 					<HeroStrokes />
 					<span aria-hidden="true" className="absolute -bottom-10 -left-6 text-[22vw] font-black text-primary opacity-[0.04] leading-none select-none pointer-events-none">SF</span>
@@ -206,7 +206,7 @@ const Home = () => {
 					<Crosshatch className="text-primary opacity-[0.04]" />
 					<InkAccent size={280} className="bg-primary opacity-[0.05] -top-16 right-0 blur-3xl" />
 					<SwordDude
-						className="absolute -bottom-10 -right-80 h-[720px] w-auto pointer-events-none text-primary opacity-[0.30]"
+						className="absolute -bottom-10 -right-80 h-180 w-auto pointer-events-none text-primary opacity-[0.30]"
 						aria-hidden="true"
 						
 					/>
