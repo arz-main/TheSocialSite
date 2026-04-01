@@ -1,6 +1,6 @@
 import React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { cn } from "../../utils/ClassNameMergeUtil";
+import { cn } from "../utils/ClassNameMergeUtil";
 
 function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
     return (

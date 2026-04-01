@@ -1,8 +1,8 @@
 import { Navigate } from "react-router";
-import type { Role } from "../../types/RolesTypes";
-import paths from "../../routes/paths";
-import { useAuth } from "../../hooks/useAuth";
-import LoadingScreen from "../ui/LoadingScreen";
+import type { Role } from "../types/RolesTypes";
+import paths from "../routes/paths";
+import { useAuth } from "../hooks/useAuth";
+import LoadingScreen from "../components/LoadingScreen";
 
 interface Props {
     children: React.ReactNode;

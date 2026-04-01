@@ -2,7 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { type VariantProps } from "class-variance-authority";
 import { buttonVariants } from "./BasicButton";
-import { cn } from "../../utils/ClassNameMergeUtil";
+import { cn } from "../utils/ClassNameMergeUtil";
 
 interface LinkButtonProps
     extends React.AnchorHTMLAttributes<HTMLAnchorElement>,

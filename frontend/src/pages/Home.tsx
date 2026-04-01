@@ -1,8 +1,8 @@
 ﻿
-import { HomeCard } from "../components/ui/HomePageComponents";
+import { HomeCard } from "../components/HomePageComponents";
 import paths from "../routes/paths";
 import MockCards from "../_mock/mockHomeCards";
-import { LinkButton } from "../components/ui/LinkButton";
+import { LinkButton } from "../components/LinkButton";
 
 import SketchCircle from "../assets/Sketches/CoolFace.svg?react";
 import SketchNameArt from "../assets/Sketches/NameArt.svg?react";

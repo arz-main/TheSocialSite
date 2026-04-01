@@ -10,14 +10,14 @@ import {
     FaDiscord,
     FaGlobe,
 } from "react-icons/fa";
-import { Badge as BadgeUI } from "../components/ui/Badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
+import { Badge as BadgeUI } from "../components/Badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { usePosts } from "../hooks/usePosts";
-import { CommentsModal, PostCard } from "../components/ui/ExplorePageComponents";
-import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
+import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
+import { ImageWithFallback } from "../components/ImageWithFallBack";
 import type { Post } from "../types/PostTypes";
-import { Card } from "../components/ui/Card";
+import { Card } from "../components/Card";
 import { useUsers } from "../hooks/useUsers";
 import type { User } from "../types/UserTypes";
 

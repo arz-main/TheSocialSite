@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../utils/ClassNameMergeUtil";
+import { cn } from "../utils/ClassNameMergeUtil";
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
 	return (

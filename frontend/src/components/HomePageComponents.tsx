@@ -1,4 +1,4 @@
-import type { HomeCardProp } from "../../types/HomePageTypes";
+import type { HomeCardProp } from "../types/HomePageTypes";
 
 export function HomeCard({ icon: Icon, title, description }: HomeCardProp) {
     return (

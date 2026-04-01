@@ -1,9 +1,9 @@
 ﻿import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, AreaChart, Area } from "recharts";
-import { SectionHeader, ContributionCell, CategoryRow, BadgePill } from "../ui/StatisticsUIComponents";
-import { groupIntoWeeks, formatMonthLabel, computeStreak } from "../../utils/StatisticsPageUtils";
-import type { DailyContribution, CategoryItem } from "../../types/StatisticsPageTypes";
+import { SectionHeader, ContributionCell, CategoryRow, BadgePill } from "./StatisticsUIComponents";
+import { groupIntoWeeks, formatMonthLabel, computeStreak } from "../utils/StatisticsPageUtils";
+import type { DailyContribution, CategoryItem } from "../types/StatisticsPageTypes";
 
 export function ContributionGrid({ contributions }: { contributions: DailyContribution[] }) {
     const [tooltip, setTooltip] = useState<{ x: number; y: number; date: string; count: number } | null>(null);

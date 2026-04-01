@@ -4,13 +4,13 @@ import {
     Pause, Play, SkipForward, Download, Upload,
     Send, X, Pencil, Eraser, Minus, Plus, Check, Image, CheckCircle2
 } from "lucide-react";
-import { Button } from "../ui/BasicButton";
-import { TimerBar, ProgressPills } from "../ui/PracticePageUIComponents";
-import { downloadDataUrl } from "../../utils/PracticePageUtils";
+import { Button } from "./BasicButton";
+import { TimerBar, ProgressPills } from "./PracticePageUIComponents";
+import { downloadDataUrl } from "../utils/PracticePageUtils";
 import type {
     ActiveSessionPanelProps, DrawingReviewGridProps,
     PostDrawingPanelProps, SessionResult
-} from "../../types/PracticePageTypes";
+} from "../types/PracticePageTypes";
 
 // ── DrawingCanvas ─────────────────────────────────────────────────────────────
 interface DrawingCanvasProps {

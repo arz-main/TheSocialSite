@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { Button } from "../components/ui/BasicButton";
-import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/BasicInput";
-import { Label } from "../components/ui/LabelComponent";
+import { Button } from "../components/BasicButton";
+import { Card } from "../components/Card";
+import { Input } from "../components/BasicInput";
+import { Label } from "../components/LabelComponent";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
 
@@ -34,20 +34,19 @@ export default function Login() {
     };
 
     return (
-        <div className="flex flex-col flex-1 items-center justify-center py-8 px-4 bg-background text-text">
+        <div className="flex flex-col flex-1 items-center justify-center py-4 px-4 bg-background text-text">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md"
             >
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-semibold mb-2">User Login</h1>
-                    <p className="text-text-opaque">Enter your credentials</p>
+                <div className="text-center mb-4">
+                    <h1 className="text-2xl font-semibold mb-2">User Login</h1>
                 </div>
 
                 <Card className="p-8">
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-4">
 
                         {error && (
                             <div className="p-3 rounded-lg bg-destructive/10 text-danger text-sm">

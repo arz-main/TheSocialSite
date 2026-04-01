@@ -7,10 +7,10 @@ import {
     Search, Flame, ArrowLeft,
 } from 'lucide-react';
 import { StatPill, FilterSelect } from './RoadmapPageUIComponents';
-import { DIFF_STYLES, DIFFICULTY_COLORS, CIRCUMFERENCE } from '../../utils/RoadmapPageUtils';
-import type { Course, Lesson, Chapter } from '../../_mock/mockCourses';
-import type { DifficultyFilter, ProgressFilter, SortOption, RoadmapStats } from '../../types/RoadmapPageTypes';
-import paths from '../../routes/paths';
+import { DIFF_STYLES, DIFFICULTY_COLORS, CIRCUMFERENCE } from '../utils/RoadmapPageUtils';
+import type { Course, Lesson, Chapter } from '../_mock/mockCourses';
+import type { DifficultyFilter, ProgressFilter, SortOption, RoadmapStats } from '../types/RoadmapPageTypes';
+import paths from '../routes/paths';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Roadmap page components

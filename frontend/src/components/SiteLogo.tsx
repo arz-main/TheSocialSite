@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import paths from "../../routes/paths";
-import Logo from "../../assets/3dicons-pencil.png";
+import paths from "../routes/paths";
+import Logo from "../assets/3dicons-pencil.png";
 
 const WebsiteLogo = () => {
   return (

@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
 import {
 	Home,
 	Image,
@@ -14,9 +15,8 @@ import {
 	Sun,
 	Moon,
 } from "lucide-react";
-import { Button } from "../ui/BasicButton";
-import paths from "../../routes/paths";
-import switchTheme from "../../utils/ThemeUtil";
+import { Button } from "../components/BasicButton";
+import paths from "../routes/paths";
 
 interface SidebarProps {
 	isOpen: boolean;
@@ -25,36 +25,12 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
 	const location = useLocation();
-	const themes = ["light", "dark"];
-	const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
-
-	// Initialize theme
-	useEffect(() => {
-		const storedTheme = localStorage.getItem("theme");
-		if (storedTheme) {
-			const index = themes.indexOf(storedTheme);
-			if (index >= 0) {
-				setCurrentThemeIndex(index);
-				switchTheme(storedTheme);
-				return;
-			}
-		}
-		switchTheme(themes[0]);
-	}, []);
+	const { theme, setTheme } = useTheme();
 
 	// Close sidebar on route change
 	useEffect(() => {
 		onClose();
 	}, [location.pathname]);
-
-	const handleToggle = () => {
-		const nextIndex = (currentThemeIndex + 1) % themes.length;
-		const nextTheme = themes[nextIndex];
-
-		setCurrentThemeIndex(nextIndex);
-		switchTheme(nextTheme);
-		localStorage.setItem("theme", nextTheme);
-	};
 
 	const navItems = [
 		{ path: paths.home, label: "Home", icon: Home },
@@ -135,22 +111,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 							<div className="mb-2 text-sm text-text-opaque px-1">
 								Theme
 							</div>
-
 							<motion.div
-								onClick={handleToggle}
+								onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
 								whileTap={{ scale: 0.98 }}
 								transition={{ type: "spring", stiffness: 400, damping: 17 }}
 							>
-								<Button
-									variant="outline"
-									className="w-full justify-start gap-3"
-								>
-									{currentThemeIndex === 0 ? (
-										<Moon className="w-4 h-4" />
-									) : (
+								<Button variant="outline" className="w-full justify-start gap-3">
+									{theme === "dark" ? (
 										<Sun className="w-4 h-4" />
+									) : (
+										<Moon className="w-4 h-4" />
 									)}
-									Change Theme
+									{theme === "dark" ? "Light Mode" : "Dark Mode"}
 								</Button>
 							</motion.div>
 						</div>

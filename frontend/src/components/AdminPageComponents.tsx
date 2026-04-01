@@ -5,12 +5,12 @@ import type {
     Column,
     TableSectionPropsWithPagination,
     ActionToggleButtonProps,
-} from "../../types/AdminPageTypes";
+} from "../types/AdminPageTypes";
 
 import { Button } from "./BasicButton";
-import type { User } from "../../types/UserTypes";
-import type { Post } from "../../types/PostTypes";
-import { usePaginatedData } from "../../hooks/usePaginatedData";
+import type { User } from "../types/UserTypes";
+import type { Post } from "../types/PostTypes";
+import { usePaginatedData } from "../hooks/usePaginatedData";
 
 export const userColumns: Column<User>[] = [
     { label: "Username", field: "username", sortable: true },

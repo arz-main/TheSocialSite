@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import paths from "../../routes/paths";
+import paths from "../routes/paths";
 
 const Footer = () => {
 	return (

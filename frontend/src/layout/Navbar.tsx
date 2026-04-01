@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom";
-import paths from "../../routes/paths";
-import WebsiteLogo from "../ui/SiteLogo";
+import paths from "../routes/paths";
+import WebsiteLogo from "../components/SiteLogo";
 import { Menu } from "lucide-react";
 import { motion } from "motion/react";
 import { Sidebar }  from "./SidePanel";

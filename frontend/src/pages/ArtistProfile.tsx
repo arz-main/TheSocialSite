@@ -9,18 +9,18 @@ import {
     FaYoutube,
     FaDiscord,
 } from "react-icons/fa";
-import { Badge as BadgeUI } from "../components/ui/Badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
+import { Badge as BadgeUI } from "../components/Badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { usePosts } from "../hooks/usePosts";
-import { CommentsModal, PostCard } from "../components/ui/ExplorePageComponents";
-import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
+import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
+import { ImageWithFallback } from "../components/ImageWithFallBack";
 import { useAuth } from "../hooks/useAuth";
 import { useSocialMedia } from "../hooks/useSocialMedia";
 import type { Post } from "../types/PostTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
 import paths from "../routes/paths";
-import { Card } from "../components/ui/Card";
+import { Card } from "../components/Card";
 
 export default function ArtistProfile() {
     const [activeTab, setActiveTab] = useState("posts");

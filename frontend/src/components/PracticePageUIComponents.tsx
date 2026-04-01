@@ -1,5 +1,5 @@
-import type { PracticeCardProp, TimerBarProps } from "../../types/PracticePageTypes";
-import { getCircleDash, formatTime } from "../../utils/PracticePageUtils";
+import type { PracticeCardProp, TimerBarProps } from "../types/PracticePageTypes";
+import { getCircleDash, formatTime } from "../utils/PracticePageUtils";
 
 export function TimerBar({ timeLeft, total }: TimerBarProps) {
     const percentage = Math.max(0, (timeLeft / total) * 100);

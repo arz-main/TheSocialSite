@@ -1,9 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { } from "./providers/AxiosProvider";
-import Navbar from "./components/layout/Navbar";
-import Footer from "./components/layout/Footer";
-import ProtectedRoute from "./components/layout/ProtectedRoute";
-import LoadingScreen from "./components/ui/LoadingScreen";
+import ProtectedRoute from "./layout/ProtectedRoute";
+import LoadingScreen from "./components/LoadingScreen";
 
 import Home from "./pages/Home";
 import ArtistProfile from "./pages/ArtistProfile";
@@ -34,42 +32,29 @@ import LessonPage from "./pages/LessonPage";
 
 import paths from "./routes/paths";
 import { useAuth } from "./hooks/useAuth"
+import Layout from "./layout/Layout";
 
 const App = () => {
 	const { initializing } = useAuth();
 	if (initializing) return <LoadingScreen />;
 	return (
-		<div className="flex flex-col h-screen overflow-hidden">
+		<>
 			<ScrollToTop />
-			<Navbar />
-			<main className="flex-1 pt-16 overflow-y-auto">
-				<Routes>
-					{/* access to all users */}
+			<Routes>
+				{/* Place pages that require scrolling here */}
+				<Route element={<Layout />}>
 					<Route path={paths.home} element={<Home />} />
 					<Route path={paths.about} element={<About />} />
 					<Route path={paths.explore.page} element={<Explore />} />
 					<Route path={paths.explore.user} element={<OthersProfile />} />
-					<Route path={paths.practice} element={<Practice />} />
 					<Route path={paths.roadmap.page} element={<Roadmap />} />
-					<Route path={paths.login} element={<Login />} />
-					<Route path={paths.signup} element={<SignUp />} />
-					<Route path={paths.forgot_password} element={<ForgotPassword />} />
-					<Route path={paths.reset_password} element={<ResetPassword />} />
 					<Route path={paths.terms} element={<Terms />} />
 					<Route path={paths.privacy} element={<Privacy />} />
-
 					<Route path={paths.roadmap.course} element={<CourseRoadmap />} />
 					<Route path={paths.roadmap.lesson} element={<LessonPage />} />
-
-					{/* access to authenticated users */}
 					<Route path={paths.artist.statistics} element={
 						<ProtectedRoute allowedRoles={["User", "Admin"]}>
 							<Statistics />
-						</ProtectedRoute>
-					} />
-					<Route path={paths.artist.messages} element={
-						<ProtectedRoute allowedRoles={["User", "Admin"]}>
-							<Messages />
 						</ProtectedRoute>
 					} />
 					<Route path={paths.artist.edit_profile} element={
@@ -85,9 +70,9 @@ const App = () => {
 
 					{/* admin only */}
 					<Route path={paths.admin.dashboard} element={
-						<ProtectedRoute allowedRoles={["Admin"]}>
+						// <ProtectedRoute allowedRoles={["Admin", "User"]}>
 							<AdminDashboard />
-						</ProtectedRoute>
+						
 					} />
 
 					<Route path={paths.admin.course_creator} element={
@@ -95,6 +80,20 @@ const App = () => {
 							<AdminCourseCreator />
 						</ProtectedRoute>
 					} />
+				</Route>
+
+				{/* Pages that dont require scrolling */}
+				<Route element={<Layout noScroll />}>
+					<Route path={paths.artist.messages} element={
+						<ProtectedRoute allowedRoles={["User", "Admin"]}>
+							<Messages />
+						</ProtectedRoute>
+					} />
+					<Route path={paths.practice} element={<Practice />} />
+					<Route path={paths.login} element={<Login />} />
+					<Route path={paths.signup} element={<SignUp />} />
+					<Route path={paths.forgot_password} element={<ForgotPassword />} />
+					<Route path={paths.reset_password} element={<ResetPassword />} />
 
 					{/* error pages */}
 					<Route path={paths.error.unauthorized} element={<Unauthorized />} />
@@ -102,10 +101,9 @@ const App = () => {
 					<Route path={paths.error.internal_server_error} element={<InternalServerError />} />
 					<Route path={paths.error.not_found} element={<NotFound />} />
 					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</main>
-			<Footer />
-		</div>
+				</Route>
+			</Routes>
+		</>
 	);
 };
 

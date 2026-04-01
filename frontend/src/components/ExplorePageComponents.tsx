@@ -4,10 +4,10 @@ import { Heart, User, X, ChevronLeft, ChevronRight, MessageCircle, ChevronDown, 
 import { Card } from "./Card";
 import { Button } from "./BasicButton";
 import { ImageWithFallback } from "./ImageWithFallBack";
-import type { CommentsModalProps, PostCardProps, DropDownProps } from "../../types/ExplorePageTypes";
-import { useAuth } from "../../hooks/useAuth";
+import type { CommentsModalProps, PostCardProps, DropDownProps } from "../types/ExplorePageTypes";
+import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import paths from "../../routes/paths";
+import paths from "../routes/paths";
 
 // --- User Banner Component ---
 export function UserBanner({

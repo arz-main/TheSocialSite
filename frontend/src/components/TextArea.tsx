@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "../../utils/ClassNameMergeUtil";
+import { cn } from "../utils/ClassNameMergeUtil";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
 	return (

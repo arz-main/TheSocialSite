@@ -5,7 +5,7 @@ import {
     ChevronRight, Check, Save, Send,
     UserCircle2, Image as ImageIcon, ZoomIn
 } from 'lucide-react';
-import type { Lesson } from '../../_mock/mockCourses';
+import type { Lesson } from '../_mock/mockCourses';
 
 interface Props {
     lesson: Lesson;

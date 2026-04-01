@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../../utils/ClassNameMergeUtil";
+import { cn } from "../utils/ClassNameMergeUtil";
 
 function Input({ className, ...props }: React.ComponentProps<"input">) {
     return (

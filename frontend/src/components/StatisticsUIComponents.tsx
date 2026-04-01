@@ -1,4 +1,4 @@
-﻿import type { StatisticsCardProp } from "../../types/StatisticsPageTypes";
+﻿import type { StatisticsCardProp } from "../types/StatisticsPageTypes";
 
 export function StatCard({ icon: Icon, value, title, trend, trendUp }: StatisticsCardProp) {
     return (

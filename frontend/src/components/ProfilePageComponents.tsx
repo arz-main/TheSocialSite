@@ -5,10 +5,10 @@ import { Badge } from "./Badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { Button } from "./BasicButton";
 import { Calendar, Heart } from "lucide-react";
-import { formatDate, formatDuration } from "../../utils/ProfilePageUtils";
+import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { ImageWithFallback } from "./ImageWithFallBack";
 import { PostCard } from "./ExplorePageComponents";
-import type { TabsPageProps } from "../../types/ProfilePageTypes";
+import type { TabsPageProps } from "../types/ProfilePageTypes";
 
 const PAGE_SIZE = 6;
 

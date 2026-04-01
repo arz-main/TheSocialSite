@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Camera, Save, Palette, CheckCircle2, X, Trash2, AlertTriangle } from "lucide-react";
-import { Button } from "../components/ui/BasicButton";
-import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/BasicInput";
-import { Label } from "../components/ui/LabelComponent";
-import { Textarea } from "../components/ui/TextArea";
+import { Button } from "../components/BasicButton";
+import { Card } from "../components/Card";
+import { Input } from "../components/BasicInput";
+import { Label } from "../components/LabelComponent";
+import { Textarea } from "../components/TextArea";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
 import { useUsers } from "../hooks/useUsers";
@@ -14,7 +14,7 @@ import { useSocialMedia } from "../hooks/useSocialMedia";
 import type { EditProfileForm } from "../types/UserTypes";
 import { defaultEditProfileForm } from "../types/UserTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
-import LoadingScreen from "../components/ui/LoadingScreen";
+import LoadingScreen from "../components/LoadingScreen";
 
 const socialPlatforms: { key: keyof EditProfileForm["socialMedia"]; label: string; type: string }[] = [
     { key: "twitter",    label: "Twitter / X", type: "url"  },
