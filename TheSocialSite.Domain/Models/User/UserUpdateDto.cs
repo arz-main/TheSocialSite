@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Models.User
 {
@@ -15,6 +16,7 @@ namespace TheSocialSite.Domain.Models.User
         [MaxLength(150)] public string? Website { get; set; }
         [MaxLength(500)] public string? Bio { get; set; }
         [MaxLength(250)] public string? Avatar { get; set; } // URL to image
+        public string Role { get; set; }
         public SocialMediaDto? SocialLinks { get; set; }
     }
 }

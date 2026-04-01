@@ -71,41 +71,40 @@ namespace TheSocialSite.Business.Core
             return new SignupActionResponse { IsValid = true };
         }
 
-        public SignupActionResponse UserCreationExecution(UserSignupDto userData)
+        public LoginActionResponse RefreshTokenActionExecution(string userId)
         {
-            var validationInfo = UserSignupValidationExecution(userData);
-            if (!validationInfo.IsValid)
-                return validationInfo;
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return new LoginActionResponse
+                {
+                    IsValid = false,
+                    Message = "User ID is required to refresh token."
+                };
+            }
 
             using (var userContext = new UserContext())
             {
-                // check for duplicate email/username before creating
-                var exists = userContext.Users
-                    .Any(u => u.Email == userData.Email || u.Username == userData.Username);
-
-                if (exists)
-                    return new SignupActionResponse { IsValid = false, Message = "Email or username already taken." };
-
-                var user = new UserData
+                var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
+                if (user == null)
                 {
-                    Email = userData.Email,
-                    Username = userData.Username,
-                    Password = BCrypt.Net.BCrypt.HashPassword(userData.Password),
-                    Role = Role.User,
-                    JoinedDate = DateTime.UtcNow
+                    return new LoginActionResponse
+                    {
+                        IsValid = false,
+                        Message = "User not found."
+                    };
+                }
+
+                // Generate a new JWT based on the latest role and info
+                var token = _jwtServiceAction.GenerateTokenAction(user.Id, user.Username, user.Role);
+
+                return new LoginActionResponse
+                {
+                    IsValid = true,
+                    Message = "Token refreshed successfully.",
+                    Token = token,
+                    UserIdentifier = user.Username
                 };
-
-                userContext.Users.Add(user);
-                userContext.SaveChanges();
             }
-
-            return new SignupActionResponse
-            {
-                IsValid = true,
-                Message = "User created successfully",
-                Email = userData.Email,
-                Username = userData.Username
-            };
         }
     }
 }

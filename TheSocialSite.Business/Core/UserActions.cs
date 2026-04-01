@@ -7,7 +7,7 @@ namespace TheSocialSite.Business.Core
 {
     public class UserActions
     {
-        public UserActions(){}
+        public UserActions() { }
 
         public List<UserData> GetAllUsersActionExecution()
         {
@@ -110,6 +110,25 @@ namespace TheSocialSite.Business.Core
                     user.SocialLinks.DeviantArt = data.SocialLinks.DeviantArt;
                     user.SocialLinks.YouTube = data.SocialLinks.YouTube;
                     user.SocialLinks.Discord = data.SocialLinks.Discord;
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.Role))
+                {
+                    Role userRole;
+                    switch (data.Role)
+                    {
+                        case nameof(Role.Admin):
+                            userRole = Role.Admin;
+                            break;
+                        case nameof(Role.User):
+                            userRole = Role.User;
+                            break;
+                        default:
+                            userRole = user.Role; // keep current role if unknown
+                            break;
+                    }
+
+                    user.Role = userRole; // assign to user so DB is updated
                 }
 
                 userContext.SaveChanges();
