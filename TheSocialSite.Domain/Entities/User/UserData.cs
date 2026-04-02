@@ -26,7 +26,7 @@ namespace TheSocialSite.Domain.Entities.User
         public  string Password { get; set; }
 
         [Required]
-        public Role Role { get; set; }
+        public Role Role { get; set; } = Role.User;
 
         [Required]
         [MaxLength(50)]
@@ -46,7 +46,7 @@ namespace TheSocialSite.Domain.Entities.User
 
         public SocialMedia? SocialLinks { get; set; }
        
-        public int PostsCount { get; set; }
+        public int? PostsCount { get; set; }
 
         [Required]
         public DateTime JoinedDate { get; set; } = DateTime.UtcNow;

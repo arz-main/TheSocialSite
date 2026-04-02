@@ -7,21 +7,59 @@ namespace TheSocialSite.Business.Core
 {
     public class UserActions
     {
-        public UserActions(){}
+        public UserActions() { }
 
-        public List<UserData> GetAllUsersActionExecution()
+        public List<GetUserDataDto> GetAllUsersActionExecution()
         {
+            var result = new List<GetUserDataDto>();
             using (var userContext = new UserContext())
             {
-                return userContext.Users.ToList();
+                var users = userContext.Users.ToList();
+
+                foreach (var user in users)
+                {
+                    result.Add(new GetUserDataDto
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        Role = user.Role,
+                        Username = user.Username,
+                        Avatar = user.Avatar,
+                        Bio = user.Bio,
+                        Location = user.Location,
+                        Website = user.Website,
+                        SocialLinks = user.SocialLinks,
+                        PostsCount = user.PostsCount,
+                        JoinedDate = user.JoinedDate
+                    });
+                }
             }
+            return result;
         }
 
-        public UserData GetUserByIdActionExecution(string userId)
+        public GetUserDataDto GetUserByIdActionExecution(string userId)
         {
             using (var userContext = new UserContext())
             {
-                return userContext.Users.FirstOrDefault(u => u.Id == userId);
+                var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user == null) return null;
+
+                // AutoMapper handles all property copying for you
+                return new GetUserDataDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Username = user.Username,
+                    Role = user.Role,
+                    Avatar = user.Avatar,
+                    Bio = user.Bio,
+                    Location = user.Location,
+                    Website = user.Website,
+                    SocialLinks = user.SocialLinks,
+                    PostsCount = user.PostsCount,
+                    JoinedDate = user.JoinedDate
+                };
             }
         }
 
@@ -111,7 +149,6 @@ namespace TheSocialSite.Business.Core
                     user.SocialLinks.YouTube = data.SocialLinks.YouTube;
                     user.SocialLinks.Discord = data.SocialLinks.Discord;
                 }
-
                 userContext.SaveChanges();
             }
 

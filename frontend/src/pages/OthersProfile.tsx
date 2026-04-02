@@ -10,14 +10,14 @@ import {
     FaDiscord,
     FaGlobe,
 } from "react-icons/fa";
-import { Badge as BadgeUI } from "../components/ui/Badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
+import { Badge as BadgeUI } from "../components/Badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { usePosts } from "../hooks/usePosts";
-import { CommentsModal, PostCard } from "../components/ui/ExplorePageComponents";
-import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
+import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
+import { ImageWithFallback } from "../components/ImageWithFallBack";
 import type { Post } from "../types/PostTypes";
-import { Card } from "../components/ui/Card";
+import { Card } from "../components/Card";
 import { useUsers } from "../hooks/useUsers";
 import type { User } from "../types/UserTypes";
 
@@ -262,7 +262,7 @@ export default function OthersProfile() {
                                                                 <div className="flex-1">
                                                                     <div className="flex items-center gap-2 mb-1">
                                                                         <h4 className="font-semibold">{badge.name}</h4>
-                                                                        <BadgeUI variant="default" className="text-xs border border-2">Earned</BadgeUI>
+                                                                        <BadgeUI variant="default" className="text-xs border">Earned</BadgeUI>
                                                                     </div>
                                                                     <p className="text-sm text-muted-foreground mb-2">{badge.description}</p>
                                                                     {badge.earnedDate && <p className="text-xs text-muted-foreground">{formatDate(badge.earnedDate)}</p>}

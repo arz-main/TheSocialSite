@@ -150,7 +150,7 @@ const About = () => {
 			<div className="relative flex flex-col flex-1 bg-background text-primary overflow-x-hidden">
 
 				{/* ── HERO ────────────────────────────────────────────────── */}
-				<section className="relative w-full flex flex-col items-center gap-3 p-6 pb-16 bg-background overflow-hidden min-h-[260px] justify-center">
+				<section className="relative w-full flex flex-col items-center gap-3 p-6 pb-16 bg-background overflow-hidden min-h-65 justify-center">
 					<DotGrid className="text-primary opacity-[0.06]" />
 					<div className="relative z-10 text-center flex flex-col items-center">
 						<h1 className="ab-w1 text-text text-5xl md:text-6xl font-black tracking-tight leading-tight mb-1">About</h1>
@@ -178,7 +178,7 @@ const About = () => {
 						<div className="flex gap-6">
 
 							{/* Timeline column — measured absolutely */}
-							<div ref={containerRef} className="relative flex-shrink-0" style={{ width: 24 }}>
+							<div ref={containerRef} className="relative shrink-0" style={{ width: 24 }}>
 								{dotPositions.length > 1 && (
 									<>
 										{/* Line from first dot to last dot */}

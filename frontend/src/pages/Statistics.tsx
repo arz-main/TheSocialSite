@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { StatCard } from "../components/ui/StatisticsUIComponents";
-import { ContributionGrid, CategoryBreakdown, FollowersTrend, PostsTrend, SpeedTrend, BadgesGrid, StreakBanner } from "../components/ui/StatisticsPageComponents";
+import { ContributionGrid, CategoryBreakdown, FollowersTrend, SpeedTrend, StreakBanner, StatCard, PostsTrend, BadgesGrid } from "../components/StatisticsPageComponents";
 import { practiceInfoData, categoryData, followersData, postsData, speedData, dailyContributions, badgesData } from "../_mock/mockStatistics";
 import { computeStreak } from "../utils/StatisticsPageUtils";
 

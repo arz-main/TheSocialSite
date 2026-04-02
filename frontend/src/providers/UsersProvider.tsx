@@ -11,13 +11,14 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     const cache = useRef<Map<string, User>>(new Map());
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    async function updateUser(userId: string, data: UpdateUserPayload): Promise<void> {
+    
+    async function updateUser(userId: string, data: UpdateUserPayload): Promise<UpdateUserPayload> {
         try {
             setLoading(true);
             setError(null);
             await axios.put(`/users/${userId}`, data);
             cache.current.delete(userId); // force fresh fetch next time
+            return data; // ✅ return what you sent
         } catch (err) {
             setError("Failed to update profile");
             throw err;
@@ -25,7 +26,6 @@ export function UsersProvider({ children }: { children: ReactNode }) {
             setLoading(false);
         }
     }
-
     // ─── User Fetching ─────────────────────────────────────────────────────
 
     const getUser = useCallback(async (userId: string): Promise<User> => {

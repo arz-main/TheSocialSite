@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { MOCK_COURSES } from '../_mock/mockCourses';
 import type { LessonSection as LS, Lesson, Chapter } from '../_mock/mockCourses';
-import LessonPracticeModal from '../components/ui/LessonPracticeModal';
+import LessonPracticeModal from '../components/LessonPracticeModal';
 
 function SecText({ s, i }: { s: LS; i: number }) {
     return (

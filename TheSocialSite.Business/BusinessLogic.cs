@@ -6,9 +6,9 @@ namespace TheSocialSite.Business
     public class BusinessLogic
     {
         public BusinessLogic() { }
-        public IUserAuthAction UserAuthAction()
+        public IAuthInteractAction UserAuthAction()
         {
-            return new UserAuthAction();
+            return new AuthInteractAction();
         }
         public IUserInteractAction UserInteractAction()
         {
@@ -25,6 +25,9 @@ namespace TheSocialSite.Business
         public ISocialMediaInteractAction SocialMediaInteractAction()
         {
             return new SocialMediaInteractAction();
+        }
+        public IAdminInteractAction AdminInteractAction() { 
+            return new AdminInteractAction();
         }
     }
 }

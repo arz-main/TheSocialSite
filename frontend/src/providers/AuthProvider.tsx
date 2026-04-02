@@ -9,19 +9,21 @@ import { type AuthContextType } from "../types/AuthContextTypes";
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | undefined>(undefined);
+    const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
     const [initializing, setInitializing] = useState(true);
     const axios = useAxios()!;
 
+    // this function prevents the offline misuse of jwt tokens
+    // because it enforces that a request is be made to the backend
     const fetchUser = async (token: string): Promise<User> => {
         const { sub: id } = jwtDecode<JwtPayload>(token);
         const { data } = await axios.get(`users/${id}`);
-        setUser(data);
+        setCurrentUser(data);
         return data;
     };
 
     const clearSession = () => {
-        setUser(undefined);
+        setCurrentUser(undefined);
         localStorage.removeItem("token");
     };
 
@@ -54,13 +56,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         fetchUser(token).catch(clearSession).finally(() => setInitializing(false));
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const refreshUser = async (): Promise<void> => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        await fetchUser(token);
+    // Fixed refreshToken
+    const refreshToken = async () => {
+        if (!currentUser) return;
+        try {
+            const { data } = await axios.post("/auth/refresh-token", { userId: currentUser.id });
+            localStorage.setItem("token", data.token);
+            await fetchUser(data.token);
+        } catch (err) {
+            console.error("Failed to refresh token", err);
+            clearSession();
+        }
     };
+
     return (
-        <AuthContext.Provider value={{ user, initializing, refreshUser, login, logout, signup }}>
+        <AuthContext.Provider value={{ currentUser, initializing, refreshToken, login, logout, signup }}>
             {children}
         </AuthContext.Provider>
     );

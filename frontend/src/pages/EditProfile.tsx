@@ -2,31 +2,31 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Camera, Save, Palette, CheckCircle2, X, Trash2, AlertTriangle } from "lucide-react";
-import { Button } from "../components/ui/BasicButton";
-import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/BasicInput";
-import { Label } from "../components/ui/LabelComponent";
-import { Textarea } from "../components/ui/TextArea";
+import { Button } from "../components/BasicButton";
+import { Card } from "../components/Card";
+import { Input } from "../components/BasicInput";
+import { Label } from "../components/LabelComponent";
+import { Textarea } from "../components/TextArea";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
 import { useUsers } from "../hooks/useUsers";
 import { useSocialMedia } from "../hooks/useSocialMedia";
-import type { EditProfileForm } from "../types/UserTypes";
+import type { EditProfileForm, SocialLinks } from "../types/UserTypes";
 import { defaultEditProfileForm } from "../types/UserTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
-import LoadingScreen from "../components/ui/LoadingScreen";
+import LoadingScreen from "../components/LoadingScreen";
 
-const socialPlatforms: { key: keyof EditProfileForm["socialMedia"]; label: string; type: string }[] = [
-    { key: "twitter",    label: "Twitter / X", type: "url"  },
-    { key: "pinterest",  label: "Pinterest",   type: "url"  },
-    { key: "deviantArt", label: "DeviantArt",  type: "url"  },
-    { key: "youTube",    label: "YouTube",     type: "url"  },
-    { key: "discord",    label: "Discord",     type: "text" },
+const socialPlatforms: { key: keyof SocialLinks; label: string; type: string }[] = [
+    { key: "twitter", label: "Twitter / X", type: "url" },
+    { key: "pinterest", label: "Pinterest", type: "url" },
+    { key: "deviantArt", label: "DeviantArt", type: "url" },
+    { key: "youTube", label: "YouTube", type: "url" },
+    { key: "discord", label: "Discord", type: "text" },
 ];
 
 export default function EditProfile() {
     const navigate = useNavigate();
-    const { user, logout, refreshUser } = useAuth();
+    const { currentUser, logout, refreshToken } = useAuth();
     const { getUser, updateUser, deleteUser } = useUsers();
     const { getSocialMedia, createSocialMedia, updateSocialMedia } = useSocialMedia();
 
@@ -42,30 +42,30 @@ export default function EditProfile() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (!user?.id) return;
+        if (!currentUser?.id) return;
 
         const fetchData = async () => {
             try {
-                const userData = await getUser(user.id);
+                const userData = await getUser(currentUser.id);
                 if (!userData) throw new Error("User not found");
 
-                const social = await getSocialMedia(user.id);
+                const social = await getSocialMedia(currentUser.id);
                 const socialExists = !!social && Object.values(social).some(val => val !== "");
 
                 setHasSocialRecord(socialExists);
                 setForm({
-                    username:    userData.username  ?? "",
-                    email:       userData.email     ?? "",
-                    bio:         userData.bio       ?? "",
-                    location:    userData.location  ?? "",
-                    website:     userData.website   ?? "",
-                    avatar:      userData.avatar    ?? null,
+                    username: userData.username ?? "",
+                    email: userData.email ?? "",
+                    bio: userData.bio ?? "",
+                    location: userData.location ?? "",
+                    website: userData.website ?? "",
+                    avatar: userData.avatar ?? null,
                     socialMedia: {
-                        twitter:    social?.twitter    ?? "",
-                        pinterest:  social?.pinterest  ?? "",
+                        twitter: social?.twitter ?? "",
+                        pinterest: social?.pinterest ?? "",
                         deviantArt: social?.deviantArt ?? "",
-                        youTube:    social?.youTube    ?? "",
-                        discord:    social?.discord    ?? "",
+                        youTube: social?.youTube ?? "",
+                        discord: social?.discord ?? "",
                     },
                 });
             } catch (err) {
@@ -76,7 +76,7 @@ export default function EditProfile() {
         };
 
         fetchData();
-    }, [user?.id]);
+    }, [currentUser?.id]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -84,7 +84,7 @@ export default function EditProfile() {
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSocialChange = (key: keyof EditProfileForm["socialMedia"], value: string) => {
+    const handleSocialChange = (key: keyof SocialLinks, value: string) => {
         setForm(prev => ({
             ...prev,
             socialMedia: { ...prev.socialMedia, [key]: value },
@@ -114,24 +114,24 @@ export default function EditProfile() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user?.id) return;
+        if (!currentUser?.id) return;
 
         setSaving(true);
         setError(null);
         setSuccess(false);
 
         try {
-            await updateUser(user.id, {
+            await updateUser(currentUser.id, {
                 username: form.username,
-                email:    form.email,
-                bio:      form.bio,
+                email: form.email,
+                bio: form.bio,
                 location: form.location,
-                website:  form.website,
-                avatar:   form.avatar,
+                website: form.website,
+                avatar: form.avatar,
             });
 
             const socialPayload: SocialMediaDto = {
-                userId: user.id,
+                userId: currentUser.id,
                 ...form.socialMedia,
             };
 
@@ -142,7 +142,7 @@ export default function EditProfile() {
                 setHasSocialRecord(true);
             }
 
-            await refreshUser();
+            await refreshToken();
             setSuccess(true);
             navigate(paths.artist.profile);
         } catch (err) {
@@ -153,11 +153,11 @@ export default function EditProfile() {
     };
 
     const handleDelete = async () => {
-        if (!user?.id) return;
+        if (!currentUser?.id) return;
         setDeleting(true);
         setError(null);
         try {
-            await deleteUser(user.id);
+            await deleteUser(currentUser.id);
             logout();
             navigate(paths.home);
         } catch (err) {
@@ -217,7 +217,7 @@ export default function EditProfile() {
                                 <Label className="mb-4 block">Profile Picture</Label>
                                 <div className="flex items-center gap-6">
                                     <div className="relative">
-                                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-5xl overflow-hidden">
+                                        <div className="w-24 h-24 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-5xl overflow-hidden">
                                             {form.avatar
                                                 ? <img src={form.avatar} alt="avatar" className="w-full h-full object-cover" />
                                                 : <Palette />
@@ -278,8 +278,8 @@ export default function EditProfile() {
                                 <Textarea id="bio" name="bio"
                                     value={form.bio} onChange={handleChange} rows={4}
                                     placeholder="Tell us about yourself…" className="bg-background" />
-                                <p className={`text-sm ${form.bio.length >= 500 ? "text-danger" : "text-muted-foreground"}`}>
-                                    {form.bio.length}/500 characters
+                                <p className={`text-sm ${form.bio?.length && form.bio.length >= 500 ? "text-danger" : "text-muted-foreground"}`}>
+                                    {form.bio?.length ?? 0}/500 characters
                                 </p>
                             </div>
 
@@ -298,7 +298,7 @@ export default function EditProfile() {
                                             <Input
                                                 id={key}
                                                 type={type}
-                                                value={form.socialMedia[key] ?? ""}
+                                                value={form.socialMedia ? form?.socialMedia[key] : ""}
                                                 onChange={e => handleSocialChange(key, e.target.value)}
                                                 placeholder={type === "url" ? `https://${key}.com/yourprofile` : `Your ${label} username`}
                                                 className="bg-background"

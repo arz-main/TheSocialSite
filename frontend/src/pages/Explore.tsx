@@ -1,13 +1,13 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
-import { CommentsModal, Dropdown, PostCard } from "../components/ui/ExplorePageComponents";
+import { CommentsModal, Dropdown, PostCard } from "../components/ExplorePageComponents";
 import type { SearchByOption, SortByOption } from "../types/ExplorePageTypes";
 import { getSearchPlaceholder, searchByOptions, sortByOptions, filterPosts, sortPosts } from "../utils/ExplorePageUtils";
-import { Button } from "../components/ui/BasicButton";
+import { Button } from "../components/BasicButton";
 import type { Post } from "../types/PostTypes";
-import LoadingScreen from "../components/ui/LoadingScreen";
-import ErrorScreen from "../components/ui/ErrorScreen";
+import LoadingScreen from "../components/LoadingScreen";
+import ErrorScreen from "../components/ErrorScreen";
 import { usePosts } from "../hooks/usePosts";
 
 const PAGE_SIZE = 9;

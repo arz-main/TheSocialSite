@@ -1,4 +1,25 @@
 import type { ReactNode } from "react";
+import type { SocialLinks } from "./UserTypes";
+import type { Role } from "./RolesTypes";
+
+export type AdminUpdateUserPayload = {
+    email?: string;
+    username?: string;
+    avatar?: string;
+    bio?: string;
+    location?: string;
+    website?: string;
+    socialLinks?: SocialLinks;
+    role?: Role;
+}
+
+export type AdminContextType = {
+    loading: boolean;
+    error: string | null;
+    adminUpdateUser: (userId: string, data: AdminUpdateUserPayload) => Promise<AdminUpdateUserPayload>;
+    adminDeleteUser: (userId: string) => Promise<void>;
+};
+
 
 export interface Column<T> {
     label: string;
@@ -41,8 +62,8 @@ export interface TableSectionPropsWithPagination extends TableSectionProps {
 
 // Small helper: a toggle-style action button that shows its active state
 export interface ActionToggleButtonProps {
-	label: string;
-	variant: "danger" | "warning";
-	active: boolean;
-	onClick: () => void;
+    label: string;
+    variant: "danger" | "warning";
+    active: boolean;
+    onClick: () => void;
 }
