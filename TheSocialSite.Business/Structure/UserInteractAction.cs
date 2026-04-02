@@ -14,7 +14,7 @@ namespace TheSocialSite.Business.Structure
 {
     public class UserInteractAction : UserActions, IUserInteractAction
     {
-        public List<UserData> GetAllUsersAction()
+        public List<GetUserDataDto> GetAllUsersAction()
         {
             return GetAllUsersActionExecution();
         }
@@ -26,7 +26,7 @@ namespace TheSocialSite.Business.Structure
         {
             return UserUpdateActionExecution(userId, data);
         }
-        public UserData GetUserByIdAction(string userId)
+        public GetUserDataDto GetUserByIdAction(string userId)
         {
             return GetUserByIdActionExecution(userId);
         }

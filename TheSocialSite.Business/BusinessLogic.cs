@@ -26,5 +26,8 @@ namespace TheSocialSite.Business
         {
             return new SocialMediaInteractAction();
         }
+        public IAdminInteractAction AdminInteractAction() { 
+            return new AdminInteractAction();
+        }
     }
 }

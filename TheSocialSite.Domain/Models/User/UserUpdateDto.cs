@@ -16,7 +16,7 @@ namespace TheSocialSite.Domain.Models.User
         [MaxLength(150)] public string? Website { get; set; }
         [MaxLength(500)] public string? Bio { get; set; }
         [MaxLength(250)] public string? Avatar { get; set; } // URL to image
-        public string Role { get; set; }
+        public Role? Role { get; set; }
         public SocialMediaDto? SocialLinks { get; set; }
     }
 }

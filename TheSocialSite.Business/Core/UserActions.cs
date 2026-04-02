@@ -9,19 +9,57 @@ namespace TheSocialSite.Business.Core
     {
         public UserActions() { }
 
-        public List<UserData> GetAllUsersActionExecution()
+        public List<GetUserDataDto> GetAllUsersActionExecution()
         {
+            var result = new List<GetUserDataDto>();
             using (var userContext = new UserContext())
             {
-                return userContext.Users.ToList();
+                var users = userContext.Users.ToList();
+
+                foreach (var user in users)
+                {
+                    result.Add(new GetUserDataDto
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        Role = user.Role,
+                        Username = user.Username,
+                        Avatar = user.Avatar,
+                        Bio = user.Bio,
+                        Location = user.Location,
+                        Website = user.Website,
+                        SocialLinks = user.SocialLinks,
+                        PostsCount = user.PostsCount,
+                        JoinedDate = user.JoinedDate
+                    });
+                }
             }
+            return result;
         }
 
-        public UserData GetUserByIdActionExecution(string userId)
+        public GetUserDataDto GetUserByIdActionExecution(string userId)
         {
             using (var userContext = new UserContext())
             {
-                return userContext.Users.FirstOrDefault(u => u.Id == userId);
+                var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user == null) return null;
+
+                // AutoMapper handles all property copying for you
+                return new GetUserDataDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Username = user.Username,
+                    Role = user.Role,
+                    Avatar = user.Avatar,
+                    Bio = user.Bio,
+                    Location = user.Location,
+                    Website = user.Website,
+                    SocialLinks = user.SocialLinks,
+                    PostsCount = user.PostsCount,
+                    JoinedDate = user.JoinedDate
+                };
             }
         }
 
@@ -111,26 +149,6 @@ namespace TheSocialSite.Business.Core
                     user.SocialLinks.YouTube = data.SocialLinks.YouTube;
                     user.SocialLinks.Discord = data.SocialLinks.Discord;
                 }
-
-                if (!string.IsNullOrWhiteSpace(data.Role))
-                {
-                    Role userRole;
-                    switch (data.Role)
-                    {
-                        case nameof(Role.Admin):
-                            userRole = Role.Admin;
-                            break;
-                        case nameof(Role.User):
-                            userRole = Role.User;
-                            break;
-                        default:
-                            userRole = user.Role; // keep current role if unknown
-                            break;
-                    }
-
-                    user.Role = userRole; // assign to user so DB is updated
-                }
-
                 userContext.SaveChanges();
             }
 

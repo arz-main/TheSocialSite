@@ -65,11 +65,12 @@ namespace TheSocialSite.Api.Controllers
             var user = _userAction.GetUserByIdAction(id);
             if (user == null) return Unauthorized();
 
-            // if this is uncommented the admin page won't allow other users profile updates
+            //if this is uncommented the admin page won't allow other users profile updates
             // when the admin controller is in place, put these lines back
             // also make sure the id comes from the jwt later, dont allow users to modify other users
-            //if (userId != id)
-            //    return Forbid("You can only update your own profile");
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (userId != id)
+                return Forbid("You can only update your own profile");
 
             var result = _userAction.UserUpdateAction(id, profileData);
             if (!result.IsValid)
@@ -79,14 +80,16 @@ namespace TheSocialSite.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult DeleteUser([FromRoute] string id)
         {
             var user = _userAction.GetUserByIdAction(id);
-            if (user == null) return Unauthorized();
+            if (user == null) return NotFound();
 
             // same story as with the update endpoint above
-            //if (userId != id)
-            //    return Forbid();
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (userId != id)
+                return Forbid("You can only delete your own profile");
 
             var result = _userAction.UserDeleteAction(id);
 
