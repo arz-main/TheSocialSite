@@ -46,7 +46,7 @@ const Navbar = () => {
 					<WebsiteLogo />
 				</div>
 
-				{/* ✅ Desktop nav (text) */}
+				{/* Desktop nav (text) */}
 				<div className="hidden md:flex gap-2">
 					{navItems.map((item) => (
 						<Link
@@ -63,7 +63,7 @@ const Navbar = () => {
 					))}
 				</div>
 
-				{/* ✅ Mobile nav (icons) */}
+				{/* Mobile nav (icons) */}
 				<div className="flex md:hidden gap-1">
 					{navItems.map((item) => {
 						const Icon = item.icon;

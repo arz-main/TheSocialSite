@@ -10,6 +10,7 @@ import { UsersProvider } from './providers/UsersProvider.tsx';
 import { SignalRProvider } from './providers/SignalRProvider.tsx';
 import { SocialMediaProvider } from './providers/SocialMediaProvider.tsx';
 import { ThemeProvider } from "next-themes";
+import { AdminProvider } from './providers/AdminProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -21,7 +22,9 @@ createRoot(document.getElementById('root')!).render(
                             <UsersProvider>
                                 <PostsProvider>
                                     <SocialMediaProvider>
-                                        <App />
+                                        <AdminProvider>
+                                            <App />
+                                        </AdminProvider>
                                     </SocialMediaProvider>
                                 </PostsProvider>
                             </UsersProvider>

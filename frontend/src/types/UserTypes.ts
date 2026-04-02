@@ -10,7 +10,15 @@ export type UsersContextType = {
     deleteUser: (userId: string) => Promise<void>;
 };
 
-export type UpdateUserPayload = Omit<EditProfileForm, "socialMedia">;
+export type UpdateUserPayload = {
+    email?: string;
+    username?: string;
+    avatar?: string;
+    bio?: string;
+    location?: string;
+    website?: string;
+    socialLinks?: SocialLinks;
+};
 
 export type User = {
     id: string;
@@ -28,7 +36,6 @@ export type User = {
     joinedDate: string;
 };
 
-// UserTypes.ts
 export type SocialLinks = {
     twitter?: string;
     pinterest?: string;
@@ -37,24 +44,23 @@ export type SocialLinks = {
     discord?: string;
 };
 
-export interface EditProfileForm {
+export type EditProfileForm = {
     username: string;
     email: string;
     bio: string;
     location: string;
     website: string;
-    avatar: string | null;
+    avatar: string;
     socialMedia: SocialLinks;
-    role? : string;
-}
+};
 
 export const defaultEditProfileForm: EditProfileForm = {
-    username: "",
     email: "",
+    username: "",
     bio: "",
     location: "",
     website: "",
-    avatar: null,
+    avatar: "",
     socialMedia: {
         twitter: "",
         pinterest: "",

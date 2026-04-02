@@ -24,7 +24,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import AdminDashboard from "./pages/AdminDashboard";
 import ResetPassword from "./pages/ResetPassword";
-import ScrollToTop from "./utils/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop";
 
 import CourseRoadmap from "./pages/CourseRoadmap";
 import AdminCourseCreator from "./pages/AdminCourseCreator";

@@ -11,17 +11,17 @@ import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
 import { useUsers } from "../hooks/useUsers";
 import { useSocialMedia } from "../hooks/useSocialMedia";
-import type { EditProfileForm } from "../types/UserTypes";
+import type { EditProfileForm, SocialLinks } from "../types/UserTypes";
 import { defaultEditProfileForm } from "../types/UserTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
 import LoadingScreen from "../components/LoadingScreen";
 
-const socialPlatforms: { key: keyof EditProfileForm["socialMedia"]; label: string; type: string }[] = [
-    { key: "twitter",    label: "Twitter / X", type: "url"  },
-    { key: "pinterest",  label: "Pinterest",   type: "url"  },
-    { key: "deviantArt", label: "DeviantArt",  type: "url"  },
-    { key: "youTube",    label: "YouTube",     type: "url"  },
-    { key: "discord",    label: "Discord",     type: "text" },
+const socialPlatforms: { key: keyof SocialLinks; label: string; type: string }[] = [
+    { key: "twitter", label: "Twitter / X", type: "url" },
+    { key: "pinterest", label: "Pinterest", type: "url" },
+    { key: "deviantArt", label: "DeviantArt", type: "url" },
+    { key: "youTube", label: "YouTube", type: "url" },
+    { key: "discord", label: "Discord", type: "text" },
 ];
 
 export default function EditProfile() {
@@ -54,18 +54,18 @@ export default function EditProfile() {
 
                 setHasSocialRecord(socialExists);
                 setForm({
-                    username:    userData.username  ?? "",
-                    email:       userData.email     ?? "",
-                    bio:         userData.bio       ?? "",
-                    location:    userData.location  ?? "",
-                    website:     userData.website   ?? "",
-                    avatar:      userData.avatar    ?? null,
+                    username: userData.username ?? "",
+                    email: userData.email ?? "",
+                    bio: userData.bio ?? "",
+                    location: userData.location ?? "",
+                    website: userData.website ?? "",
+                    avatar: userData.avatar ?? null,
                     socialMedia: {
-                        twitter:    social?.twitter    ?? "",
-                        pinterest:  social?.pinterest  ?? "",
+                        twitter: social?.twitter ?? "",
+                        pinterest: social?.pinterest ?? "",
                         deviantArt: social?.deviantArt ?? "",
-                        youTube:    social?.youTube    ?? "",
-                        discord:    social?.discord    ?? "",
+                        youTube: social?.youTube ?? "",
+                        discord: social?.discord ?? "",
                     },
                 });
             } catch (err) {
@@ -84,7 +84,7 @@ export default function EditProfile() {
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSocialChange = (key: keyof EditProfileForm["socialMedia"], value: string) => {
+    const handleSocialChange = (key: keyof SocialLinks, value: string) => {
         setForm(prev => ({
             ...prev,
             socialMedia: { ...prev.socialMedia, [key]: value },
@@ -123,11 +123,11 @@ export default function EditProfile() {
         try {
             await updateUser(currentUser.id, {
                 username: form.username,
-                email:    form.email,
-                bio:      form.bio,
+                email: form.email,
+                bio: form.bio,
                 location: form.location,
-                website:  form.website,
-                avatar:   form.avatar,
+                website: form.website,
+                avatar: form.avatar,
             });
 
             const socialPayload: SocialMediaDto = {
@@ -278,8 +278,8 @@ export default function EditProfile() {
                                 <Textarea id="bio" name="bio"
                                     value={form.bio} onChange={handleChange} rows={4}
                                     placeholder="Tell us about yourself…" className="bg-background" />
-                                <p className={`text-sm ${form.bio.length >= 500 ? "text-danger" : "text-muted-foreground"}`}>
-                                    {form.bio.length}/500 characters
+                                <p className={`text-sm ${form.bio?.length && form.bio.length >= 500 ? "text-danger" : "text-muted-foreground"}`}>
+                                    {form.bio?.length ?? 0}/500 characters
                                 </p>
                             </div>
 
@@ -298,7 +298,7 @@ export default function EditProfile() {
                                             <Input
                                                 id={key}
                                                 type={type}
-                                                value={form.socialMedia[key] ?? ""}
+                                                value={form.socialMedia ? form?.socialMedia[key] : ""}
                                                 onChange={e => handleSocialChange(key, e.target.value)}
                                                 placeholder={type === "url" ? `https://${key}.com/yourprofile` : `Your ${label} username`}
                                                 className="bg-background"

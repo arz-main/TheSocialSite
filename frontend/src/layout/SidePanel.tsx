@@ -15,9 +15,11 @@ import {
 	Sun,
 	Moon,
 	Map,
+	LogOut,
 } from "lucide-react";
 import { Button } from "../components/BasicButton";
 import paths from "../routes/paths";
+import { useAuth } from "../hooks/useAuth";
 
 interface SidebarProps {
 	isOpen: boolean;
@@ -26,22 +28,20 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
 	const location = useLocation();
-
 	const { resolvedTheme, setTheme } = useTheme();
+	const { currentUser, logout } = useAuth();
 
-	// hydration fix
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
-	// Close sidebar on route change
 	useEffect(() => {
 		onClose();
 	}, [location.pathname]);
 
-	// prevent hydration mismatch
+	// safe now
 	if (!mounted) return null;
 
 	const navItems = [
@@ -53,11 +53,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 		{ path: paths.artist.messages, label: "Messages", icon: MessageCircle },
 		{ path: paths.artist.statistics, label: "Statistics", icon: BarChart3 },
 		{ path: paths.about, label: "About", icon: CircleQuestionMark },
-	];
-
-	const authItems = [
-		{ path: paths.login, label: "Log In", icon: LogIn },
-		{ path: paths.signup, label: "Sign Up", icon: UserPlus },
 	];
 
 	return (
@@ -166,35 +161,59 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 								Account
 							</div>
 							<div className="flex flex-col space-y-1">
-								{authItems.map((item) => {
-									const Icon = item.icon;
-
-									return (
+								{!currentUser ? (
+									<>
+										{/* NOT logged in → show Login + Sign Up */}
 										<Link
-											className="text-text"
-											key={item.path}
-											to={item.path}
+											to={paths.login}
 											onClick={onClose}
+											className="text-text"
 										>
-											<motion.div
-												whileTap={{ scale: 0.98 }}
-												transition={{
-													type: "spring",
-													stiffness: 400,
-													damping: 17,
-												}}
+											<Button
+												className="w-full justify-start gap-3"
+												variant="outline"
 											>
-												<Button
-													variant="outline"
-													className="w-full justify-start gap-3"
-												>
-													<Icon className="w-4 h-4" />
-													{item.label}
-												</Button>
-											</motion.div>
+												<LogIn className="w-4 h-4" />
+												Log In
+											</Button>
 										</Link>
-									);
-								})}
+
+										<Link
+											to={paths.signup}
+											onClick={onClose}
+											className="text-text"
+										>
+											<Button
+												className="w-full justify-start gap-3"
+												variant="outline"
+											>
+												<UserPlus className="w-4 h-4" />
+												Sign Up
+											</Button>
+										</Link>
+									</>
+								) : (
+									<>
+										{/* LOGGED IN → show Logout */}
+										<Link
+											to={paths.login}
+											onClick={onClose}
+											className="text-text"
+										>
+											<Button
+												onClick={() => {
+													logout();
+													onClose();
+												}}
+												className="w-full justify-start gap-3"
+												variant="outline"
+											>
+												<LogOut className="w-4 h-4" />
+												Logout
+											</Button>
+										</Link>
+									</>
+								)}
 							</div>
 						</div>
 					</motion.aside>

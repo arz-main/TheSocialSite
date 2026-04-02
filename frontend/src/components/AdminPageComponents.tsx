@@ -1,5 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Search, X, AlertCircle } from "lucide-react";
+import type { Post, PostStatus } from "../types/PostTypes";
+import type { Role } from "../types/RolesTypes";
+import type { User } from "../types/UserTypes";
+import { useUsers } from "../hooks/useUsers";
+import { useAuth } from "../hooks/useAuth";
+import { useFilteredData } from "../hooks/useFilteredData";
+import { usePosts } from "../hooks/usePosts";
+import { useAdmin } from "../hooks/useAdmin";
 
 // ─── SearchBar ────────────────────────────────────────
 export function SearchBar({
@@ -144,92 +152,305 @@ export function DataTable({ headers, children }: DataTableProps) {
     );
 }
 
-// ─── StatCards ────────────────────────────────────────
-export function StatCards({ stats }: { stats: { label: string; value: number }[] }) {
+// ─── Stat Card ────────────────────────────────────────
+export function StatCard({ label, value, accent }: { label: string; value: number | string; accent: string }) {
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((s) => (
-                <div
-                    key={s.label}
-                    className="bg-card border border-border rounded-xl px-5 py-4 flex flex-col gap-1 hover:border-primary transition-colors group"
-                >
-                    <div className="text-2xl font-bold text-text group-hover:text-primary transition-colors">
-                        {s.value}
-                    </div>
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-muted">
-                        {s.label}
-                    </div>
-                </div>
-            ))}
+        <div className="bg-card border border-border rounded-xl px-5 py-4 flex flex-col gap-1 min-w-32.5">
+            <span className="text-[11px] font-semibold uppercase tracking-widest text-muted">{label}</span>
+            <span className={`text-2xl font-bold ${accent}`}>{value}</span>
         </div>
     );
 }
 
-// ─── GenericTable ─────────────────────────────────────
-interface Column<T> {
-    header: string;
-    render: (item: T) => React.ReactNode;
+// ─── Section Header ───────────────────────────────────
+function SectionHeader({ title, count, search, onSearch, placeholder }: {
+    title: string;
+    count: number;
+    search: string;
+    onSearch: (v: string) => void;
+    placeholder: string;
+}) {
+    return (
+        <div className="flex items-center justify-between gap-4 px-5 py-4 border-b border-border">
+            <div className="flex items-center gap-3">
+                <h2 className="text-sm font-semibold text-text">{title}</h2>
+                <span className="text-[11px] font-semibold bg-border text-muted px-2 py-0.5 rounded-full">
+                    {count}
+                </span>
+            </div>
+            <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />
+        </div>
+    );
 }
 
-interface GenericTableProps<T> {
-    data: T[];
-    columns: Column<T>[];
-    loading?: boolean;
-    error?: string | null;
-    emptyMessage?: string;
+const roleBadge: Record<Role, string> = {
+    Admin: "bg-primary-soft text-primary border border-primary/40 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide uppercase",
+    User: "bg-secondary-soft text-secondary border border-secondary/40 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide uppercase",
+};
+
+const statusBadge: Record<PostStatus, string> = {
+    Published: "bg-success/10 text-success border border-success/30 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide uppercase",
+    Draft: "bg-muted/10 text-muted border border-muted/30 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide uppercase",
+    Flagged: "bg-danger/10 text-danger border border-danger/30 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide uppercase",
+};
+
+// ─── Helpers ─────────────────────────────────────────
+const roleOrder: Role[] = ["User", "Admin"];
+
+function promoteRole(role: Role): Role {
+    const idx = roleOrder.indexOf(role);
+    return idx < roleOrder.length - 1 ? roleOrder[idx + 1] : role;
 }
 
-export function GenericTable<T>({
-    data,
-    columns,
-    loading,
-    error,
-    emptyMessage = "No data found",
-}: GenericTableProps<T>) {
-    const isEmpty = !loading && !error && data.length === 0;
+function demoteRole(role: Role): Role {
+    const idx = roleOrder.indexOf(role);
+    return idx > 0 ? roleOrder[idx - 1] : role;
+}
+
+// ─── USERS TABLE ──────────────────────────────────────
+export function UsersTable({ totalUsers }: { totalUsers: (n: number) => void }) {
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [search, setSearch] = useState("");
+    const [confirm, setConfirm] = useState<{ type: "delete" | "promote" | "demote"; id: string } | null>(null);
+
+    const { getAllUsers } = useUsers();
+    const { adminUpdateUser, adminDeleteUser } = useAdmin();
+    const { currentUser, refreshToken } = useAuth();
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                setLoading(true);
+                const data = await getAllUsers();
+                const list = data || [];
+                setUsers(list);
+                totalUsers(list.length);
+            } catch {
+                setError("Failed to load users");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetch();
+    }, [getAllUsers]);
+
+    const filtered = useFilteredData(users, search, ["username", "email", "role"]);
+
+    const executeConfirm = async () => {
+        if (!confirm) return;
+        try {
+            if (confirm.type === "delete") {
+                await adminDeleteUser(confirm.id); // this just deletes the user from the backend
+                setUsers(prev => prev.filter(u => u.id !== confirm.id)); // this removes the user from the frontend state
+            } else if (confirm.type == "promote") {
+                const target = users.find(u => u.id === confirm.id); // find which user the admin selected
+                if (!target) return;
+                const newRole = promoteRole(target.role);
+                const payload = { role: newRole }; // i won't use a type here because it's additional work for a simple update
+                await adminUpdateUser(confirm.id, payload);
+                setUsers(prev => prev.map(u => u.id === confirm.id ? { ...u, role: newRole } : u));
+                if (currentUser?.id === target.id) await refreshToken();
+            } else {
+                const target = users.find(u => u.id === confirm.id);
+                if (!target) return;
+                const newRole = demoteRole(target.role);
+                const payload = { role: newRole };
+                await adminUpdateUser(confirm.id, payload);
+                setUsers(prev => prev.map(u => u.id === confirm.id ? { ...u, role: newRole } : u));
+                if (currentUser?.id === target.id) await refreshToken();
+            }
+        } finally {
+            setConfirm(null);
+        }
+    };
+
+    const targetUser = confirm ? users.find(u => u.id === confirm.id) : null;
+
+    const modalMessages = {
+        delete: `Delete "${targetUser?.username}"?`,
+        promote: `Promote "${targetUser?.username}"?`,
+        demote: `Demote "${targetUser?.username}"?`,
+    };
+    return (
+        <section className="bg-card border border-border rounded-xl overflow-hidden">
+            {confirm && targetUser && (
+                <ConfirmModal
+                    message={modalMessages[confirm.type]}
+                    onConfirm={executeConfirm}
+                    onCancel={() => setConfirm(null)}
+                />
+            )}
+
+            <SectionHeader
+                title="Users"
+                count={filtered.length}
+                search={search}
+                onSearch={setSearch}
+                placeholder="Search users…"
+            />
+
+            <DataTable headers={["User", "Email", "Role", "Actions"]}>
+                {loading ? (
+                    <TableSkeleton cols={4} />
+                ) : error ? (
+                    <ErrorRow cols={4} message={error} />
+                ) : filtered.map((user, _i) => (
+                    <tr
+                        key={user.id}
+                        className="border-b border-border last:border-0 hover:bg-border/30 transition-colors group"
+                    >
+                        {/* User */}
+                        <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 bg-secondary-soft text-secondary"
+                                >
+                                    {user.username[0].toUpperCase()}
+                                </div>
+                                <span className="text-sm font-medium text-text">{user.username}</span>
+                            </div>
+                        </td>
+
+                        {/* Email */}
+                        <td className="px-5 py-3.5 text-sm text-muted">{user.email}</td>
+
+                        {/* Role */}
+                        <td className="px-5 py-3.5">
+                            <span className={roleBadge[user.role]}>{user.role}</span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setConfirm({ type: "promote", id: user.id })}
+                                    disabled={user.role === "Admin"}
+                                    className="px-2.5 py-1 text-xs rounded-lg bg-secondary-soft text-secondary border border-secondary/30 hover:bg-secondary/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    Promote
+                                </button>
+                                <button
+                                    onClick={() => setConfirm({ type: "demote", id: user.id })}
+                                    disabled={user.role === "User"}
+                                    className="px-2.5 py-1 text-xs rounded-lg bg-secondary-soft text-secondary border border-secondary/30 hover:bg-secondary/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    Demote
+                                </button>
+                                <button
+                                    onClick={() => setConfirm({ type: "delete", id: user.id })}
+                                    className="px-2.5 py-1 text-xs rounded-lg bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20 transition-colors"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                ))}
+            </DataTable>
+        </section>
+    );
+}
+
+// ─── POSTS TABLE ──────────────────────────────────────
+export function PostsTable({ totalPosts }: { totalPosts: (n: number) => void }) {
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [search, setSearch] = useState("");
+    const [confirm, setConfirm] = useState<string | null>(null);
+
+    const { getAllPosts, deletePost } = usePosts();
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                setLoading(true);
+                const data = await getAllPosts();
+                const list = data || [];
+                setPosts(list);
+                totalPosts(list.length);
+            } catch {
+                setError("Failed to load posts");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetch();
+    }, [getAllPosts]);
+
+    const filtered = useFilteredData(posts, search, ["title", "author", "status", "category"]);
+
+    const handleDelete = async () => {
+        if (!confirm) return;
+        await deletePost(confirm);
+        setPosts(prev => prev.filter(p => p.id !== confirm));
+        setConfirm(null);
+    };
+
+    const targetPost = confirm ? posts.find(p => p.id === confirm) : null;
 
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-                <thead>
-                    <tr className="bg-background">
-                        {columns.map((col, i) => (
-                            <th
-                                key={i}
-                                className="px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-widest text-muted border-b border-border"
+        <section className="bg-card border border-border rounded-xl overflow-hidden">
+            {confirm && targetPost && (
+                <ConfirmModal
+                    message={`Delete "${targetPost.title}"?`}
+                    onConfirm={handleDelete}
+                    onCancel={() => setConfirm(null)}
+                />
+            )}
+
+            <SectionHeader
+                title="Posts"
+                count={filtered.length}
+                search={search}
+                onSearch={setSearch}
+                placeholder="Search posts…"
+            />
+
+            <DataTable headers={["Title", "Author", "Status", "Actions"]}>
+                {loading ? (
+                    <TableSkeleton cols={4} />
+                ) : error ? (
+                    <ErrorRow cols={4} message={error} />
+                ) : filtered.map((post) => (
+                    <tr
+                        key={post.id}
+                        className="border-b border-border last:border-0 hover:bg-border/30 transition-colors"
+                    >
+                        {/* Title */}
+                        <td className="px-5 py-3.5 text-sm font-medium text-text max-w-65 truncate">
+                            {post.title}
+                        </td>
+
+                        {/* Author */}
+                        <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-accent-soft text-accent flex items-center justify-center text-[10px] font-bold shrink-0">
+                                    {post.author[0].toUpperCase()}
+                                </div>
+                                <span className="text-sm text-muted">{post.author}</span>
+                            </div>
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-5 py-3.5">
+                            <span className={statusBadge[post.status]}>{post.status}</span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-5 py-3.5">
+                            <button
+                                onClick={() => setConfirm(post.id)}
+                                className="px-2.5 py-1 text-xs rounded-lg bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20 transition-colors"
                             >
-                                {col.header}
-                            </th>
-                        ))}
+                                Delete
+                            </button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {loading ? (
-                        <TableSkeleton cols={columns.length} />
-                    ) : error ? (
-                        <ErrorRow cols={columns.length} message={error} />
-                    ) : isEmpty ? (
-                        <tr>
-                            <td colSpan={columns.length} className="text-center py-10 text-muted text-sm">
-                                {emptyMessage}
-                            </td>
-                        </tr>
-                    ) : (
-                        data.map((item, idx) => (
-                            <tr
-                                key={idx}
-                                className="border-b border-border last:border-0 hover:bg-border/30 transition-colors"
-                            >
-                                {columns.map((col, i) => (
-                                    <td key={i} className="px-5 py-3.5">
-                                        {col.render(item)}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
-        </div>
+                ))}
+            </DataTable>
+        </section>
     );
 }

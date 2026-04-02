@@ -13,6 +13,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [initializing, setInitializing] = useState(true);
     const axios = useAxios()!;
 
+    // this function prevents the offline misuse of jwt tokens
+    // because it enforces that a request is be made to the backend
     const fetchUser = async (token: string): Promise<User> => {
         const { sub: id } = jwtDecode<JwtPayload>(token);
         const { data } = await axios.get(`users/${id}`);
@@ -59,7 +61,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!currentUser) return;
         try {
             const { data } = await axios.post("/auth/refresh-token", { userId: currentUser.id });
-            console.log(data)
             localStorage.setItem("token", data.token);
             await fetchUser(data.token);
         } catch (err) {
