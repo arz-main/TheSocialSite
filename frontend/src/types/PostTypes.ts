@@ -4,17 +4,14 @@ export interface Post {
 	id: string;
 	title: string,
 	description: string,
-	author: string;
+	authorUsername: string;
+	authorAvatar: string;
 	authorId: string;
 	status: PostStatus;
 	imageUrl: string;
-	referenceUrl?: string;
 	category: string;
-	duration: number;
 	createdAt: string;
 	likes: number;
-	comments: number;
-	showWithReference: boolean;
 }
 
 export interface UpdatePostPayload {
@@ -22,10 +19,7 @@ export interface UpdatePostPayload {
 	description?: string;
 	status?: PostStatus;
 	imageUrl?: string;
-	referenceUrl?: string;
 	category?: string;
-	duration?: number;
-	showWithReference?: boolean;
 }
 
 export type PostsContextType = {

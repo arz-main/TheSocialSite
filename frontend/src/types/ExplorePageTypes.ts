@@ -1,28 +1,24 @@
+import type { Comment } from "./CommentTypes";
 import type { Post } from "./PostTypes";
-
-export type Comment = {
-	id: string;
-	username: string;
-	text: string;
-	createdAt: string;
-}
-
 // --- Props ---
+
 export interface CommentsModalProps {
 	post: Post;
-	comments?: Record<string, Comment[]>;
+	comments: Comment[];
+	newComment: string;                             // controlled input
+	imageIndex: number;                             // controlled current image
+	onChangeNewComment: (value: string) => void;   // setter for newComment
+	onChangeImageIndex: (index: number) => void;   // setter for imageIndex
 	onClose: () => void;
 	likedDrawings: Set<string>;
 	toggleLike: (id: string) => void;
-	initialImageIndex?: number;
 	onSubmitComment: (postId: string, text: string) => Promise<Comment>;
 }
 
 export interface PostCardProps {
-    post: Post;
+	post: Post;
 	index: number;
 	isLiked: boolean;
-    pageSize: number;
 	onToggleLike: (id: string) => void;
 	onOpenComments: (post: Post) => void;
 	formatDate: (d: string) => string;
@@ -32,9 +28,12 @@ export interface PostCardProps {
 export interface DropDownProps {
 	label: string;
 	value: string;
+	isOpen: boolean;                               // controlled dropdown state
 	options: { value: string; label: string }[];
 	onChange: (value: string) => void;
+	onToggle: () => void;                          // toggle open/close state
 }
 
+// --- Search & Sort types ---
 export type SearchByOption = "creator" | "reference" | "keywords" | "category";
 export type SortByOption = "relevance" | "likes" | "recent" | "category";

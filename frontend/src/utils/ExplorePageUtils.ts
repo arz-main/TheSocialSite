@@ -28,7 +28,7 @@ export function filterPosts(
 
 	switch (searchBy) {
 		case "creator":
-			return posts.filter((p) => p.author.toLowerCase().includes(query));
+			return posts.filter((p) => p.authorUsername.toLowerCase().includes(query));
 
 		case "reference":
 			// Empty for now
@@ -38,7 +38,7 @@ export function filterPosts(
 			// Search in username or category (can be extended)
 			return posts.filter(
 				(p) =>
-					p.author.toLowerCase().includes(query) ||
+					p.authorUsername.toLowerCase().includes(query) ||
 					p.category.toLowerCase().includes(query)
 			);
 
