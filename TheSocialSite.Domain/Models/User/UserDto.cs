@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TheSocialSite.Domain.Entities.User;
 
-namespace TheSocialSite.Domain.Models.Response
+namespace TheSocialSite.Domain.Models.User
 {
-    public class GetUserDataDto
+    public class UserDto
     {
         public string Id { get; set; }
         public string Email { get; set; } 

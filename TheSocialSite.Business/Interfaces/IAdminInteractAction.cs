@@ -10,7 +10,7 @@ namespace TheSocialSite.Business.Interfaces
 {
     public interface IAdminInteractAction
     {
-        public DefaultActionResponse AdminUserUpdateAction(string userId, UserUpdateDto data);
+        public DefaultActionResponse AdminUserUpdateAction(string userId, UpdateUserDto data);
         public DefaultActionResponse AdminUserDeleteAction(string userId);
     }
 }

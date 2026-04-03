@@ -28,7 +28,7 @@ namespace TheSocialSite.Api.Controllers
             {
                 return BadRequest("Could not find posts");
             }
-            return Ok(posts);
+            return Ok(posts.PostDtos);
         }
 
         [HttpGet("user/{id}")]
@@ -39,26 +39,22 @@ namespace TheSocialSite.Api.Controllers
             {
                 return BadRequest("Could not find posts");
             }
-            return Ok(posts);
+            return Ok(posts.PostDtos);
         }
 
         [Authorize]
         [HttpPost("create")]
-        public IActionResult CreatePost([FromBody] PostCreationDto postData)
+        public IActionResult CreatePost([FromBody] CreatePostDto postData)
         {
             if (postData == null)
-            {
                 return BadRequest("No data provided");
-            }
+
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var username = User.FindFirstValue(JwtRegisteredClaimNames.Name);
-            Console.WriteLine(userId);
-            DefaultActionResponse validationInfo = _postAction.PostCreationAction(postData, userId, username);
-            if (!validationInfo.IsValid)
-            {
-                return BadRequest(validationInfo.Message);
-            }
-            return Ok(validationInfo);
+            DefaultActionResponse data = _postAction.CreatePostAction(postData, userId);
+            if (!data.IsValid)
+                return BadRequest(data.Message);
+
+            return Ok(data);
         }
     }
 }

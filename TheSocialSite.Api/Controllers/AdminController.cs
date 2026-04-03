@@ -23,7 +23,7 @@ namespace TheSocialSite.Api.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
-        public IActionResult AdminUpdateProfile([FromRoute] string id, [FromBody] UserUpdateDto profileData)
+        public IActionResult AdminUpdateProfile([FromRoute] string id, [FromBody] UpdateUserDto profileData)
         {
             if (profileData == null)
                 return BadRequest("No data provided");

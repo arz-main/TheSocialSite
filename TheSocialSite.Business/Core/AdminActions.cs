@@ -12,9 +12,9 @@ namespace TheSocialSite.Business.Core
 {
     public class AdminActions
     {
-        public DefaultActionResponse AdminUserUpdateActionExecution(string userId, UserUpdateDto data)
+        public DefaultActionResponse AdminUserUpdateActionExecution(string userId, UpdateUserDto data)
         {
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)
@@ -63,7 +63,7 @@ namespace TheSocialSite.Business.Core
 
         public DefaultActionResponse AdminUserDeleteActionExecution(string userId)
         {
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)

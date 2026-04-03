@@ -44,7 +44,7 @@ namespace TheSocialSite.Api.Controllers
             {
                 return BadRequest("No data provided");
             }
-            SignupActionResponse validationInfo = _userInteractAction.UserCreationAction(userData);
+            SignupActionResponse validationInfo = _userInteractAction.CreateUserAction(userData);
             if (!validationInfo.IsValid)
             {
                 return BadRequest(validationInfo.Message);

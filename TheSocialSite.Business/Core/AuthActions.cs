@@ -24,7 +24,7 @@ namespace TheSocialSite.Business.Core
             if (string.IsNullOrWhiteSpace(loginData.Password))
                 return new LoginActionResponse { IsValid = false, Message = "Password is required." };
 
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users
                     .FirstOrDefault(u => u.Username == loginData.UserIdentifier || u.Email == loginData.UserIdentifier);
@@ -82,7 +82,7 @@ namespace TheSocialSite.Business.Core
                 };
             }
 
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)

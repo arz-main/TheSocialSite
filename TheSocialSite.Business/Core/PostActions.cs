@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -17,23 +18,67 @@ namespace TheSocialSite.Business.Core
     public class PostActions
     {
         public PostActions() { }
-        public List<PostData> GetAllPostsActionExecution()
+        public PostActionResponse GetAllPostsActionExecution()
         {
-            using (var postContext = new PostContext())
+            using (var postContext = new AppDbContext())
             {
-                return postContext.Posts.ToList();
+                var posts = postContext.Posts
+                    .Include(p => p.Author)
+                    .Select(p => new PostDto
+                    {
+                        Id = p.Id,
+                        AuthorId = p.AuthorId,
+                        AuthorUsername = p.Author.Username, // only username
+                        AuthorAvatar = p.Author.Avatar,
+                        Status = p.Status,
+                        Likes = p.Likes,
+                        Title = p.Title,
+                        ImageUrl = p.ImageUrl,
+                        Category = p.Category,
+                        Description = p.Description,
+                        CreatedAt = p.CreatedAt
+                    })
+                    .ToList();
+
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "All posts have been obtained",
+                    PostDtos = posts
+                };
             }
         }
 
-        public List<PostData> GetUserPostsActionExecution(string id)
+        public PostActionResponse GetUserPostsActionExecution(string id)
         {
-            using (var postContext = new PostContext())
+            using (var postContext = new AppDbContext())
             {
-                return postContext.Posts.Where(p => p.AuthorId == id).ToList();
+                var posts = postContext.Posts
+                    .Include(p => p.Author)
+                    .Where(p => p.AuthorId == id).ToList();
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "User posts have been obtained",
+                    PostDtos = posts.Select(p => new PostDto
+                    {
+                        Id = p.Id,
+                        AuthorId = p.AuthorId,
+                        AuthorUsername = p.Author.Username, // only username
+                        AuthorAvatar = p.Author.Avatar,
+                        Status = p.Status,
+                        Likes = p.Likes,
+                        Title = p.Title,
+                        ImageUrl = p.ImageUrl,
+                        Category = p.Category,
+                        Description = p.Description,
+                        CreatedAt = p.CreatedAt
+                    }).ToList()
+                };
             }
         }
 
-        public DefaultActionResponse PostCreationActionExecution(PostCreationDto postData, string userId, string username)
+        public DefaultActionResponse CreatePostActionExecution(CreatePostDto postData, string userId)
         {
             if (postData == null)
             {
@@ -44,24 +89,46 @@ namespace TheSocialSite.Business.Core
                 };
             }
 
-            using (var postContext = new PostContext())
+            if (string.IsNullOrWhiteSpace(postData.Title))
             {
+                return new DefaultActionResponse
+                {
+                    IsValid = false,
+                    Message = "Title is required"
+                };
+            }
+
+            using (var appDbContext = new AppDbContext())
+            {
+                // Find the user
+                var author = appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+                if (author == null)
+                {
+                    return new DefaultActionResponse
+                    {
+                        IsValid = false,
+                        Message = "Invalid user"
+                    };
+                }
+
+                // Create the post with Author navigation property
                 var postEntity = new PostData
                 {
                     Title = postData.Title,
                     Description = postData.Description,
-                    Author = username,
                     ImageUrl = postData.ImageUrl,
-                    ReferenceUrl = postData.ReferenceUrl,
                     Category = postData.Category,
-                    Duration = postData.Duration,
-                    ShowWithReference = postData.ShowWithReference,
-                    AuthorId = userId,
+                    AuthorId = author.Id,
+                    Author = author,               // <- navigation property
+                    CreatedAt = DateTime.UtcNow,
+                    Status = PostStatus.Draft,
+                    Likes = 0
                 };
 
-                postContext.Posts.Add(postEntity);
-                postContext.SaveChanges();
-            };
+                appDbContext.Posts.Add(postEntity);
+                appDbContext.SaveChanges();
+            }
+
             return new DefaultActionResponse
             {
                 IsValid = true,

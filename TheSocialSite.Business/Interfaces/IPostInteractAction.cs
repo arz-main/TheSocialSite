@@ -11,8 +11,8 @@ namespace TheSocialSite.Business.Interfaces
 {
     public interface IPostInteractAction
     {
-        public List<PostData> GetAllPostsAction();
-        public List<PostData> GetUserPostsAction(string id);
-        public DefaultActionResponse PostCreationAction(PostCreationDto postData, string userId, string username);
+        public PostActionResponse GetAllPostsAction();
+        public PostActionResponse GetUserPostsAction(string id);
+        public DefaultActionResponse CreatePostAction(CreatePostDto postData, string userId);
     }
 }
