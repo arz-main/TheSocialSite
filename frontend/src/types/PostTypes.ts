@@ -1,11 +1,12 @@
+import type { User } from "./UserTypes";
+
 export type PostStatus = "Published" | "Draft" | "Flagged";
 
 export interface Post {
 	id: string;
 	title: string,
 	description: string,
-	authorUsername: string;
-	authorAvatar: string;
+	author: User;
 	authorId: string;
 	status: PostStatus;
 	imageUrl: string;

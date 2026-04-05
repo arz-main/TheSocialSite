@@ -360,8 +360,9 @@ export function PostsTable({ totalPosts }: { totalPosts: (n: number) => void }) 
     const [error, setError] = useState<string | null>(null);
     const [search, setSearch] = useState("");
     const [confirm, setConfirm] = useState<string | null>(null);
-
-    const { getAllPosts, deletePost } = usePosts();
+    
+    const { adminDeletePost } = useAdmin();
+    const { getAllPosts } = usePosts();
 
     useEffect(() => {
         const fetch = async () => {
@@ -384,7 +385,7 @@ export function PostsTable({ totalPosts }: { totalPosts: (n: number) => void }) 
 
     const handleDelete = async () => {
         if (!confirm) return;
-        await deletePost(confirm);
+        await adminDeletePost(confirm);
         setPosts(prev => prev.filter(p => p.id !== confirm));
         setConfirm(null);
     };
@@ -428,9 +429,9 @@ export function PostsTable({ totalPosts }: { totalPosts: (n: number) => void }) 
                         <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-full bg-accent-soft text-accent flex items-center justify-center text-[10px] font-bold shrink-0">
-                                    {post.author[0].toUpperCase()}
+                                    {post.author.username[0].toUpperCase()}
                                 </div>
-                                <span className="text-sm text-muted">{post.author}</span>
+                                <span className="text-sm text-muted">{post.author.username}</span>
                             </div>
                         </td>
 

@@ -17,7 +17,6 @@ import { useAuth } from "../hooks/useAuth";
 import type { User } from "../types/UserTypes";
 import type { Post } from "../types/PostTypes";
 import type { Comment } from "../types/CommentTypes";
-import { LinkButton } from "./LinkButton";
 
 // --- User Banner Component ---
 export function UserBanner({
@@ -40,13 +39,13 @@ export function UserBanner({
 			<Card className="p-6 hover:shadow-lg transition-shadow">
 				<div className="flex items-center gap-4">
 					<div
-						className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+						className="w-16 h-16 rounded-full overflow-hidden shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
 						onClick={() => onUserClick(user.id)}
 					>
 						{user.avatar ? (
 							<img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
 						) : (
-							<div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl">
+							<div className="w-full h-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-2xl">
 								{user.username.charAt(0)}
 							</div>
 						)}
@@ -180,7 +179,7 @@ export function CommentsModal({
 						>
 							<ImageWithFallback
 								src={post.imageUrl}
-								alt={`Image by ${post.authorUsername}`}
+								alt={`Image by ${post.author.username}`}
 								className="object-contain"
 								style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto" }}
 							/>
@@ -202,22 +201,22 @@ export function CommentsModal({
 					<div className="flex items-center gap-3 px-4 py-3 border-b border-muted shrink-0">
 						<div
 							className="w-8 h-8 rounded-full overflow-hidden shrink-0 cursor-pointer ring-1 ring-muted"
-							onClick={() => handleUserClick(post.authorId)}
+							onClick={() => handleUserClick(post.author.id)}
 						>
-							{post.authorAvatar ? (
-								<img src={post.authorAvatar} alt={post.authorUsername} className="w-full h-full object-cover" />
+							{post.author.avatar ? (
+								<img src={post.author.avatar} alt={post.author.username} className="w-full h-full object-cover" />
 							) : (
-								<div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
-									{post.authorUsername?.charAt(0)?.toUpperCase()}
+								<div className="w-full h-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
+									{post.author.username?.charAt(0)?.toUpperCase()}
 								</div>
 							)}
 						</div>
 						<div className="flex-1 min-w-0">
 							<span
 								className="text-text font-semibold text-sm cursor-pointer hover:underline"
-								onClick={() => handleUserClick(post.authorId)}
+								onClick={() => handleUserClick(post.author.id)}
 							>
-								{post.authorUsername}
+								{post.author.username}
 							</span>
 							<span className="text-text/40 text-xs ml-2">{formatDate(post.createdAt)}</span>
 						</div>
@@ -344,7 +343,7 @@ export function Dropdown({ label, value, options, isOpen, onToggle, onChange }: 
 						animate={{ opacity: 1, y: 0, scale: 1 }}
 						exit={{ opacity: 0, y: -6, scale: 0.97 }}
 						transition={{ duration: 0.12 }}
-						className="absolute top-full mt-1.5 left-0 bg-card border border-muted rounded-xl shadow-xl overflow-hidden z-10 min-w-[180px]"
+						className="absolute top-full mt-1.5 left-0 bg-card border border-muted rounded-xl shadow-xl overflow-hidden z-10 min-w-45"
 					>
 						{options.map((option: any) => (
 							<button
@@ -428,7 +427,7 @@ export function PostCard({
 					>
 						<ImageWithFallback
 							src={post.imageUrl}
-							alt={`Drawing by ${post.authorUsername}`}
+							alt={`Drawing by ${post.author.username}`}
 							className="w-full h-full object-cover"
 						/>
 					</motion.div>
@@ -464,14 +463,14 @@ export function PostCard({
 				<div className="px-3 py-2.5 flex items-center gap-2.5">
 					{/* Author avatar */}
 					<div
-						className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 cursor-pointer ring-1 ring-muted hover:ring-primary transition-all"
-						onClick={(e) => handleUserClick(e, post.authorId)}
+						className="w-7 h-7 rounded-full overflow-hidden shrink-0 cursor-pointer ring-1 ring-muted hover:ring-primary transition-all"
+						onClick={(e) => handleUserClick(e, post.author.id)}
 					>
-						{post.authorAvatar ? (
-							<img src={post.authorAvatar} alt={post.authorUsername} className="w-full h-full object-cover" />
+						{post.author.avatar ? (
+							<img src={post.author.avatar} alt={post.author.username} className="w-full h-full object-cover" />
 						) : (
-							<div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
-								{post.authorUsername?.charAt(0)?.toUpperCase()}
+							<div className="w-full h-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
+								{post.author.username?.charAt(0)?.toUpperCase()}
 							</div>
 						)}
 					</div>
@@ -480,9 +479,9 @@ export function PostCard({
 					<div className="flex-1 min-w-0">
 						<span
 							className="text-text text-xs font-semibold truncate block cursor-pointer hover:underline"
-							onClick={(e) => handleUserClick(e, post.authorId)}
+							onClick={(e) => handleUserClick(e, post.author.id)}
 						>
-							{post.authorUsername}
+							{post.author.username}
 						</span>
 						<span className="text-text/40 text-xs">{formatDate(post.createdAt)}</span>
 					</div>

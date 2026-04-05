@@ -18,6 +18,7 @@ export type AdminContextType = {
     error: string | null;
     adminUpdateUser: (userId: string, data: AdminUpdateUserPayload) => Promise<AdminUpdateUserPayload>;
     adminDeleteUser: (userId: string) => Promise<void>;
+    adminDeletePost: (postId: string) => Promise<void>;
 };
 
 
