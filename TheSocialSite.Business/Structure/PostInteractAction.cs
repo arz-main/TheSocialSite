@@ -25,6 +25,14 @@ namespace TheSocialSite.Business.Structure
         {
             return CreatePostActionExecution(postData, userId);
         }
+        public PostActionResponse GetPostsByIdAction(string postId)
+        {
+            return GetPostsByIdActionExecution(postId);
+        }
+        public DefaultActionResponse DeletePostAction(string id)
+        {
+            return DeletePostActionExecution(id);
+        }
 
     }
 }

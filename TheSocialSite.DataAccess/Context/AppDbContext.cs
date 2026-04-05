@@ -33,7 +33,7 @@ namespace TheSocialSite.DataAccess.Context
                 .HasOne(c => c.Author)
                 .WithMany() // User can have many comments
                 .HasForeignKey(c => c.AuthorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Comment → Post
             modelBuilder.Entity<CommentData>()

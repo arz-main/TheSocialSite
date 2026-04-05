@@ -197,7 +197,7 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TheSocialSite.Domain.Entities.Post.PostData", "Post")

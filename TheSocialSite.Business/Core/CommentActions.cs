@@ -61,19 +61,15 @@ namespace TheSocialSite.Business.Core
                 {
                     IsValid = true,
                     Message = "Comment fetched successfully",
-                    CommentDtos = new List<CommentDto>
-                    {
-                        new CommentDto
-                        {
-                            Id = comment.Id,
-                            PostId = comment.PostId,
-                            AuthorId = comment.AuthorId,
-                            AuthorAvatar = comment.Author.Avatar,
-                            AuthorUsername = comment.Author.Username,
-                            Content = comment.Content,
-                            CreatedAt = comment.CreatedAt,
-                            UpdatedAt = comment.UpdatedAt
-                        }
+                    CommentDto = new CommentDto {
+                        Id = comment.Id,
+                        PostId = comment.PostId,
+                        AuthorId = comment.AuthorId,
+                        AuthorAvatar = comment.Author.Avatar,
+                        AuthorUsername = comment.Author.Username,
+                        Content = comment.Content,
+                        CreatedAt = comment.CreatedAt,
+                        UpdatedAt = comment.UpdatedAt
                     }
                 };
             }

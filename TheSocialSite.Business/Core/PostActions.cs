@@ -27,9 +27,7 @@ namespace TheSocialSite.Business.Core
                     .Select(p => new PostDto
                     {
                         Id = p.Id,
-                        AuthorId = p.AuthorId,
-                        AuthorUsername = p.Author.Username, // only username
-                        AuthorAvatar = p.Author.Avatar,
+                        Author = p.Author,
                         Status = p.Status,
                         Likes = p.Likes,
                         Title = p.Title,
@@ -49,6 +47,34 @@ namespace TheSocialSite.Business.Core
             }
         }
 
+        public PostActionResponse GetPostsByIdActionExecution(string postId)
+        {
+            using (var _appDbContext = new AppDbContext())
+            {
+                var p = _appDbContext.Posts.FirstOrDefault(p => p.Id == postId);
+
+                var returnedPost = new PostDto
+                {
+                    Id = p.Id,
+                    Author = p.Author,
+                    Status = p.Status,
+                    Likes = p.Likes,
+                    Title = p.Title,
+                    ImageUrl = p.ImageUrl,
+                    Category = p.Category,
+                    Description = p.Description,
+                    CreatedAt = p.CreatedAt
+                };
+
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "All posts have been obtained",
+                    PostDto = returnedPost
+                };
+            }
+        }
+
         public PostActionResponse GetUserPostsActionExecution(string id)
         {
             using (var postContext = new AppDbContext())
@@ -63,9 +89,7 @@ namespace TheSocialSite.Business.Core
                     PostDtos = posts.Select(p => new PostDto
                     {
                         Id = p.Id,
-                        AuthorId = p.AuthorId,
-                        AuthorUsername = p.Author.Username, // only username
-                        AuthorAvatar = p.Author.Avatar,
+                        Author = p.Author,
                         Status = p.Status,
                         Likes = p.Likes,
                         Title = p.Title,
@@ -134,6 +158,29 @@ namespace TheSocialSite.Business.Core
                 IsValid = true,
                 Message = "Post created successfully"
             };
+        }
+
+        public DefaultActionResponse DeletePostActionExecution(string id)
+        {
+            using (var _appDbContext = new AppDbContext())
+            {
+                var post = _appDbContext.Posts.FirstOrDefault(p => p.Id == id);
+                if (post == null)
+                {
+                    return new DefaultActionResponse
+                    {
+                        IsValid = false,
+                        Message = "Post not found"
+                    };
+                }
+                _appDbContext.Posts.Remove(post);
+                _appDbContext.SaveChanges();
+                return new DefaultActionResponse
+                {
+                    IsValid = true,
+                    Message = "Post deleted successfully"
+                };
+            }
         }
     }
 }

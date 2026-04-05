@@ -12,7 +12,7 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260402221832_InitialCreate")]
+    [Migration("20260404230109_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -200,7 +200,7 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TheSocialSite.Domain.Entities.Post.PostData", "Post")
