@@ -13,7 +13,7 @@ namespace TheSocialSite.Business.Core
         // --- Get ---
         public SocialMediaActionResponse GetSocialMediaActionExecution(string userId)
         {
-            using (var _userContext = new UserContext())
+            using (var _userContext = new AppDbContext())
             {
                 var links = _userContext.SocialMedia
                     .FirstOrDefault(sm => sm.UserId == userId);
@@ -48,7 +48,7 @@ namespace TheSocialSite.Business.Core
         // --- Create ---
         public SocialMediaActionResponse CreateSocialMediaActionExecution(SocialMediaDto dto)
         {
-            using (var _userContext = new UserContext())
+            using (var _userContext = new AppDbContext())
             {
                 var exists = _userContext.SocialMedia
                     .Any(sl => sl.UserId == dto.UserId);
@@ -86,7 +86,7 @@ namespace TheSocialSite.Business.Core
         // --- Update ---
         public SocialMediaActionResponse UpdateSocialMediaActionExecution(SocialMediaDto dto)
         {
-            using (var _userContext = new UserContext())
+            using (var _userContext = new AppDbContext())
             {
                 var existing = _userContext.SocialMedia
                     .FirstOrDefault(sl => sl.UserId == dto.UserId);
@@ -118,7 +118,7 @@ namespace TheSocialSite.Business.Core
         // --- Delete ---
         public SocialMediaActionResponse DeleteSocialMediaActionExecution(string userId)
         {
-            using (var _userContext = new UserContext())
+            using (var _userContext = new AppDbContext())
             {
                 var existing = _userContext.SocialMedia
                     .FirstOrDefault(sl => sl.UserId == userId);

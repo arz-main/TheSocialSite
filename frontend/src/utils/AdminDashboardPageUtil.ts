@@ -1,5 +1,5 @@
 import type { Role } from "../types/RolesTypes";
-const roleOrder: Role[] = ["User", "Admin"];
+export const roleOrder: Role[] = ["User", "Admin"];
 
 export function promoteRole(role: Role): Role {
     const idx = roleOrder.indexOf(role);

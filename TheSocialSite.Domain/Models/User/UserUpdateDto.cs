@@ -8,7 +8,7 @@ using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Models.User
 {
-    public class UserUpdateDto
+    public class UpdateUserDto
     {
         [MaxLength(50)] public string? Username { get; set; }
         [MaxLength(150)] public string? Email { get; set; }

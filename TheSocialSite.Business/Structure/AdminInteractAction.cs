@@ -12,14 +12,17 @@ namespace TheSocialSite.Business.Structure
 {
     public class AdminInteractAction : AdminActions, IAdminInteractAction
     {
-        public DefaultActionResponse AdminUserUpdateAction(string userId, UserUpdateDto data)
+        public DefaultActionResponse AdminUpdateUserAction(string userId, UpdateUserDto data)
         {
-            return AdminUserUpdateActionExecution(userId, data);
+            return AdminUpdateUserActionExecution(userId, data);
         }
-
-        public DefaultActionResponse AdminUserDeleteAction(string userId)
+        public DefaultActionResponse AdminDeleteUserAction(string userId)
         {
-            return AdminUserDeleteActionExecution(userId);
+            return AdminDeleteUserActionExecution(userId);
+        }
+        public DefaultActionResponse AdminDeletePostAction(string id)
+        {
+            return AdminDeletePostActionExecution(id);
         }
     }
 }

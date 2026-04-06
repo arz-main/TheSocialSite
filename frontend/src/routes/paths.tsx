@@ -7,7 +7,6 @@ const paths = {
 	privacy: "/privacy",
 	practice: "/practice",
 	forgot_password: "/forgot-password",
-	reset_password: "/reset-password",
 	explore: {
 		page: "/explore",
 		user: "/explore/user/:userId", // for the app.tsx route

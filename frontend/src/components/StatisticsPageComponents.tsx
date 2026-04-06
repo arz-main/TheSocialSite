@@ -1,30 +1,57 @@
 ﻿import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, AreaChart, Area } from "recharts";
-import type {
-    Badge,
-    CategoryItem, DailyContribution, SpeedData, StatisticsCardProp
-} from "../types/StatisticsPageTypes";
+import { ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, AreaChart, Area } from "recharts";
+import type { CategoryItem, StatisticsCardProp } from "../types/StatisticsPageTypes";
 import { computeStreak, formatMonthLabel, groupIntoWeeks } from "../utils/StatisticsPageUtils";
 
-export function SpeedTrend({ data }: { data: SpeedData[] }) {
-    return (
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
-            <SectionHeader title="Avg Drawing Time" subtitle="Minutes per drawing — improving over time" />
-            <div className="h-40">
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data} margin={{ top: 4, right: 4, left: -30, bottom: 0 }}>
-                        <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-                        <XAxis dataKey="name" tick={{ fill: "var(--text-opaque)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: "var(--text-opaque)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                        <Tooltip contentStyle={{ backgroundColor: "var(--card)", border: "none", borderRadius: 8, color: "var(--text)", fontSize: 12 }} labelStyle={{ color: "var(--text-opaque)" }} />
-                        <Line type="monotone" dataKey="minutes" stroke="var(--accent)" strokeWidth={2} dot={{ fill: "var(--accent)", r: 3 }} />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-        </div>
-    );
-}
+// export function SpeedTrend({ data }: { data: SpeedData[] }) {
+//     return (
+//         <div className="rounded-2xl bg-card p-5 shadow-sm flex flex-col">
+//             <SectionHeader
+//                 title="Avg Drawing Time"
+//                 subtitle="Minutes per drawing — improving over time"
+//             />
+//             <div className="flex-1 min-h-0">
+//                 <ResponsiveContainer width="100%" height="100%">
+//                     <LineChart
+//                         data={data}
+//                         margin={{ top: 4, right: 4, left: -30, bottom: 0 }}
+//                     >
+//                         <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
+//                         <XAxis
+//                             dataKey="name"
+//                             tick={{ fill: "var(--text-opaque)", fontSize: 10 }}
+//                             axisLine={false}
+//                             tickLine={false}
+//                         />
+//                         <YAxis
+//                             tick={{ fill: "var(--text-opaque)", fontSize: 10 }}
+//                             axisLine={false}
+//                             tickLine={false}
+//                         />
+//                         <Tooltip
+//                             contentStyle={{
+//                                 backgroundColor: "var(--card)",
+//                                 border: "none",
+//                                 borderRadius: 8,
+//                                 color: "var(--text)",
+//                                 fontSize: 12,
+//                             }}
+//                             labelStyle={{ color: "var(--text-opaque)" }}
+//                         />
+//                         <Line
+//                             type="monotone"
+//                             dataKey="minutes"
+//                             stroke="var(--accent)"
+//                             strokeWidth={2}
+//                             dot={{ fill: "var(--accent)", r: 3 }}
+//                         />
+//                     </LineChart>
+//                 </ResponsiveContainer>
+//             </div>
+//         </div>
+//     );
+// }
 
 export function StreakBanner({ streak, longestStreak, totalDays }: { streak: number; longestStreak: number; totalDays: number }) {
     return (
@@ -97,41 +124,17 @@ export function StatCard({ icon: Icon, value, title, trend, trendUp, tooltip }: 
     );
 }
 
-export function ContributionCell({ count, date }: DailyContribution) {
+export function ContributionCell({ count, date, onHover }: { count: number; date: string; onHover?: (content: string, x: number, y: number) => void }) {
     const level = count === 0 ? 0 : count <= 2 ? 1 : count <= 5 ? 2 : count <= 9 ? 3 : 4;
     const colors = ["bg-primary/8", "bg-primary/25", "bg-primary/50", "bg-primary/75", "bg-primary"];
     const label = count === 0 ? "No drawings" : `${count} drawing${count > 1 ? "s" : ""}`;
 
-    const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
-
     return (
-        <>
-            <div
-                className={`w-3 h-3 rounded-sm ${colors[level]} transition-colors cursor-default`}
-                onMouseMove={(e) => setTooltipPos({ x: e.clientX, y: e.clientY })}
-                onMouseLeave={() => setTooltipPos(null)}
-            />
-            {tooltipPos && (
-                <div
-                    className="fixed z-50 pointer-events-none px-2 py-1 bg-background-opposite text-text-opposite text-xs rounded-lg shadow-lg whitespace-nowrap"
-                    style={{
-                        left: tooltipPos.x,
-                        top: tooltipPos.y - 30,
-                        transform: "translateX(-50%)",
-                    }}
-                >
-                    {label} ({new Date(date).toLocaleDateString()})
-                    <div
-                        className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0"
-                        style={{
-                            borderLeft: "4px solid transparent",
-                            borderRight: "4px solid transparent",
-                            borderTop: "4px solid var(--background-opposite)",
-                        }}
-                    />
-                </div>
-            )}
-        </>
+        <div
+            className={`w-3 h-3 rounded-sm ${colors[level]} transition-colors cursor-default`}
+            onMouseMove={(e) => onHover && onHover(`${label} (${new Date(date).toLocaleDateString()})`, e.clientX, e.clientY)}
+            onMouseLeave={() => onHover && onHover(null!, 0, 0)}
+        />
     );
 }
 
@@ -172,11 +175,7 @@ export function CategoryRow({ name, value, icon }: CategoryItem) {
     );
 }
 
-// -------------------- TRENDS --------------------
-
-export function ContributionGrid({ contributions }: { contributions: DailyContribution[] }) {
-    // const [tooltip, setTooltip] = useState<{ x: number; y: number; date: string; count: number } | null>(null);
-
+export function ContributionGrid({ contributions }: { contributions: { date: string; count: number }[] }) {
     const weeks = useMemo(() => groupIntoWeeks(contributions), [contributions]);
     const streak = useMemo(() => computeStreak(contributions), [contributions]);
     const total = useMemo(() => contributions.reduce((s, d) => s + d.count, 0), [contributions]);
@@ -193,13 +192,14 @@ export function ContributionGrid({ contributions }: { contributions: DailyContri
         return labels;
     }, [weeks]);
 
+    const [tooltip, setTooltip] = useState<{ x: number; y: number; content: string } | null>(null);
+
     const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     return (
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                <SectionHeader title="Drawing Activity" subtitle={`${total} drawings · ${streak} day streak`} />
-            </div>
+        <div className="rounded-2xl bg-card p-5 shadow-sm relative">
+            <SectionHeader title="Drawing Activity" subtitle={`${total} drawings · ${streak} day streak`} />
+
             <div className="flex justify-center overflow-x-auto pb-1">
                 <div className="flex gap-2 min-w-0">
                     <div className="flex flex-col gap-1 pt-5 shrink-0">
@@ -228,7 +228,14 @@ export function ContributionGrid({ contributions }: { contributions: DailyContri
                                     {Array.from({ length: 7 }).map((_, row) => {
                                         const d = week[row];
                                         if (!d) return <div key={row} className="w-3 h-3" />;
-                                        return <ContributionCell key={row} count={d.count} date={d.date} />;
+                                        return (
+                                            <ContributionCell
+                                                key={row}
+                                                count={d.count}
+                                                date={d.date}
+                                                onHover={(content, x, y) => setTooltip({ content, x, y })}
+                                            />
+                                        );
                                     })}
                                 </div>
                             ))}
@@ -236,36 +243,70 @@ export function ContributionGrid({ contributions }: { contributions: DailyContri
                     </div>
                 </div>
             </div>
+
+            {tooltip && (
+                <div
+                    className="fixed z-50 pointer-events-none px-2 py-1 bg-background-opposite text-text-opposite text-xs rounded-lg shadow-lg whitespace-nowrap"
+                    style={{
+                        left: tooltip.x,
+                        top: tooltip.y - 30,
+                        transform: "translateX(-50%)",
+                    }}
+                >
+                    {tooltip.content}
+                    <div
+                        className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0"
+                        style={{
+                            borderLeft: "4px solid transparent",
+                            borderRight: "4px solid transparent",
+                            borderTop: "4px solid var(--background-opposite)",
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 }
 
 // -------------------- CATEGORY --------------------
+// export function CategoryBreakdown({ data }: { data: CategoryItem[] }) {
+//     return (
+//         <div className="rounded-2xl bg-card p-5 shadow-sm w-full min-w-0 h-full flex flex-col">
+//             <SectionHeader title="Category Distribution" subtitle="All-time drawing breakdown" />
 
-export function CategoryBreakdown({ data }: { data: CategoryItem[] }) {
-    return (
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
-            <SectionHeader title="Category Distribution" subtitle="All-time drawing breakdown" />
-            <div className="flex h-4 rounded-full overflow-hidden mb-5 gap-0.5">
-                {data.map(cat => (
-                    <motion.div key={cat.name} initial={{ flex: 0 }} animate={{ flex: cat.value }}
-                        transition={{ duration: 0.7, delay: 0.1 }}
-                        style={{ backgroundColor: cat.fill }} title={cat.name}
-                        className="h-full first:rounded-l-full last:rounded-r-full cursor-default" />
-                ))}
-            </div>
-            <div className="flex flex-col gap-3">
-                {data.map((cat, i) => (
-                    <motion.div key={cat.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}>
-                        <CategoryRow {...cat} />
-                    </motion.div>
-                ))}
-            </div>
-        </div>
-    );
-}
+//             {/* Horizontal bar */}
+//             <div className="flex h-4 rounded-full overflow-hidden mb-5 gap-0.5 flex-shrink-0">
+//                 {data.map(cat => (
+//                     <motion.div
+//                         key={cat.name}
+//                         initial={{ flex: 0 }}
+//                         animate={{ flex: cat.value }}
+//                         transition={{ duration: 0.7, delay: 0.1 }}
+//                         style={{ backgroundColor: cat.fill }}
+//                         title={cat.name}
+//                         className="h-full first:rounded-l-full last:rounded-r-full cursor-default"
+//                     />
+//                 ))}
+//             </div>
 
-// -------------------- FOLLOWERS & POSTS --------------------
+//             {/* List of categories */}
+//             <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+//                 {data.map((cat, i) => (
+//                     <motion.div
+//                         key={cat.name}
+//                         initial={{ opacity: 0, x: -10 }}
+//                         animate={{ opacity: 1, x: 0 }}
+//                         transition={{ delay: i * 0.08 }}
+//                     >
+//                         <CategoryRow {...cat} />
+//                     </motion.div>
+//                 ))}
+//             </div>
+//         </div>
+//     );
+// }
+
+//--------------FOLLOWERS & POSTS--------------------
 
 export function FollowersTrend({ data }: { data: { date: string; followers: number }[] }) {
     return (
@@ -321,17 +362,15 @@ export function PostsTrend({ data }: { data: { date: string; posts: number }[] }
     );
 }
 
-// -------------------- BADGES GRID --------------------
-
-export function BadgesGrid({ badges }: { badges: Badge[] }) {
+export function BadgesGrid({ badges }: { badges: { id: string; icon: string; name: string; earned: boolean; description: string; earnedDate?: string }[] }) {
     const [tooltip, setTooltip] = useState<{ x: number; y: number; content: string } | null>(null);
     const earnedCount = badges.filter(b => b.earned).length;
 
     return (
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
+        <div className="rounded-2xl bg-card p-5 shadow-sm relative">
             <SectionHeader title="Badges" subtitle={`${earnedCount} / ${badges.length} earned`} />
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                {badges.map((badge, i) => (
+                {badges.map((badge) => (
                     <div
                         key={badge.id}
                         className="relative"
@@ -344,13 +383,7 @@ export function BadgesGrid({ badges }: { badges: Badge[] }) {
                         }
                         onMouseLeave={() => setTooltip(null)}
                     >
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.05 }}
-                        >
-                            <BadgePill icon={badge.icon} name={badge.name} earned={badge.earned} />
-                        </motion.div>
+                        <BadgePill icon={badge.icon} name={badge.name} earned={badge.earned} />
                     </div>
                 ))}
             </div>

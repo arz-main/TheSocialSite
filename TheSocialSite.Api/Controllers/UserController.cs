@@ -48,7 +48,7 @@ namespace TheSocialSite.Api.Controllers
         [HttpPost("create")]
         public IActionResult CreateUser([FromBody] UserSignupDto userData)
         {
-            var validation = _userAction.UserCreationAction(userData);
+            var validation = _userAction.CreateUserAction(userData);
             if (!validation.IsValid)
                 return BadRequest(validation.Message);
 
@@ -57,7 +57,7 @@ namespace TheSocialSite.Api.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
-        public IActionResult UpdateProfile([FromRoute] string id, [FromBody] UserUpdateDto profileData)
+        public IActionResult UpdateProfile([FromRoute] string id, [FromBody] UpdateUserDto profileData)
         {
             if (profileData == null)
                 return BadRequest("No data provided");
@@ -72,7 +72,7 @@ namespace TheSocialSite.Api.Controllers
             if (userId != id)
                 return Forbid("You can only update your own profile");
 
-            var result = _userAction.UserUpdateAction(id, profileData);
+            var result = _userAction.UpdateUserAction(id, profileData);
             if (!result.IsValid)
                 return BadRequest(result.Message);
 
@@ -91,7 +91,7 @@ namespace TheSocialSite.Api.Controllers
             if (userId != id)
                 return Forbid("You can only delete your own profile");
 
-            var result = _userAction.UserDeleteAction(id);
+            var result = _userAction.DeleteUserAction(id);
 
             if (!result.IsValid)
                 return BadRequest(result.Message);

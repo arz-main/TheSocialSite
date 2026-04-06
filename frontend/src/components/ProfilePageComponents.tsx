@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { Button } from "./BasicButton";
 import { Calendar, Heart } from "lucide-react";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
-import { ImageWithFallback } from "./ImageWithFallBack";
+import { ImageFallback } from "../components/ImageFallback";
 import { PostCard } from "./ExplorePageComponents";
 import type { TabsPageProps } from "../types/ProfilePageTypes";
 
@@ -117,7 +117,7 @@ export const TabsPage: React.FC<TabsPageProps> = ({
                             >
                                 <Card className="text-text overflow-hidden hover:shadow-lg transition-shadow">
                                     <div className="aspect-square bg-muted overflow-hidden">
-                                        <ImageWithFallback
+                                        <ImageFallback
                                             src={""}
                                             alt={`Drawing ${drawing.id}`}
                                             className="w-full h-full object-contain"

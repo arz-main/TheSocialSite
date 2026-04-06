@@ -2,50 +2,61 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { ExternalLink, MapPin, CalendarDays, Settings } from "lucide-react";
-import {
-    FaPinterest,
-    FaTwitter,
-    FaDeviantart,
-    FaYoutube,
-    FaDiscord,
-} from "react-icons/fa";
+import { FaPinterest, FaTwitter, FaDeviantart, FaYoutube, FaDiscord } from "react-icons/fa";
 import { Badge as BadgeUI } from "../components/Badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { usePosts } from "../hooks/usePosts";
+import { useComments } from "../hooks/useComments";
 import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
-import { ImageWithFallback } from "../components/ImageWithFallBack";
+import { AvatarFallback } from "../components/AvatarFallback";
 import { useAuth } from "../hooks/useAuth";
 import { useSocialMedia } from "../hooks/useSocialMedia";
 import type { Post } from "../types/PostTypes";
+import type { Comment } from "../types/CommentTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
 import paths from "../routes/paths";
 import { Card } from "../components/Card";
 
 export default function ArtistProfile() {
-    const [activeTab, setActiveTab] = useState("posts");
-    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-    const [openedPost, setOpenedPost] = useState<any>(null);
+    // data
     const [userPosts, setUserPosts] = useState<Post[]>([]);
     const [socialMedia, setSocialMedia] = useState<SocialMediaDto | null>(null);
+    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+    const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+    const [comments, setComments] = useState<Comment[]>([]);
 
+    // ui
+    const [activeTab, setActiveTab] = useState("posts");
+    const [openedPost, setOpenedPost] = useState<Post | null>(null);
+    const [imageIndex, setImageIndex] = useState(0);
+    const [newComment, setNewComment] = useState("");
+
+    // hooks
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const { getUserPosts } = usePosts();
+    const { getComments, postComment } = useComments();
     const { getSocialMedia } = useSocialMedia();
 
     useEffect(() => {
         if (!currentUser?.id) return;
-
-        getUserPosts(currentUser.id)
-            .then(data => { if (data) setUserPosts(data); });
-
-        getSocialMedia(currentUser.id)
-            .then(data => {
-                if (data) setSocialMedia(data);
-            });
+        getUserPosts(currentUser.id).then(data => { if (data) setUserPosts(data); });
+        getSocialMedia(currentUser.id).then(data => { if (data) setSocialMedia(data); });
     }, [currentUser?.id]);
 
+    useEffect(() => {
+        if (userPosts.length === 0) return;
+        userPosts.forEach((post) => {
+            getComments(post.id)
+                .then((data) => setCommentCounts(prev => ({ ...prev, [post.id]: data.length })))
+                .catch(() => { });
+        });
+    }, [userPosts]);
+
+    if (!currentUser) return null;
+
+    // ─── Handlers ─────────────────────────────────────────
     const handleToggleLike = (postId: string) => {
         setLikedPosts(prev => {
             const next = new Set(prev);
@@ -54,19 +65,45 @@ export default function ArtistProfile() {
         });
     };
 
-    const handleOpenComments = (post: any) => setOpenedPost(post);
+    const handleOpenComments = async (post: Post) => {
+        setOpenedPost(post);
+        try {
+            const data = await getComments(post.id);
+            setComments(data);
+        } catch {
+            setComments([]);
+        }
+    };
 
-    const DUMMY_BIO =
-        "Digital artist and illustrator passionate about character design and anatomy studies. Always learning, always creating.";
+    const handleSubmitComment = async (postId: string, content: string) => {
+        const raw = await postComment(postId, content);
+        const normalized: Comment = {
+            id: raw.id,
+            postId: raw.postId,
+            content: raw.content,
+            authorId: raw.authorId,
+            authorUsername: raw.authorUsername,
+            authorAvatar: raw.authorAvatar,
+            createdAt: raw.createdAt,
+        };
+        setComments(prev => [...prev, normalized]);
+        setCommentCounts(prev => ({ ...prev, [postId]: (prev[postId] ?? 0) + 1 }));
+        return normalized;
+    };
 
-    if (!currentUser) return null;
+    const closeModal = () => {
+        setOpenedPost(null);
+        setComments([]);
+        setImageIndex(0);
+        setNewComment("");
+    };
 
-    const bio = currentUser.bio || DUMMY_BIO;
+    // ─── Derived ──────────────────────────────────────────
     const hasSocialLinks = !!socialMedia && Object.values(socialMedia).some(v => v && v !== currentUser.id);
     const earnedBadges = currentUser.badges ? currentUser.badges.filter((b: any) => b.earned) : [];
     const rankBadge = currentUser.level || "Advanced Sketcher";
-    const streak = currentUser.streak ?? 15;
-    const postsCount = userPosts.length || 387;
+    const streak = currentUser.streak ?? 0;
+    const postsCount = userPosts.length;
 
     return (
         <div className="flex flex-col flex-1 bg-background text-text">
@@ -80,20 +117,22 @@ export default function ArtistProfile() {
                     <div className="rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
 
                         {/* Banner */}
-                        <div className="h-36 w-full" style={{ backgroundColor: 'var(--button)' }} />
+                        <div className="h-36 w-full" style={{ backgroundColor: "var(--button)" }} />
 
                         {/* Profile body */}
-                        <div className="px-8 pb-8 relative">
-                            {/* Avatar overlapping banner */}
-                            <div className="absolute -top-14 left-8 w-28 h-28 rounded-full bg-card ring-4 ring-card overflow-hidden shadow-lg">
-                                <ImageWithFallback
-                                    src={currentUser?.avatar}
-                                    alt={currentUser?.username}
-                                    className="w-full h-full object-cover"
+                        <div className="px-8 pt-4 pb-6 relative">
+
+                            {/* Avatar */}
+                            <div className="absolute -top-14 left-8">
+                                <AvatarFallback
+                                    src={currentUser.avatar}
+                                    alt={currentUser.username ?? ""}
+                                    size={112}
+                                    className="ring-4 ring-card shadow-lg"
                                 />
                             </div>
 
-                            {/* Edit profile top-right */}
+                            {/* Edit profile */}
                             <div className="flex justify-end pt-3">
                                 <button
                                     onClick={() => navigate(paths.artist.edit_profile)}
@@ -104,14 +143,21 @@ export default function ArtistProfile() {
                                 </button>
                             </div>
 
+                            {/* Spacer for avatar */}
+                            <div className="h-8" />
+
                             {/* Name & handle */}
-                            <div className="mt-8">
+                            <div className="mt-2">
                                 <h1 className="text-2xl font-bold leading-tight">{currentUser.username}</h1>
-                                <p className="text-sm text-muted mt-0.5">@{(currentUser.username || "artist").toLowerCase().replace(/\s/g, "")}</p>
+                                <p className="text-sm text-muted mt-0.5">
+                                    @{(currentUser.username ?? "artist").toLowerCase().replace(/\s/g, "")}
+                                </p>
                             </div>
 
                             {/* Bio */}
-                            <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{bio}</p>
+                            {currentUser.bio && (
+                                <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{currentUser.bio}</p>
+                            )}
 
                             {/* Meta row */}
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-sm text-muted">
@@ -125,16 +171,18 @@ export default function ArtistProfile() {
                                     <a href={currentUser.website} target="_blank" rel="noopener noreferrer"
                                         className="flex items-center gap-1.5 text-primary hover:underline transition-colors">
                                         <ExternalLink className="w-4 h-4 shrink-0" />
-                                        {currentUser.website.replace(/^https?:\/\//, '')}
+                                        {currentUser.website.replace(/^https?:\/\//, "")}
                                     </a>
                                 )}
-                                <span className="flex items-center gap-1.5">
-                                    <CalendarDays className="w-4 h-4 shrink-0" />
-                                    Joined {formatDate(currentUser.joinedDate)}
-                                </span>
+                                {currentUser.joinedDate && (
+                                    <span className="flex items-center gap-1.5">
+                                        <CalendarDays className="w-4 h-4 shrink-0" />
+                                        Joined {formatDate(currentUser.joinedDate)}
+                                    </span>
+                                )}
                             </div>
 
-                            {/* Social icon buttons */}
+                            {/* Social links */}
                             {hasSocialLinks && (
                                 <div className="flex flex-wrap gap-2 mt-3">
                                     {socialMedia!.twitter && (
@@ -174,13 +222,13 @@ export default function ArtistProfile() {
 
                             {/* Followers / Following */}
                             <div className="flex items-center gap-1 mt-4 text-sm">
-                                <span className="font-bold">1.2K</span>
+                                <span className="font-bold">{currentUser.followers?.length ?? 0}</span>
                                 <span className="text-muted mr-4">Followers</span>
-                                <span className="font-bold">342</span>
+                                <span className="font-bold">{currentUser.following?.length ?? 0}</span>
                                 <span className="text-muted">Following</span>
                             </div>
 
-                            {/* Stats pills row */}
+                            {/* Stats pills */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
                                     <span className="text-2xl font-bold">{postsCount}</span>
@@ -194,7 +242,7 @@ export default function ArtistProfile() {
                                     <span className="text-xs text-muted">Day Streak</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
-                                    <span className="text-2xl font-bold">{earnedBadges.length || 4}</span>
+                                    <span className="text-2xl font-bold">{earnedBadges.length}</span>
                                     <span className="text-xs text-muted">Badges Earned</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
@@ -213,10 +261,10 @@ export default function ArtistProfile() {
                                     My Posts <span className="ml-1.5 text-xs opacity-60">{postsCount}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="badges" className="h-full text-sm font-semibold">
-                                    Badges <span className="ml-1.5 text-xs opacity-60">{earnedBadges.length || 4}</span>
+                                    Badges <span className="ml-1.5 text-xs opacity-60">{earnedBadges.length}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="favorites" className="h-full text-sm font-semibold">
-                                    Favorites <span className="ml-1.5 text-xs opacity-60">12</span>
+                                    Favorites <span className="ml-1.5 text-xs opacity-60">0</span>
                                 </TabsTrigger>
                             </TabsList>
 
@@ -227,7 +275,7 @@ export default function ArtistProfile() {
                                             <Card className="p-20 text-center">
                                                 <div className="text-5xl mb-4">🎨</div>
                                                 <h3 className="text-lg font-semibold mb-2">No Drawings Yet</h3>
-                                                <p className="text-muted-foreground">Start practicing to see your drawings here</p>
+                                                <p className="text-muted">Start practicing to see your drawings here</p>
                                             </Card>
                                         ) : (
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -236,8 +284,8 @@ export default function ArtistProfile() {
                                                         key={post.id}
                                                         post={post}
                                                         index={index}
-                                                        pageSize={userPosts.length}
                                                         isLiked={likedPosts.has(post.id)}
+                                                        commentCount={commentCounts[post.id]}
                                                         onToggleLike={handleToggleLike}
                                                         onOpenComments={handleOpenComments}
                                                         formatDate={formatDate}
@@ -251,9 +299,9 @@ export default function ArtistProfile() {
 
                                 <TabsContent value="badges">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                                        {currentUser.badges && currentUser.badges.filter((b: any) => b.earned).length > 0 ? (
+                                        {earnedBadges.length > 0 ? (
                                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                {currentUser.badges.filter((b: any) => b.earned).map((badge: any, index: number) => (
+                                                {earnedBadges.map((badge: any, index: number) => (
                                                     <motion.div key={badge.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index, duration: 0.3 }}>
                                                         <Card className="p-5 hover:shadow-lg transition-all">
                                                             <div className="flex items-start gap-4">
@@ -263,8 +311,8 @@ export default function ArtistProfile() {
                                                                         <h4 className="font-semibold">{badge.name}</h4>
                                                                         <BadgeUI variant="default" className="text-xs border">Earned</BadgeUI>
                                                                     </div>
-                                                                    <p className="text-sm text-muted-foreground mb-2">{badge.description}</p>
-                                                                    {badge.earnedDate && <p className="text-xs text-muted-foreground">{formatDate(badge.earnedDate)}</p>}
+                                                                    <p className="text-sm text-muted mb-2">{badge.description}</p>
+                                                                    {badge.earnedDate && <p className="text-xs text-muted">{formatDate(badge.earnedDate)}</p>}
                                                                 </div>
                                                             </div>
                                                         </Card>
@@ -275,7 +323,7 @@ export default function ArtistProfile() {
                                             <Card className="p-20 text-center">
                                                 <div className="text-5xl mb-4">🏅</div>
                                                 <h3 className="text-lg font-semibold mb-2">No Badges Yet</h3>
-                                                <p className="text-muted-foreground">Complete challenges to earn badges</p>
+                                                <p className="text-muted">Complete challenges to earn badges</p>
                                             </Card>
                                         )}
                                     </motion.div>
@@ -286,14 +334,13 @@ export default function ArtistProfile() {
                                         <Card className="p-20 text-center">
                                             <div className="text-5xl mb-4">❤️</div>
                                             <h3 className="text-lg font-semibold mb-2">No Favorites Yet</h3>
-                                            <p className="text-muted-foreground">Posts you favorite will appear here</p>
+                                            <p className="text-muted">Posts you favorite will appear here</p>
                                         </Card>
                                     </motion.div>
                                 </TabsContent>
                             </div>
                         </Tabs>
                     </div>
-
                 </motion.div>
             </div>
 
@@ -301,10 +348,15 @@ export default function ArtistProfile() {
                 {openedPost && (
                     <CommentsModal
                         post={openedPost}
-                        onClose={() => setOpenedPost(null)}
+                        comments={comments}
                         likedDrawings={likedPosts}
+                        imageIndex={imageIndex}
+                        newComment={newComment}
+                        onChangeImageIndex={setImageIndex}
+                        onChangeNewComment={setNewComment}
+                        onSubmitComment={handleSubmitComment}
                         toggleLike={handleToggleLike}
-                        initialImageIndex={0}
+                        onClose={closeModal}
                     />
                 )}
             </AnimatePresence>

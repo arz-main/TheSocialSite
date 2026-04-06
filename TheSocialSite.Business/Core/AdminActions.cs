@@ -12,9 +12,9 @@ namespace TheSocialSite.Business.Core
 {
     public class AdminActions
     {
-        public DefaultActionResponse AdminUserUpdateActionExecution(string userId, UserUpdateDto data)
+        public DefaultActionResponse AdminUpdateUserActionExecution(string userId, UpdateUserDto data)
         {
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)
@@ -61,9 +61,9 @@ namespace TheSocialSite.Business.Core
             return new DefaultActionResponse { IsValid = true, Message = "Profile updated." };
         }
 
-        public DefaultActionResponse AdminUserDeleteActionExecution(string userId)
+        public DefaultActionResponse AdminDeleteUserActionExecution(string userId)
         {
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)
@@ -73,6 +73,29 @@ namespace TheSocialSite.Business.Core
             }
             return new DefaultActionResponse { IsValid = true, Message = "User deleted." };
 
+        }
+
+        public DefaultActionResponse AdminDeletePostActionExecution(string id)
+        {
+            using (var _appDbContext = new AppDbContext())
+            {
+                var post = _appDbContext.Posts.FirstOrDefault(p => p.Id == id);
+                if (post == null)
+                {
+                    return new DefaultActionResponse
+                    {
+                        IsValid = false,
+                        Message = "Post not found"
+                    };
+                }
+                _appDbContext.Posts.Remove(post);
+                _appDbContext.SaveChanges();
+                return new DefaultActionResponse
+                {
+                    IsValid = true,
+                    Message = "Post deleted successfully"
+                };
+            }
         }
     }
 }

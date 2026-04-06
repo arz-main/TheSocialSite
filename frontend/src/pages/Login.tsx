@@ -8,7 +8,6 @@ import { Input } from "../components/BasicInput";
 import { Label } from "../components/LabelComponent";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
-
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
@@ -41,81 +40,85 @@ export default function Login() {
                 transition={{ duration: 0.5 }}
                 className="w-full max-w-md"
             >
-                <div className="text-center mb-4">
-                    <h1 className="text-2xl font-semibold mb-2">User Login</h1>
+                <div className="text-center mb-6">
+                    <h1 className="text-2xl font-bold text-text">Welcome back</h1>
+                    <p className="text-sm text-muted mt-1">Log in to your account to continue</p>
                 </div>
 
                 <Card className="p-8">
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-5">
 
                         {error && (
-                            <div className="p-3 rounded-lg bg-destructive/10 text-danger text-sm">
+                            <div className="p-3 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm">
                                 {error}
                             </div>
                         )}
 
-                        <div className="space-y-2">
+                        {/* Email */}
+                        <div className="space-y-1.5">
                             <Label htmlFor="email">Email or Username</Label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                                 <Input
                                     id="email"
                                     type="text"
                                     placeholder="your@email.com or username"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="pl-10 bg-background"
+                                    className="pl-9"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                        {/* Password */}
+                        <div className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password">Password</Label>
+                                <Link to={paths.forgot_password} className="text-xs text-primary hover:underline">
+                                    Forgot password?
+                                </Link>
+                            </div>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="px-10 bg-background"
+                                    className="px-9"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-foreground transition-colors"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition-colors"
                                 >
-                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                            <label className="flex items-center gap-2 text-sm">
-                                <input type="checkbox" className="rounded border-border" />
-                                <span>Remember me</span>
-                            </label>
-                            <Link to={paths.forgot_password} className="text-sm text-primary hover:underline">
-                                Forgot password?
-                            </Link>
-                        </div>
+                        {/* Remember me */}
+                        <label className="flex items-center gap-2 text-sm text-muted cursor-pointer select-none">
+                            <input type="checkbox" className="rounded border-border accent-primary" />
+                            <span>Remember me</span>
+                        </label>
 
                         <motion.div
                             whileTap={{ scale: 0.98 }}
                             transition={{ type: "spring", stiffness: 400, damping: 17 }}
                         >
-                            <Button type="submit" className="w-full h-11" disabled={loading}>
+                            <Button type="submit" className="w-full" disabled={loading}>
                                 {loading ? "Logging in..." : "Log In"}
                             </Button>
                         </motion.div>
                     </form>
 
-                    <div className="mt-6 text-center text-sm">
-                        <span className="text-muted-foreground">Don't have an account? </span>
-                        <Link to={paths.signup} className="text-primary hover:underline">
+                    <div className="mt-6 pt-5 border-t border-border text-center text-sm">
+                        <span className="text-muted">Don't have an account? </span>
+                        <Link to={paths.signup} className="text-primary font-medium hover:underline">
                             Sign up
                         </Link>
                     </div>

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import type { SocialLinks } from "./UserTypes";
+import type { SocialLinks, User } from "./UserTypes";
 import type { Role } from "./RolesTypes";
+import type { Post } from "./PostTypes";
 
 export type AdminUpdateUserPayload = {
     email?: string;
@@ -18,8 +19,37 @@ export type AdminContextType = {
     error: string | null;
     adminUpdateUser: (userId: string, data: AdminUpdateUserPayload) => Promise<AdminUpdateUserPayload>;
     adminDeleteUser: (userId: string) => Promise<void>;
+    adminDeletePost: (postId: string) => Promise<void>;
 };
 
+export type PostConfirm = { type: "delete"; id: string } | null;
+export type UserConfirm = { type: "delete" | "promote" | "demote"; id: string } | null;
+export type UserOptions = "delete" | "promote" | "demote";
+export type PostOptions = "delete";
+
+export interface AdminUsersTableProps {
+    filteredData: User[];
+    loading: boolean;
+    error: string | null;
+    search: string;
+    onSearch: (val: string) => void;
+    confirm: UserConfirm | null;
+    setConfirm: (val: UserConfirm | null) => void;
+    executeConfirm: () => Promise<void>;
+    targetUser: User | null;
+}
+
+export interface AdminPostsTableProps {
+    filteredData: Post[];
+    loading: boolean;
+    error: string | null;
+    search: string;
+    onSearch: (val: string) => void;
+    confirm: PostConfirm | null;
+    setConfirm: (id: PostConfirm | null) => void;
+    executeConfirm: () => Promise<void>;
+    targetPost: Post | null;
+}
 
 export interface Column<T> {
     label: string;

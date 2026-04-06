@@ -16,7 +16,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.put(`/admin/${userId}`, data);
+            const response = await axios.put(`/admin/user/${userId}`, data);
             cache.current.delete(userId); // force new fetch next time
             return response.data;
         } catch (err) {
@@ -31,7 +31,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         try {
             setLoading(true);
             setError(null);
-            await axios.delete(`/admin/${userId}`);
+            await axios.delete(`/admin/user/${userId}`);
             cache.current.delete(userId); // clear from cache
         } catch (err) {
             setError("Failed to delete account");
@@ -41,8 +41,22 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    async function adminDeletePost(postId: string): Promise<void> {
+        try {
+            setLoading(true);
+            setError(null);
+            await axios.delete(`/admin/post/${postId}`);
+            cache.current.delete(postId); // remove from cache
+        } catch (err) {
+            setError("Failed to delete post");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
-        <AdminContext.Provider value={{ adminUpdateUser, adminDeleteUser, loading, error }}>
+        <AdminContext.Provider value={{ adminUpdateUser, adminDeleteUser, adminDeletePost, loading, error }}>
             {children}
         </AdminContext.Provider>
     );

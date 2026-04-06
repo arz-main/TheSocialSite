@@ -11,6 +11,7 @@ import { SignalRProvider } from './providers/SignalRProvider.tsx';
 import { SocialMediaProvider } from './providers/SocialMediaProvider.tsx';
 import { ThemeProvider } from "next-themes";
 import { AdminProvider } from './providers/AdminProvider.tsx';
+import { CommentsProvider } from './providers/CommentsProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -19,15 +20,17 @@ createRoot(document.getElementById('root')!).render(
                 <AxiosProvider>
                     <SignalRProvider>
                         <AuthProvider>
-                            <UsersProvider>
-                                <PostsProvider>
-                                    <SocialMediaProvider>
-                                        <AdminProvider>
-                                            <App />
-                                        </AdminProvider>
-                                    </SocialMediaProvider>
-                                </PostsProvider>
-                            </UsersProvider>
+                            <CommentsProvider>
+                                <UsersProvider>
+                                    <PostsProvider>
+                                        <SocialMediaProvider>
+                                            <AdminProvider>
+                                                <App />
+                                            </AdminProvider>
+                                        </SocialMediaProvider>
+                                    </PostsProvider>
+                                </UsersProvider>
+                            </CommentsProvider>
                         </AuthProvider>
                     </SignalRProvider>
                 </AxiosProvider>

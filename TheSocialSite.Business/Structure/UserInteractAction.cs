@@ -14,25 +14,25 @@ namespace TheSocialSite.Business.Structure
 {
     public class UserInteractAction : UserActions, IUserInteractAction
     {
-        public List<GetUserDataDto> GetAllUsersAction()
+        public List<UserDto> GetAllUsersAction()
         {
             return GetAllUsersActionExecution();
         }
-        public SignupActionResponse UserCreationAction(UserSignupDto userData)
+        public SignupActionResponse CreateUserAction(UserSignupDto userData)
         {
-            return UserCreationActionExecution(userData);
+            return CreateUserActionExecution(userData);
         }
-        public DefaultActionResponse UserUpdateAction(string userId, UserUpdateDto data)
+        public DefaultActionResponse UpdateUserAction(string userId, UpdateUserDto data)
         {
-            return UserUpdateActionExecution(userId, data);
+            return UpdateUserActionExecution(userId, data);
         }
-        public GetUserDataDto GetUserByIdAction(string userId)
+        public UserDto GetUserByIdAction(string userId)
         {
             return GetUserByIdActionExecution(userId);
         }
-        public DefaultActionResponse UserDeleteAction(string userId)
+        public DefaultActionResponse DeleteUserAction(string userId)
         {
-            return UserDeleteActionExecution(userId);
+            return DeleteUserActionExecution(userId);
         }
     }
 }

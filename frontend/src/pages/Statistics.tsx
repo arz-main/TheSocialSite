@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { ContributionGrid, CategoryBreakdown, FollowersTrend, SpeedTrend, StreakBanner, StatCard, PostsTrend, BadgesGrid } from "../components/StatisticsPageComponents";
-import { practiceInfoData, categoryData, followersData, postsData, speedData, dailyContributions, badgesData } from "../_mock/mockStatistics";
+import { ContributionGrid, FollowersTrend, StreakBanner, StatCard, PostsTrend, BadgesGrid }
+    from "../components/StatisticsPageComponents";
+import { practiceInfoData, followersData, postsData, dailyContributions, badgesData }
+    from "../_mock/mockStatistics";
 import { computeStreak } from "../utils/StatisticsPageUtils";
 
 export default function StatsPage() {
@@ -22,10 +24,8 @@ export default function StatsPage() {
 
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
                 className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {practiceInfoData.map((stat, i) => (
-                    <motion.div key={stat.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 * i }}>
-                        <StatCard {...stat} />
-                    </motion.div>
+                {practiceInfoData.map((stat) => (
+                    <StatCard key={stat.id} {...stat} />
                 ))}
             </motion.div>
 
@@ -34,26 +34,11 @@ export default function StatsPage() {
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
-                    <FollowersTrend data={followersData} />
-                </motion.div>
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-                    <PostsTrend data={postsData} />
-                </motion.div>
+                <FollowersTrend data={followersData} />
+                <PostsTrend data={postsData} />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
-                    <CategoryBreakdown data={categoryData} />
-                </motion.div>
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-                    <SpeedTrend data={speedData} />
-                </motion.div>
-            </div>
-
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}>
-                <BadgesGrid badges={badgesData} />
-            </motion.div>
+            <BadgesGrid badges={badgesData} />
         </div>
     );
 }

@@ -9,16 +9,16 @@ namespace TheSocialSite.Business.Core
     {
         public UserActions() { }
 
-        public List<GetUserDataDto> GetAllUsersActionExecution()
+        public List<UserDto> GetAllUsersActionExecution()
         {
-            var result = new List<GetUserDataDto>();
-            using (var userContext = new UserContext())
+            var result = new List<UserDto>();
+            using (var userContext = new AppDbContext())
             {
                 var users = userContext.Users.ToList();
 
                 foreach (var user in users)
                 {
-                    result.Add(new GetUserDataDto
+                    result.Add(new UserDto
                     {
                         Id = user.Id,
                         Email = user.Email,
@@ -37,16 +37,16 @@ namespace TheSocialSite.Business.Core
             return result;
         }
 
-        public GetUserDataDto GetUserByIdActionExecution(string userId)
+        public UserDto GetUserByIdActionExecution(string userId)
         {
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
 
                 if (user == null) return null;
 
                 // AutoMapper handles all property copying for you
-                return new GetUserDataDto
+                return new UserDto
                 {
                     Id = user.Id,
                     Email = user.Email,
@@ -86,14 +86,14 @@ namespace TheSocialSite.Business.Core
             return new SignupActionResponse { IsValid = true };
         }
 
-        public SignupActionResponse UserCreationActionExecution(UserSignupDto userData)
+        public SignupActionResponse CreateUserActionExecution(UserSignupDto userData)
         {
             var validationResult = UserSignupValidationExecution(userData);
             if (!validationResult.IsValid)
             {
                 return validationResult;
             }
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var newUser = new UserData
                 {
@@ -112,9 +112,9 @@ namespace TheSocialSite.Business.Core
                 Username = userData.Username
             };
         }
-        public DefaultActionResponse UserUpdateActionExecution(string userId, UserUpdateDto data)
+        public DefaultActionResponse UpdateUserActionExecution(string userId, UpdateUserDto data)
         {
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)
@@ -155,9 +155,9 @@ namespace TheSocialSite.Business.Core
             return new DefaultActionResponse { IsValid = true, Message = "Profile updated." };
         }
 
-        public DefaultActionResponse UserDeleteActionExecution(string userId)
+        public DefaultActionResponse DeleteUserActionExecution(string userId)
         {
-            using (var userContext = new UserContext())
+            using (var userContext = new AppDbContext())
             {
                 var user = userContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (user == null)

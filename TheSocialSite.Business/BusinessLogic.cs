@@ -26,8 +26,17 @@ namespace TheSocialSite.Business
         {
             return new SocialMediaInteractAction();
         }
-        public IAdminInteractAction AdminInteractAction() { 
+        public IAdminInteractAction AdminInteractAction()
+        {
             return new AdminInteractAction();
+        }
+        public ICommentInteractAction CommentInteractAction()
+        {
+            return new CommentInteractAction();
+        }
+        public IBadgeInteractAction BadgeInteractAction()
+        {
+            return new BadgeInteractAction();
         }
     }
 }
