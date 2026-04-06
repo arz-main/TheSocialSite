@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { Search, X, AlertCircle } from "lucide-react";
-import type { Post, PostStatus } from "../types/PostTypes";
+import type { PostStatus } from "../types/PostTypes";
 import type { Role } from "../types/RolesTypes";
-import type { User } from "../types/UserTypes";
-import { useUsers } from "../hooks/useUsers";
-import { useAuth } from "../hooks/useAuth";
-import { useFilteredData } from "../hooks/useFilteredData";
-import { usePosts } from "../hooks/usePosts";
-import { useAdmin } from "../hooks/useAdmin";
+import type { AdminPostsTableProps, UserOptions, AdminUsersTableProps } from "../types/AdminPageTypes";
+import { demoteRole, promoteRole } from "../utils/AdminDashboardPageUtil";
 
 // ─── SearchBar ────────────────────────────────────────
 export function SearchBar({
@@ -194,84 +189,22 @@ const statusBadge: Record<PostStatus, string> = {
     Flagged: "bg-danger/10 text-danger border border-danger/30 px-2.5 py-0.5 rounded-md text-[11px] font-semibold tracking-wide uppercase",
 };
 
-// ─── Helpers ─────────────────────────────────────────
-const roleOrder: Role[] = ["User", "Admin"];
-
-function promoteRole(role: Role): Role {
-    const idx = roleOrder.indexOf(role);
-    return idx < roleOrder.length - 1 ? roleOrder[idx + 1] : role;
-}
-
-function demoteRole(role: Role): Role {
-    const idx = roleOrder.indexOf(role);
-    return idx > 0 ? roleOrder[idx - 1] : role;
-}
-
 // ─── USERS TABLE ──────────────────────────────────────
-export function UsersTable({ totalUsers }: { totalUsers: (n: number) => void }) {
-    const [users, setUsers] = useState<User[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [search, setSearch] = useState("");
-    const [confirm, setConfirm] = useState<{ type: "delete" | "promote" | "demote"; id: string } | null>(null);
-
-    const { getAllUsers } = useUsers();
-    const { adminUpdateUser, adminDeleteUser } = useAdmin();
-    const { currentUser, refreshToken } = useAuth();
-
-    useEffect(() => {
-        const fetch = async () => {
-            try {
-                setLoading(true);
-                const data = await getAllUsers();
-                const list = data || [];
-                setUsers(list);
-                totalUsers(list.length);
-            } catch {
-                setError("Failed to load users");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetch();
-    }, [getAllUsers]);
-
-    const filtered = useFilteredData(users, search, ["username", "email", "role"]);
-
-    const executeConfirm = async () => {
-        if (!confirm) return;
-        try {
-            if (confirm.type === "delete") {
-                await adminDeleteUser(confirm.id); // this just deletes the user from the backend
-                setUsers(prev => prev.filter(u => u.id !== confirm.id)); // this removes the user from the frontend state
-            } else if (confirm.type == "promote") {
-                const target = users.find(u => u.id === confirm.id); // find which user the admin selected
-                if (!target) return;
-                const newRole = promoteRole(target.role);
-                const payload = { role: newRole }; // i won't use a type here because it's additional work for a simple update
-                await adminUpdateUser(confirm.id, payload);
-                setUsers(prev => prev.map(u => u.id === confirm.id ? { ...u, role: newRole } : u));
-                if (currentUser?.id === target.id) await refreshToken();
-            } else {
-                const target = users.find(u => u.id === confirm.id);
-                if (!target) return;
-                const newRole = demoteRole(target.role);
-                const payload = { role: newRole };
-                await adminUpdateUser(confirm.id, payload);
-                setUsers(prev => prev.map(u => u.id === confirm.id ? { ...u, role: newRole } : u));
-                if (currentUser?.id === target.id) await refreshToken();
-            }
-        } finally {
-            setConfirm(null);
-        }
-    };
-
-    const targetUser = confirm ? users.find(u => u.id === confirm.id) : null;
-
-    const modalMessages = {
+export function UsersTable({
+    filteredData,
+    loading,
+    error,
+    search,
+    onSearch,
+    confirm,
+    setConfirm,
+    executeConfirm,
+    targetUser
+}: AdminUsersTableProps) {
+    const modalMessages: Record<UserOptions, string> = {
         delete: `Delete "${targetUser?.username}"?`,
-        promote: `Promote "${targetUser?.username}"?`,
-        demote: `Demote "${targetUser?.username}"?`,
+        promote: `Promote "${targetUser?.username}" to ${targetUser ? promoteRole(targetUser.role) : ""}?`,
+        demote: `Demote "${targetUser?.username}" to ${targetUser ? demoteRole(targetUser.role) : ""}?`,
     };
     return (
         <section className="bg-card border border-border rounded-xl overflow-hidden">
@@ -282,46 +215,35 @@ export function UsersTable({ totalUsers }: { totalUsers: (n: number) => void }) 
                     onCancel={() => setConfirm(null)}
                 />
             )}
-
             <SectionHeader
                 title="Users"
-                count={filtered.length}
+                count={filteredData.length}
                 search={search}
-                onSearch={setSearch}
+                onSearch={onSearch}
                 placeholder="Search users…"
             />
-
             <DataTable headers={["User", "Email", "Role", "Actions"]}>
                 {loading ? (
                     <TableSkeleton cols={4} />
                 ) : error ? (
                     <ErrorRow cols={4} message={error} />
-                ) : filtered.map((user, _i) => (
+                ) : filteredData.map((user) => (
                     <tr
                         key={user.id}
                         className="border-b border-border last:border-0 hover:bg-border/30 transition-colors group"
                     >
-                        {/* User */}
                         <td className="px-5 py-3.5">
                             <div className="flex items-center gap-3">
-                                <div
-                                    className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 bg-secondary-soft text-secondary"
-                                >
+                                <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 bg-secondary-soft text-secondary">
                                     {user.username[0].toUpperCase()}
                                 </div>
                                 <span className="text-sm font-medium text-text">{user.username}</span>
                             </div>
                         </td>
-
-                        {/* Email */}
                         <td className="px-5 py-3.5 text-sm text-muted">{user.email}</td>
-
-                        {/* Role */}
                         <td className="px-5 py-3.5">
                             <span className={roleBadge[user.role]}>{user.role}</span>
                         </td>
-
-                        {/* Actions */}
                         <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2">
                                 <button
@@ -353,79 +275,46 @@ export function UsersTable({ totalUsers }: { totalUsers: (n: number) => void }) 
     );
 }
 
-// ─── POSTS TABLE ──────────────────────────────────────
-export function PostsTable({ totalPosts }: { totalPosts: (n: number) => void }) {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [search, setSearch] = useState("");
-    const [confirm, setConfirm] = useState<string | null>(null);
-    
-    const { adminDeletePost } = useAdmin();
-    const { getAllPosts } = usePosts();
-
-    useEffect(() => {
-        const fetch = async () => {
-            try {
-                setLoading(true);
-                const data = await getAllPosts();
-                const list = data || [];
-                setPosts(list);
-                totalPosts(list.length);
-            } catch {
-                setError("Failed to load posts");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetch();
-    }, [getAllPosts]);
-
-    const filtered = useFilteredData(posts, search, ["title", "author", "status", "category"]);
-
-    const handleDelete = async () => {
-        if (!confirm) return;
-        await adminDeletePost(confirm);
-        setPosts(prev => prev.filter(p => p.id !== confirm));
-        setConfirm(null);
-    };
-
-    const targetPost = confirm ? posts.find(p => p.id === confirm) : null;
-
+export function PostsTable({
+    filteredData,
+    loading,
+    error,
+    search,
+    onSearch,
+    confirm,
+    setConfirm,
+    executeConfirm,
+    targetPost,
+}: AdminPostsTableProps) {
     return (
         <section className="bg-card border border-border rounded-xl overflow-hidden">
             {confirm && targetPost && (
                 <ConfirmModal
                     message={`Delete "${targetPost.title}"?`}
-                    onConfirm={handleDelete}
+                    onConfirm={executeConfirm}
                     onCancel={() => setConfirm(null)}
                 />
             )}
-
             <SectionHeader
                 title="Posts"
-                count={filtered.length}
+                count={filteredData.length}
                 search={search}
-                onSearch={setSearch}
+                onSearch={onSearch}
                 placeholder="Search posts…"
             />
-
             <DataTable headers={["Title", "Author", "Status", "Actions"]}>
                 {loading ? (
                     <TableSkeleton cols={4} />
                 ) : error ? (
                     <ErrorRow cols={4} message={error} />
-                ) : filtered.map((post) => (
+                ) : filteredData.map((post) => (
                     <tr
                         key={post.id}
                         className="border-b border-border last:border-0 hover:bg-border/30 transition-colors"
                     >
-                        {/* Title */}
                         <td className="px-5 py-3.5 text-sm font-medium text-text max-w-65 truncate">
                             {post.title}
                         </td>
-
-                        {/* Author */}
                         <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-full bg-accent-soft text-accent flex items-center justify-center text-[10px] font-bold shrink-0">
@@ -434,16 +323,12 @@ export function PostsTable({ totalPosts }: { totalPosts: (n: number) => void }) 
                                 <span className="text-sm text-muted">{post.author.username}</span>
                             </div>
                         </td>
-
-                        {/* Status */}
                         <td className="px-5 py-3.5">
                             <span className={statusBadge[post.status]}>{post.status}</span>
                         </td>
-
-                        {/* Actions */}
                         <td className="px-5 py-3.5">
                             <button
-                                onClick={() => setConfirm(post.id)}
+                                onClick={() => setConfirm({ type: "delete", id: post.id })}
                                 className="px-2.5 py-1 text-xs rounded-lg bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20 transition-colors"
                             >
                                 Delete

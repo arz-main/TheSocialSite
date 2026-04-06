@@ -7,10 +7,11 @@ import {
 	MessageCircle,
 	ChevronDown,
 	Send,
+	Check,
 } from "lucide-react";
 import { Card } from "./Card";
 import { Button } from "./BasicButton";
-import { ImageWithFallback } from "./ImageWithFallBack";
+import { ImageFallback } from "../components/ImageFallback";
 import { useNavigate } from "react-router-dom";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
@@ -98,7 +99,6 @@ export function CommentsModal({
 	likedDrawings,
 	imageIndex,
 	newComment,
-	onChangeImageIndex,
 	onChangeNewComment,
 	onSubmitComment,
 	toggleLike,
@@ -107,8 +107,7 @@ export function CommentsModal({
 	const commentsEndRef = useRef<HTMLDivElement>(null);
 	const navigate = useNavigate();
 	const { currentUser } = useAuth();
-	const isLiked = likedDrawings.has(post.id);
-
+	
 	const handleUserClick = (userId: string) => {
 		if (userId === currentUser?.id) navigate(paths.artist.profile);
 		else navigate(paths.explore.toUser(userId));
@@ -139,179 +138,174 @@ export function CommentsModal({
 		return () => window.removeEventListener("keydown", handler);
 	}, [onClose]);
 
-	return (
+	return (<motion.div
+		className="fixed inset-0 z-50 flex items-center justify-center p-4"
+		style={{ backgroundColor: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)" }}
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+		onClick={(e) => e.target === e.currentTarget && onClose()}
+	>
 		<motion.div
-			className="fixed inset-0 z-50 flex items-center justify-center p-4"
-			style={{ backgroundColor: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)" }}
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			onClick={(e) => e.target === e.currentTarget && onClose()}
+			className="relative bg-card rounded-2xl overflow-hidden shadow-2xl flex w-full"
+			style={{ maxWidth: "1100px", height: "min(860px, 90vh)" }}
+			initial={{ scale: 0.95, opacity: 0, y: 20 }}
+			animate={{ scale: 1, opacity: 1, y: 0 }}
+			exit={{ scale: 0.95, opacity: 0, y: 20 }}
+			transition={{ type: "spring", stiffness: 340, damping: 30 }}
+			onClick={(e) => e.stopPropagation()}
 		>
-			<motion.div
-				className="relative bg-card rounded-2xl overflow-hidden shadow-2xl flex w-full"
-				style={{ maxWidth: "1100px", height: "min(860px, 90vh)" }}
-				initial={{ scale: 0.95, opacity: 0, y: 20 }}
-				animate={{ scale: 1, opacity: 1, y: 0 }}
-				exit={{ scale: 0.95, opacity: 0, y: 20 }}
-				transition={{ type: "spring", stiffness: 340, damping: 30 }}
-				onClick={(e) => e.stopPropagation()}
+			{/* Close button */}
+			<button
+				onClick={onClose}
+				className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors"
 			>
-				{/* Close button */}
-				<button
-					onClick={onClose}
-					className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all"
-					style={{ background: "rgba(0,0,0,0.4)", color: "#fff" }}
-				>
-					<X className="w-4 h-4" />
-				</button>
+				<X className="w-4 h-4" />
+			</button>
 
-				{/* Image panel */}
-				<div className="relative shrink-0 bg-black flex items-center justify-center" style={{ width: "58%" }}>
-					<AnimatePresence mode="wait">
-						<motion.div
-							key={imageIndex}
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={{ duration: 0.2 }}
-							className="w-full h-full flex items-center justify-center"
-						>
-							<ImageWithFallback
-								src={post.imageUrl}
-								alt={`Image by ${post.author.username}`}
-								className="object-contain"
-								style={{ maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto" }}
-							/>
-						</motion.div>
-					</AnimatePresence>
+			{/* Image panel */}
+			<div className="relative shrink-0 bg-card flex items-center justify-center" style={{ width: "58%" }}>
+				<AnimatePresence mode="wait">
+					<motion.div
+						key={imageIndex}
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.2 }}
+						className="w-full h-full flex items-center justify-center"
+					>
+						<ImageFallback
+							src={post.imageUrl}
+							alt={`Image by ${post.author.username}`}
+							className="object-contain w-full h-full"
+						/>
+					</motion.div>
+				</AnimatePresence>
 
-					{/* Image overlay — post info */}
-					<div className="absolute bottom-0 left-0 right-0 p-4" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)" }}>
-						<p className="text-white font-semibold text-sm truncate">{post.title}</p>
-						{post.description && (
-							<p className="text-white/60 text-xs mt-0.5 line-clamp-2">{post.description}</p>
+				{/* Image overlay — post info */}
+				<div className="absolute bottom-0 left-0 right-0 p-5" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)" }}>
+					<p className="text-white font-semibold text-sm truncate">{post.title}</p>
+					{post.description && (
+						<p className="text-white/50 text-xs mt-1 line-clamp-2 leading-relaxed">{post.description}</p>
+					)}
+				</div>
+			</div>
+
+			{/* Right panel */}
+			<div className="flex flex-col flex-1 min-w-0 border-l border-border">
+
+				{/* Post author header */}
+				<div className="flex items-center gap-3 px-4 py-3 border-b border-border shrink-0">
+					<div
+						className="w-8 h-8 rounded-full overflow-hidden shrink-0 cursor-pointer ring-1 ring-border hover:ring-primary transition-all"
+						onClick={() => handleUserClick(post.author.id)}
+					>
+						{post.author.avatar ? (
+							<img src={post.author.avatar} alt={post.author.username} className="w-full h-full object-cover" />
+						) : (
+							<div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
+								{post.author.username?.charAt(0)?.toUpperCase()}
+							</div>
 						)}
+					</div>
+					<div className="flex-1 min-w-0">
+						<span
+							className="text-text font-semibold text-sm cursor-pointer hover:underline block truncate"
+							onClick={() => handleUserClick(post.author.id)}
+						>
+							{post.author.username}
+						</span>
+						<span className="text-muted text-xs">{formatDate(post.createdAt)}</span>
 					</div>
 				</div>
 
-				{/* Right panel */}
-				<div className="flex flex-col flex-1 min-w-0">
-					{/* Post author header */}
-					<div className="flex items-center gap-3 px-4 py-3 border-b border-muted shrink-0">
-						<div
-							className="w-8 h-8 rounded-full overflow-hidden shrink-0 cursor-pointer ring-1 ring-muted"
-							onClick={() => handleUserClick(post.author.id)}
+				{/* Comments list */}
+				<div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-0">
+					{comments.length === 0 ? (
+						<div className="flex flex-col items-center justify-center h-full gap-2">
+							<MessageCircle className="w-8 h-8 text-muted/40" />
+							<p className="text-muted text-sm">No comments yet. Be the first!</p>
+						</div>
+					) : comments.map((comment) => (
+						<motion.div
+							key={comment.id}
+							initial={{ opacity: 0, y: 8 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.2 }}
+							className="flex gap-2.5 group"
 						>
-							{post.author.avatar ? (
-								<img src={post.author.avatar} alt={post.author.username} className="w-full h-full object-cover" />
-							) : (
-								<div className="w-full h-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
-									{post.author.username?.charAt(0)?.toUpperCase()}
-								</div>
-							)}
-						</div>
-						<div className="flex-1 min-w-0">
-							<span
-								className="text-text font-semibold text-sm cursor-pointer hover:underline"
-								onClick={() => handleUserClick(post.author.id)}
+							<div
+								className="w-7 h-7 rounded-full bg-card border border-border flex items-center justify-center shrink-0 mt-0.5 cursor-pointer overflow-hidden group-hover:ring-2 group-hover:ring-primary/30 transition-all"
+								onClick={() => handleUserClick(comment.authorId)}
 							>
-								{post.author.username}
-							</span>
-							<span className="text-text/40 text-xs ml-2">{formatDate(post.createdAt)}</span>
-						</div>
-					</div>
-
-					{/* Comments list */}
-					<div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 min-h-0">
-						{comments.length === 0 && (
-							<div className="flex flex-col items-center justify-center h-full gap-2 py-12">
-								<MessageCircle className="w-8 h-8 text-text/20" />
-								<p className="text-text/30 text-sm">No comments yet. Be the first!</p>
-							</div>
-						)}
-						{comments.map((comment) => (
-							<motion.div
-								key={comment.id}
-								initial={{ opacity: 0, y: 8 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.2 }}
-								className="flex gap-2.5 group"
-							>
-								<div
-									className="w-7 h-7 rounded-full bg-muted flex items-center justify-center shrink-0 mt-0.5 cursor-pointer overflow-hidden ring-1 ring-transparent group-hover:ring-primary/30 transition-all"
-									onClick={() => handleUserClick(comment.authorId)}
-								>
-									{comment.authorAvatar ? (
-										<img src={comment.authorAvatar} alt={comment.authorUsername} className="w-full h-full object-cover" />
-									) : (
-										<span className="text-xs font-semibold text-text/50">
-											{comment.authorUsername?.charAt(0)?.toUpperCase()}
-										</span>
-									)}
-								</div>
-								<div className="flex-1 min-w-0">
-									<div className="flex items-baseline gap-2">
-										<span
-											className="text-text font-semibold text-xs cursor-pointer hover:underline"
-											onClick={() => handleUserClick(comment.authorId)}
-										>
-											{comment.authorUsername}
-										</span>
-										<span className="text-text/30 text-xs">{formatDate(comment.createdAt)}</span>
-									</div>
-									<p className="text-text/75 text-sm mt-0.5 leading-relaxed break-words">{comment.content}</p>
-								</div>
-							</motion.div>
-						))}
-						<div ref={commentsEndRef} />
-					</div>
-
-					{/* Comment count */}
-					{comments.length > 0 && (
-						<div className="px-4 py-1.5 border-t border-muted shrink-0">
-							<span className="text-text/40 text-xs">{comments.length} comment{comments.length !== 1 ? "s" : ""}</span>
-						</div>
-					)}
-
-					{/* Input */}
-					<div className="px-4 py-3 border-t border-muted shrink-0">
-						<div className="flex items-center gap-2 rounded-xl px-3 py-2 border border-muted bg-background focus-within:border-primary/50 transition-colors">
-							{/* Current user avatar */}
-							<div className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-muted flex items-center justify-center">
-								{currentUser?.avatar ? (
-									<img src={currentUser.avatar} alt={currentUser.username} className="w-full h-full object-cover" />
+								{comment.authorAvatar ? (
+									<img src={comment.authorAvatar} alt={comment.authorUsername} className="w-full h-full object-cover" />
 								) : (
-									<span className="text-xs font-semibold text-text/50">
-										{currentUser?.username?.charAt(0)?.toUpperCase()}
+									<span className="text-xs font-semibold text-muted">
+										{comment.authorUsername?.charAt(0)?.toUpperCase()}
 									</span>
 								)}
 							</div>
-							<input
-								type="text"
-								value={newComment}
-								onChange={(e) => onChangeNewComment(e.target.value)}
-								onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && submitComment()}
-								placeholder="Add a comment…"
-								className="flex-1 bg-transparent text-text text-sm placeholder:text-text/30 focus:outline-none"
-							/>
-							<motion.button
-								onClick={submitComment}
-								disabled={!newComment.trim()}
-								className="text-primary disabled:opacity-20 transition-opacity shrink-0"
-								whileTap={{ scale: 0.85 }}
-							>
-								<Send className="w-4 h-4" />
-							</motion.button>
+							<div className="flex-1 min-w-0">
+								<div className="flex items-baseline gap-2">
+									<span
+										className="text-text font-semibold text-xs cursor-pointer hover:underline"
+										onClick={() => handleUserClick(comment.authorId)}
+									>
+										{comment.authorUsername}
+									</span>
+									<span className="text-muted text-xs">{formatDate(comment.createdAt)}</span>
+								</div>
+								<p className="text-text/80 text-sm mt-0.5 leading-relaxed break-words">{comment.content}</p>
+							</div>
+						</motion.div>
+					))}
+					<div ref={commentsEndRef} />
+				</div>
+
+				{/* Comment count */}
+				{comments.length > 0 && (
+					<div className="px-4 py-2 border-t border-border shrink-0">
+						<span className="text-muted text-xs">{comments.length} comment{comments.length !== 1 ? "s" : ""}</span>
+					</div>
+				)}
+
+				{/* Input */}
+				<div className="px-4 py-3 border-t border-border shrink-0">
+					<div className="flex items-center gap-2.5 rounded-xl px-3 py-2 border border-border bg-background focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/20 transition-all">
+						<div className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-card border border-border flex items-center justify-center">
+							{currentUser?.avatar ? (
+								<img src={currentUser.avatar} alt={currentUser.username} className="w-full h-full object-cover" />
+							) : (
+								<span className="text-xs font-semibold text-muted">
+									{currentUser?.username?.charAt(0)?.toUpperCase()}
+								</span>
+							)}
 						</div>
+						<input
+							type="text"
+							value={newComment}
+							onChange={(e) => onChangeNewComment(e.target.value)}
+							onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && submitComment()}
+							placeholder="Add a comment…"
+							className="flex-1 bg-transparent text-text text-sm placeholder:text-muted focus:outline-none"
+						/>
+						<motion.button
+							onClick={submitComment}
+							disabled={!newComment.trim()}
+							className="text-primary disabled:opacity-20 transition-opacity shrink-0"
+							whileTap={{ scale: 0.85 }}
+						>
+							<Send className="w-4 h-4" />
+						</motion.button>
 					</div>
 				</div>
-			</motion.div>
+			</div>
 		</motion.div>
-	);
-}
+	</motion.div>
+	)
+};
 
-// --- Dropdown ---
 export function Dropdown({ label, value, options, isOpen, onToggle, onChange }: any) {
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const selectedOption = options.find((opt: any) => opt.value === value);
@@ -329,37 +323,65 @@ export function Dropdown({ label, value, options, isOpen, onToggle, onChange }: 
 		<div ref={dropdownRef} className="relative">
 			<button
 				onClick={onToggle}
-				className="flex items-center gap-2 bg-card text-text border border-muted rounded-lg py-2 px-3 hover:bg-muted/40 transition-colors text-sm"
+				className={`flex items-center gap-2 bg-card text-text border rounded-md h-9 px-3 text-sm shadow-sm transition-colors
+        			${isOpen
+						? "border-primary ring-3 ring-primary/20"
+						: "border-border hover:border-primary/50"
+					}`}
 			>
-				<span className="text-text/50">{label}:</span>
-				<span className="font-medium">{selectedOption?.label}</span>
-				<ChevronDown className={`w-3.5 h-3.5 text-text/40 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+				<span className="text-muted text-xs font-medium uppercase tracking-wide">{label}</span>
+				<span className="w-px h-3.5 bg-border" />
+				<span className="font-medium text-text">{selectedOption?.label}</span>
+				<ChevronDown className={`w-3.5 h-3.5 text-muted transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
 			</button>
 
 			<AnimatePresence>
 				{isOpen && (
 					<motion.div
-						initial={{ opacity: 0, y: -6, scale: 0.97 }}
+						initial={{ opacity: 0, y: -4, scale: 0.97 }}
 						animate={{ opacity: 1, y: 0, scale: 1 }}
-						exit={{ opacity: 0, y: -6, scale: 0.97 }}
+						exit={{ opacity: 0, y: -4, scale: 0.97 }}
 						transition={{ duration: 0.12 }}
-						className="absolute top-full mt-1.5 left-0 bg-card border border-muted rounded-xl shadow-xl overflow-hidden z-10 min-w-45"
+						className="absolute top-full mt-1.5 left-0 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-10 min-w-40"
 					>
 						{options.map((option: any) => (
 							<button
 								key={option.value}
 								onClick={() => { onChange(option.value); onToggle(); }}
-								className={`w-full text-left px-4 py-2 text-sm transition-colors ${option.value === value
-									? "bg-primary/10 text-primary font-medium"
-									: "text-text hover:bg-muted/40"
+								className={`w-full text-left px-3 py-2 text-sm transition-colors flex items-center justify-between gap-4
+                                    ${option.value === value
+										? "bg-primary/10 text-primary font-medium"
+										: "text-text hover:bg-border/40"
 									}`}
 							>
 								{option.label}
+								{option.value === value && (
+									<Check className="w-3.5 h-3.5 text-primary shrink-0" />
+								)}
 							</button>
 						))}
 					</motion.div>
 				)}
 			</AnimatePresence>
+		</div>
+	);
+}
+
+export function PostCardSkeleton() {
+	return (
+		<div className="rounded-2xl overflow-hidden bg-card border border-muted/60 animate-pulse">
+			<div className="bg-muted/40" style={{ aspectRatio: "4/3" }} />
+			<div className="px-3 py-2.5 flex items-center gap-2.5">
+				<div className="w-7 h-7 rounded-full bg-muted/40 shrink-0" />
+				<div className="flex-1 space-y-1.5">
+					<div className="h-2.5 bg-muted/40 rounded-full w-24" />
+					<div className="h-2 bg-muted/40 rounded-full w-16" />
+				</div>
+				<div className="flex items-center gap-3">
+					<div className="h-3 w-8 bg-muted/40 rounded-full" />
+					<div className="h-3 w-8 bg-muted/40 rounded-full" />
+				</div>
+			</div>
 		</div>
 	);
 }
@@ -376,7 +398,7 @@ export function PostCard({
 }: any) {
 	const [likeFlash, setLikeFlash] = useState(false);
 	const [hovered, setHovered] = useState(false);
-	const navigate  = useNavigate();
+	const navigate = useNavigate();
 	const { currentUser } = useAuth();
 	const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const clickCount = useRef(0);
@@ -385,8 +407,8 @@ export function PostCard({
 		e.stopPropagation();
 		if (!userId) return;
 		currentUser?.id == userId ?
-		navigate(paths.artist.profile) :
-		navigate(paths.explore.toUser(userId));
+			navigate(paths.artist.profile) :
+			navigate(paths.explore.toUser(userId));
 	}, [navigate]);
 
 	const handleImageClick = useCallback(() => {
@@ -416,7 +438,7 @@ export function PostCard({
 			<div className="rounded-2xl overflow-hidden bg-card border border-muted/60 hover:border-muted transition-all hover:shadow-lg">
 				{/* Image */}
 				<div
-					className="relative cursor-pointer select-none overflow-hidden"
+					className="relative cursor-pointer bg-background select-none overflow-hidden"
 					onClick={handleImageClick}
 					style={{ aspectRatio: "4/3" }}
 				>
@@ -425,7 +447,7 @@ export function PostCard({
 						animate={{ scale: hovered ? 1.03 : 1 }}
 						transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
 					>
-						<ImageWithFallback
+						<ImageFallback
 							src={post.imageUrl}
 							alt={`Drawing by ${post.author.username}`}
 							className="w-full h-full object-cover"

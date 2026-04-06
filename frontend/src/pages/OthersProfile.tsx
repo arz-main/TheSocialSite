@@ -2,52 +2,54 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { ExternalLink, MapPin, CalendarDays } from "lucide-react";
-import {
-    FaPinterest,
-    FaTwitter,
-    FaDeviantart,
-    FaYoutube,
-    FaDiscord,
-    FaGlobe,
-} from "react-icons/fa";
+import { FaPinterest, FaTwitter, FaDeviantart, FaYoutube, FaDiscord, FaGlobe } from "react-icons/fa";
 import { Badge as BadgeUI } from "../components/Badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { usePosts } from "../hooks/usePosts";
+import { useComments } from "../hooks/useComments";
 import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
-import { ImageWithFallback } from "../components/ImageWithFallBack";
+import { AvatarFallback } from "../components/AvatarFallback";
 import type { Post } from "../types/PostTypes";
+import type { Comment } from "../types/CommentTypes";
 import { Card } from "../components/Card";
 import { useUsers } from "../hooks/useUsers";
 import type { User } from "../types/UserTypes";
 
 export default function OthersProfile() {
-    const [user, setUser] = useState<User>();
-    const [activeTab, setActiveTab] = useState("posts");
-    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-    const [openedPost, setOpenedPost] = useState<any>(null);
+    // data
+    const [user, setUser] = useState<User | null>(null);
     const [userPosts, setUserPosts] = useState<Post[]>([]);
+    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+    const [openedPost, setOpenedPost] = useState<Post | null>(null);
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+
+    // ui
+    const [activeTab, setActiveTab] = useState("posts");
+    const [imageIndex, setImageIndex] = useState(0);
+    const [newComment, setNewComment] = useState("");
 
     const { getUser } = useUsers();
     const { getUserPosts } = usePosts();
-
+    const { getComments, postComment } = useComments();
     const { userId } = useParams();
 
     useEffect(() => {
         if (!userId) return;
-
-        // fetch profile
-        getUser(userId).then(data => {
-            if (data) setUser(data);
-        });
-
-        // fetch posts
-        getUserPosts(userId).then(data => {
-            if (data) setUserPosts(data);
-        });
-
+        getUser(userId).then(data => { if (data) setUser(data); });
+        getUserPosts(userId).then(data => { if (data) setUserPosts(data); });
     }, [userId]);
 
+    useEffect(() => {
+        if (userPosts.length === 0) return;
+        userPosts.forEach(async (post) => {
+            const data = await getComments(post.id);
+            setCommentCounts(prev => ({ ...prev, [post.id]: data.length }))
+        });
+    }, [userPosts]);
+
+    // ─── Handlers ─────────────────────────────────────────
     const handleToggleLike = (postId: string) => {
         setLikedPosts(prev => {
             const next = new Set(prev);
@@ -56,19 +58,46 @@ export default function OthersProfile() {
         });
     };
 
-    const handleOpenComments = (post: any) => setOpenedPost(post);
+    const handleOpenComments = async (post: Post) => {
+        setOpenedPost(post);
+        try {
+            const data = await getComments(post.id);
+            setComments(data);
+        } catch {
+            setComments([]);
+        }
+    };
 
-    const DUMMY_BIO =
-        "Digital artist and illustrator passionate about character design and anatomy studies. Always learning, always creating.";
+    const handleSubmitComment = async (postId: string, content: string) => {
+        const raw = await postComment(postId, content);
+        const normalized: Comment = {
+            id: raw.id,
+            postId: raw.postId,
+            content: raw.content,
+            authorId: raw.authorId,
+            authorUsername: raw.authorUsername,
+            authorAvatar: raw.authorAvatar,
+            createdAt: raw.createdAt,
+        };
+        setComments(prev => [...prev, normalized]);
+        return normalized;
+    };
+
+    const closeModal = () => {
+        setOpenedPost(null);
+        setComments([]);
+        setImageIndex(0);
+        setNewComment("");
+    };
 
     if (!user) return null;
 
-    const bio = user.bio || DUMMY_BIO;
+    // ─── Derived ──────────────────────────────────────────
     const hasSocialLinks = user.socialLinks && Object.values(user.socialLinks).some(Boolean);
     const earnedBadges = user.badges ? user.badges.filter((b: any) => b.earned) : [];
     const rankBadge = user.level || "Advanced Sketcher";
-    const streak = user.streak ?? 15;
-    const postsCount = userPosts.length || 387;
+    const streak = user.streak ?? 0;
+    const postsCount = userPosts.length;
 
     return (
         <div className="flex flex-col flex-1 bg-background text-text">
@@ -82,32 +111,36 @@ export default function OthersProfile() {
                     <div className="rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
 
                         {/* Banner */}
-                        <div className="h-36 w-full" style={{ backgroundColor: 'var(--button)' }} />
+                        <div className="h-36 w-full" style={{ backgroundColor: "var(--button)" }} />
 
                         {/* Profile body */}
-                        <div className="px-8 pb-8 pt-12 relative">
+                        <div className="px-8 pt-4 pb-6 relative">
+
                             {/* Avatar overlapping banner */}
-                            <div className="absolute -top-14 left-8 w-28 h-28 rounded-full bg-card ring-4 ring-card overflow-hidden shadow-lg">
-                                <ImageWithFallback
-                                    src={user?.avatar}
-                                    alt={user?.username}
-                                    className="w-full h-full object-cover"
+                            <div className="absolute -top-14 left-8">
+                                <AvatarFallback
+                                    src={user.avatar}
+                                    alt={user.username ?? ""}
+                                    size={112}
+                                    className="ring-4 ring-card shadow-lg"
                                 />
                             </div>
 
+                            {/* Spacer for avatar */}
+                            <div className="h-14" />
+
                             {/* Name & handle */}
-                            <div className="mt-16">
-                                <h1 className="text-2xl font-bold leading-tight">
-                                    {user.username}
-                                </h1>
+                            <div className="mt-2">
+                                <h1 className="text-2xl font-bold leading-tight">{user.username}</h1>
                                 <p className="text-sm text-muted mt-0.5">
-                                    @{(user.username || "artist").toLowerCase().replace(/\s/g, "")}
+                                    @{(user.username ?? "artist").toLowerCase().replace(/\s/g, "")}
                                 </p>
                             </div>
-                        </div>
-                        <div className="px-8 pb-8">
+
                             {/* Bio */}
-                            <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{bio}</p>
+                            {user.bio && (
+                                <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{user.bio}</p>
+                            )}
 
                             {/* Meta row */}
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-sm text-muted">
@@ -121,16 +154,18 @@ export default function OthersProfile() {
                                     <a href={user.website} target="_blank" rel="noopener noreferrer"
                                         className="flex items-center gap-1.5 text-primary hover:underline transition-colors">
                                         <ExternalLink className="w-4 h-4 shrink-0" />
-                                        {user.website.replace(/^https?:\/\//, '')}
+                                        {user.website.replace(/^https?:\/\//, "")}
                                     </a>
                                 )}
-                                <span className="flex items-center gap-1.5">
-                                    <CalendarDays className="w-4 h-4 shrink-0" />
-                                    Joined {formatDate(user.joinedDate)}
-                                </span>
+                                {user.joinedDate && (
+                                    <span className="flex items-center gap-1.5">
+                                        <CalendarDays className="w-4 h-4 shrink-0" />
+                                        Joined {formatDate(user.joinedDate)}
+                                    </span>
+                                )}
                             </div>
 
-                            {/* Social icon buttons */}
+                            {/* Social links */}
                             {hasSocialLinks && (
                                 <div className="flex flex-wrap gap-2 mt-3">
                                     {user.socialLinks!.twitter && (
@@ -158,7 +193,8 @@ export default function OthersProfile() {
                                         </a>
                                     )}
                                     {user.socialLinks!.discord && (
-                                        <button onClick={() => navigator.clipboard.writeText(user.socialLinks!.discord!)}
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(user.socialLinks!.discord!)}
                                             title={`Copy: ${user.socialLinks!.discord}`}
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaDiscord className="w-4 h-4" />
@@ -175,13 +211,13 @@ export default function OthersProfile() {
 
                             {/* Followers / Following */}
                             <div className="flex items-center gap-1 mt-4 text-sm">
-                                <span className="font-bold">1.2K</span>
+                                <span className="font-bold">{user.followers?.length ?? 0}</span>
                                 <span className="text-muted mr-4">Followers</span>
-                                <span className="font-bold">342</span>
+                                <span className="font-bold">{user.following?.length ?? 0}</span>
                                 <span className="text-muted">Following</span>
                             </div>
 
-                            {/* Stats pills row */}
+                            {/* Stats pills */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
                                     <span className="text-2xl font-bold">{postsCount}</span>
@@ -195,7 +231,7 @@ export default function OthersProfile() {
                                     <span className="text-xs text-muted">Day Streak</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
-                                    <span className="text-2xl font-bold">{earnedBadges.length || 4}</span>
+                                    <span className="text-2xl font-bold">{earnedBadges.length}</span>
                                     <span className="text-xs text-muted">Badges Earned</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
@@ -211,13 +247,13 @@ export default function OthersProfile() {
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
                             <TabsList className="w-full grid grid-cols-3 h-12">
                                 <TabsTrigger value="posts" className="h-full text-sm font-semibold">
-                                    My Posts <span className="ml-1.5 text-xs opacity-60">{postsCount}</span>
+                                    Posts <span className="ml-1.5 text-xs opacity-60">{postsCount}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="badges" className="h-full text-sm font-semibold">
-                                    Badges <span className="ml-1.5 text-xs opacity-60">{earnedBadges.length || 4}</span>
+                                    Badges <span className="ml-1.5 text-xs opacity-60">{earnedBadges.length}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="favorites" className="h-full text-sm font-semibold">
-                                    Favorites <span className="ml-1.5 text-xs opacity-60">12</span>
+                                    Favorites <span className="ml-1.5 text-xs opacity-60">0</span>
                                 </TabsTrigger>
                             </TabsList>
 
@@ -227,8 +263,8 @@ export default function OthersProfile() {
                                         {userPosts.length === 0 ? (
                                             <Card className="p-20 text-center">
                                                 <div className="text-5xl mb-4">🎨</div>
-                                                <h3 className="text-lg font-semibold mb-2">No Drawings Yet</h3>
-                                                <p className="text-muted-foreground">Start practicing to see your drawings here</p>
+                                                <h3 className="text-lg font-semibold mb-2">No Posts Yet</h3>
+                                                <p className="text-muted">This user hasn't posted anything yet</p>
                                             </Card>
                                         ) : (
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -237,12 +273,12 @@ export default function OthersProfile() {
                                                         key={post.id}
                                                         post={post}
                                                         index={index}
-                                                        pageSize={userPosts.length}
                                                         isLiked={likedPosts.has(post.id)}
                                                         onToggleLike={handleToggleLike}
                                                         onOpenComments={handleOpenComments}
                                                         formatDate={formatDate}
                                                         formatDuration={formatDuration}
+                                                        commentCount={commentCounts[post.id]}
                                                     />
                                                 ))}
                                             </div>
@@ -252,9 +288,9 @@ export default function OthersProfile() {
 
                                 <TabsContent value="badges">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                                        {user.badges && user.badges.filter((b: any) => b.earned).length > 0 ? (
+                                        {earnedBadges.length > 0 ? (
                                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                {user.badges.filter((b: any) => b.earned).map((badge: any, index: number) => (
+                                                {earnedBadges.map((badge: any, index: number) => (
                                                     <motion.div key={badge.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index, duration: 0.3 }}>
                                                         <Card className="p-5 hover:shadow-lg transition-all">
                                                             <div className="flex items-start gap-4">
@@ -264,8 +300,8 @@ export default function OthersProfile() {
                                                                         <h4 className="font-semibold">{badge.name}</h4>
                                                                         <BadgeUI variant="default" className="text-xs border">Earned</BadgeUI>
                                                                     </div>
-                                                                    <p className="text-sm text-muted-foreground mb-2">{badge.description}</p>
-                                                                    {badge.earnedDate && <p className="text-xs text-muted-foreground">{formatDate(badge.earnedDate)}</p>}
+                                                                    <p className="text-sm text-muted mb-2">{badge.description}</p>
+                                                                    {badge.earnedDate && <p className="text-xs text-muted">{formatDate(badge.earnedDate)}</p>}
                                                                 </div>
                                                             </div>
                                                         </Card>
@@ -276,7 +312,7 @@ export default function OthersProfile() {
                                             <Card className="p-20 text-center">
                                                 <div className="text-5xl mb-4">🏅</div>
                                                 <h3 className="text-lg font-semibold mb-2">No Badges Yet</h3>
-                                                <p className="text-muted-foreground">Complete challenges to earn badges</p>
+                                                <p className="text-muted">Complete challenges to earn badges</p>
                                             </Card>
                                         )}
                                     </motion.div>
@@ -287,14 +323,13 @@ export default function OthersProfile() {
                                         <Card className="p-20 text-center">
                                             <div className="text-5xl mb-4">❤️</div>
                                             <h3 className="text-lg font-semibold mb-2">No Favorites Yet</h3>
-                                            <p className="text-muted-foreground">Posts you favorite will appear here</p>
+                                            <p className="text-muted">Posts you favorite will appear here</p>
                                         </Card>
                                     </motion.div>
                                 </TabsContent>
                             </div>
                         </Tabs>
                     </div>
-
                 </motion.div>
             </div>
 
@@ -302,11 +337,15 @@ export default function OthersProfile() {
                 {openedPost && (
                     <CommentsModal
                         post={openedPost}
-                        onClose={() => setOpenedPost(null)}
+                        comments={comments}
                         likedDrawings={likedPosts}
+                        imageIndex={imageIndex}
+                        newComment={newComment}
+                        onChangeImageIndex={setImageIndex}
+                        onChangeNewComment={setNewComment}
+                        onSubmitComment={handleSubmitComment}
                         toggleLike={handleToggleLike}
-                        initialImageIndex={0}
-                        // onSubmitComment={}
+                        onClose={closeModal}
                     />
                 )}
             </AnimatePresence>

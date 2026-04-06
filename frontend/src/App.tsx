@@ -23,7 +23,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import AdminDashboard from "./pages/AdminDashboard";
-import ResetPassword from "./pages/ResetPassword";
 import ScrollToTop from "./components/ScrollToTop";
 
 import CourseRoadmap from "./pages/CourseRoadmap";
@@ -93,7 +92,6 @@ const App = () => {
 					<Route path={paths.login} element={<Login />} />
 					<Route path={paths.signup} element={<SignUp />} />
 					<Route path={paths.forgot_password} element={<ForgotPassword />} />
-					<Route path={paths.reset_password} element={<ResetPassword />} />
 
 					{/* error pages */}
 					<Route path={paths.error.unauthorized} element={<Unauthorized />} />
