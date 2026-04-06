@@ -30,10 +30,13 @@ namespace TheSocialSite.Business
         {
             return new AdminInteractAction();
         }
-        
         public ICommentInteractAction CommentInteractAction()
         {
             return new CommentInteractAction();
+        }
+        public IBadgeInteractAction BadgeInteractAction()
+        {
+            return new BadgeInteractAction();
         }
     }
 }

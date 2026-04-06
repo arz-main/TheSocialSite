@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TheSocialSite.Domain.Entities.User;
-using TheSocialSite.Domain.Entities.Post;
+using TheSocialSite.Domain.Entities.Badge;
 using TheSocialSite.Domain.Entities.Comment;
+using TheSocialSite.Domain.Entities.Post;
+using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.DataAccess.Context
 {
@@ -41,6 +42,13 @@ namespace TheSocialSite.DataAccess.Context
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.PostId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Badge → User
+            modelBuilder.Entity<BadgeData>()
+                .HasOne(b => b.User)
+                .WithMany() // user can have many badges
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         // Single DbContext for everything
@@ -48,5 +56,6 @@ namespace TheSocialSite.DataAccess.Context
         public DbSet<SocialMedia> SocialMedia { get; set; }
         public DbSet<PostData> Posts { get; set; }
         public DbSet<CommentData> Comments { get; set; }
+        public DbSet<BadgeData> Badges { get; set; }
     }
 }
