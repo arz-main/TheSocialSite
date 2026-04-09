@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace TheSocialSite.Domain.Models.Response
 {
-    public class DefaultActionResponse
+    public class JwtActionResponse
     {
         public bool IsValid { get; set; }
         public string Message { get; set; }
+        public string? Token { get; set; }
     }
 }

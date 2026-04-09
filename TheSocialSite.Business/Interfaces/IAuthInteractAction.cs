@@ -10,8 +10,8 @@ namespace TheSocialSite.Business.Interfaces
 {
     public interface IAuthInteractAction
     {
-        SignupActionResponse UserSignupValidationAction(UserSignupDto userData);
-        LoginActionResponse UserLoginDataValidationAction(UserLoginDto loginData);
-        LoginActionResponse RefreshTokenAction(string userId);
+        UserActionResponse UserSignupValidationAction(CreateUserDto userData);
+        JwtActionResponse UserLoginDataValidationAction(UserLoginDto loginData);
+        JwtActionResponse RefreshTokenAction(string userId);
     }
 }

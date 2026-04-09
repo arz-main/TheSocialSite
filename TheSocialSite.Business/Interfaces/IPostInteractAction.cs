@@ -12,9 +12,9 @@ namespace TheSocialSite.Business.Interfaces
     public interface IPostInteractAction
     {
         public PostActionResponse GetAllPostsAction();
-        public PostActionResponse GetPostsByIdAction(string postId);
+        public PostActionResponse GetPostByIdAction(string postId);
         public PostActionResponse GetUserPostsAction(string id);
-        public DefaultActionResponse CreatePostAction(CreatePostDto postData, string userId);
-        public DefaultActionResponse DeletePostAction(string id);
+        public PostActionResponse CreatePostAction(CreatePostDto postData, string userId);
+        public PostActionResponse DeletePostAction(string id);
     }
 }

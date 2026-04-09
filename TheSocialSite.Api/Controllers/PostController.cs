@@ -27,20 +27,18 @@ namespace TheSocialSite.Api.Controllers
         {
             var response = _postAction.GetAllPostsAction();
             if (!response.IsValid)
-            {
                 return BadRequest("Could not find posts");
-            }
+
             return Ok(response.PostDtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetPostById([FromRoute] string id)
         {
-            var response = _postAction.GetPostsByIdAction(id);
+            var response = _postAction.GetPostByIdAction(id);
             if (!response.IsValid)
-            {
                 return BadRequest("Could not find posts");
-            }
+
             return Ok(response.PostDto);
         }
 
@@ -49,9 +47,8 @@ namespace TheSocialSite.Api.Controllers
         {
             var response = _postAction.GetUserPostsAction(id);
             if (!response.IsValid)
-            {
                 return BadRequest("Could not find posts");
-            }
+
             return Ok(response.PostDtos);
         }
 
@@ -63,25 +60,27 @@ namespace TheSocialSite.Api.Controllers
                 return BadRequest("No data provided");
 
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            DefaultActionResponse data = _postAction.CreatePostAction(postData, userId);
-            if (!data.IsValid)
-                return BadRequest(data.Message);
+            var response = _postAction.CreatePostAction(postData, userId);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
 
-            return Ok(data);
+            return Ok(response.Message);
         }
 
         [HttpDelete("{id}")]
         [Authorize]
-        public IActionResult AdminDeletePost([FromRoute] string id)
+        public IActionResult DeletePost([FromRoute] string id)
         {
-            var postResponse = _postAction.GetPostsByIdAction(id);
+            var postResponse = _postAction.GetPostByIdAction(id);
             if (!postResponse.IsValid)
-                return NotFound();
+                return BadRequest(postResponse.Message);
 
-            var userIdFromPost = postResponse.PostDto.Author.Id;
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            if (userIdFromPost != userId)
-                return Forbid("You can only delete your own posts");
+            // get from jwt
+            var isAdmin = User.IsInRole("Admin");
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub); 
+
+            if (!isAdmin && userId != id)
+                return Forbid();
 
             var deleteResponse = _postAction.DeletePostAction(id);
 

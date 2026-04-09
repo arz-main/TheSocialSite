@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TheSocialSite.Domain.Entities.User;
 using TheSocialSite.Domain.Models.Response;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.SocialMedia;
 
 namespace TheSocialSite.Business.Interfaces
 {
@@ -13,7 +13,7 @@ namespace TheSocialSite.Business.Interfaces
     {
         SocialMediaActionResponse GetSocialMediaAction(string userId);
 
-        SocialMediaActionResponse CreateSocialMediaAction(SocialMediaDto links);
+        SocialMediaActionResponse CreateSocialMediaAction(CreateSocialMediaDto links);
 
         SocialMediaActionResponse UpdateSocialMediaAction(SocialMediaDto links);
 

@@ -20,16 +20,41 @@ namespace TheSocialSite.DataAccess.Migrations
                     Password = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     Bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Website = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
-                    PostsCount = table.Column<int>(type: "int", nullable: true),
                     JoinedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Badges",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IconUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    Tier = table.Column<int>(type: "int", nullable: false),
+                    IsEarned = table.Column<bool>(type: "bit", nullable: false),
+                    EarnedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Badges", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Badges_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,6 +135,11 @@ namespace TheSocialSite.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Badges_UserId",
+                table: "Badges",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_AuthorId",
                 table: "Comments",
                 column: "AuthorId");
@@ -134,6 +164,9 @@ namespace TheSocialSite.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Badges");
+
             migrationBuilder.DropTable(
                 name: "Comments");
 

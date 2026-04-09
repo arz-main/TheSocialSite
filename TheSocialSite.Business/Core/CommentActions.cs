@@ -17,8 +17,8 @@ namespace TheSocialSite.Business.Core
             using (var context = new AppDbContext())
             {
                 var comments = context.Comments
-                    .Where(c => c.PostId == postId)
                     .Include(c => c.Author)
+                    .Where(c => c.PostId == postId)
                     .OrderBy(c => c.CreatedAt)
                     .ToList();
 
@@ -31,8 +31,8 @@ namespace TheSocialSite.Business.Core
                         Id = c.Id,
                         PostId = c.PostId,
                         AuthorId = c.AuthorId,
-                        AuthorAvatar = c.Author.Avatar,
-                        AuthorUsername = c.Author.Username,
+                        AuthorAvatar = c.Author?.AvatarUrl,
+                        AuthorUsername = c.Author?.Username,
                         Content = c.Content,
                         CreatedAt = c.CreatedAt,
                         UpdatedAt = c.UpdatedAt
@@ -49,6 +49,7 @@ namespace TheSocialSite.Business.Core
                 var comment = context.Comments
                     .Include(c => c.Author)
                     .FirstOrDefault(c => c.Id == commentId);
+
                 if (comment == null)
                     return new CommentActionResponse
                     {
@@ -65,8 +66,8 @@ namespace TheSocialSite.Business.Core
                         Id = comment.Id,
                         PostId = comment.PostId,
                         AuthorId = comment.AuthorId,
-                        AuthorAvatar = comment.Author.Avatar,
-                        AuthorUsername = comment.Author.Username,
+                        AuthorAvatar = comment.Author?.AvatarUrl,
+                        AuthorUsername = comment.Author?.Username,
                         Content = comment.Content,
                         CreatedAt = comment.CreatedAt,
                         UpdatedAt = comment.UpdatedAt
@@ -105,8 +106,8 @@ namespace TheSocialSite.Business.Core
                         Id = comment.Id,
                         PostId = comment.PostId,
                         AuthorId = comment.AuthorId,
-                        AuthorUsername = author?.Username ?? "",
-                        AuthorAvatar = author?.Avatar,
+                        AuthorUsername = author?.Username,
+                        AuthorAvatar = author?.AvatarUrl,
                         Content = comment.Content,
                         CreatedAt = comment.CreatedAt
                     }
@@ -115,40 +116,40 @@ namespace TheSocialSite.Business.Core
         }
 
         // Update a comment (only by the author)
-        public DefaultActionResponse UpdateCommentActionExecution(string commentId, string userId, string newContent)
+        public CommentActionResponse UpdateCommentActionExecution(string commentId, string userId, string newContent)
         {
             using (var context = new AppDbContext())
             {
                 var comment = context.Comments.FirstOrDefault(c => c.Id == commentId);
                 if (comment == null)
-                    return new DefaultActionResponse { IsValid = false, Message = "Comment not found" };
+                    return new CommentActionResponse { IsValid = false, Message = "Comment not found" };
 
                 if (comment.AuthorId != userId)
-                    return new DefaultActionResponse { IsValid = false, Message = "Not authorized to edit this comment" };
+                    return new CommentActionResponse { IsValid = false, Message = "Not authorized to edit this comment" };
 
                 comment.Content = newContent;
                 comment.UpdatedAt = DateTime.UtcNow;
 
                 context.SaveChanges();
-                return new DefaultActionResponse { IsValid = true, Message = "Comment updated successfully" };
+                return new CommentActionResponse { IsValid = true, Message = "Comment updated successfully" };
             }
         }
 
         // Delete a comment (only by the author)
-        public DefaultActionResponse DeleteCommentActionExecution(string commentId, string userId)
+        public CommentActionResponse DeleteCommentActionExecution(string commentId, string userId)
         {
             using (var context = new AppDbContext())
             {
                 var comment = context.Comments.FirstOrDefault(c => c.Id == commentId);
                 if (comment == null)
-                    return new DefaultActionResponse { IsValid = false, Message = "Comment not found" };
+                    return new CommentActionResponse { IsValid = false, Message = "Comment not found" };
 
                 if (comment.AuthorId != userId)
-                    return new DefaultActionResponse { IsValid = false, Message = "Not authorized to delete this comment" };
+                    return new CommentActionResponse { IsValid = false, Message = "Not authorized to delete this comment" };
 
                 context.Comments.Remove(comment);
                 context.SaveChanges();
-                return new DefaultActionResponse { IsValid = true, Message = "Comment deleted successfully" };
+                return new CommentActionResponse { IsValid = true, Message = "Comment deleted successfully" };
             }
         }
     }

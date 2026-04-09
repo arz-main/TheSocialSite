@@ -12,11 +12,11 @@ namespace TheSocialSite.Business.Interfaces
 {
     public interface IUserInteractAction
     {
-        public List<UserDto> GetAllUsersAction();
-        public UserDto GetUserByIdAction(string userId);
-        public SignupActionResponse CreateUserAction(UserSignupDto userData);
-        public DefaultActionResponse UpdateUserAction(string userId, UpdateUserDto data);
-        public DefaultActionResponse DeleteUserAction(string userId);
+        public UserActionResponse GetAllUsersAction();
+        public UserActionResponse GetUserByIdAction(string userId);
+        public UserActionResponse CreateUserAction(CreateUserDto userData);
+        public UserActionResponse UpdateUserAction(string userId, UpdateUserDto data);
+        public UserActionResponse DeleteUserAction(string userId);
 
     }
 }

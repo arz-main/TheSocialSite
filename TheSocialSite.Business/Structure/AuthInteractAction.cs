@@ -11,15 +11,15 @@ namespace TheSocialSite.Business.Structure
 {
     public class AuthInteractAction : AuthActions, IAuthInteractAction
     {
-        public SignupActionResponse UserSignupValidationAction(UserSignupDto userData)
+        public UserActionResponse UserSignupValidationAction(CreateUserDto userData)
         {
             return UserSignupValidationExecution(userData);
         }
-        public LoginActionResponse UserLoginDataValidationAction(UserLoginDto loginData)
+        public JwtActionResponse UserLoginDataValidationAction(UserLoginDto loginData)
         {
             return UserLoginDataValidationExecution(loginData);
         }
-        public LoginActionResponse RefreshTokenAction(string userId)
+        public JwtActionResponse RefreshTokenAction(string userId)
         {
             return RefreshTokenActionExecution(userId);
         }

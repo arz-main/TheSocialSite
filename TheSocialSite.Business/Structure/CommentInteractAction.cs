@@ -27,12 +27,12 @@ namespace TheSocialSite.Business.Structure
             return CreateCommentActionExecution(postId, content, userId);
         }
 
-        public DefaultActionResponse UpdateCommentAction(string commentId, string userId, string newContent)
+        public CommentActionResponse UpdateCommentAction(string commentId, string userId, string newContent)
         {
             return UpdateCommentActionExecution(commentId, userId, newContent);
         }
 
-        public DefaultActionResponse DeleteCommentAction(string commentId, string userId)
+        public CommentActionResponse DeleteCommentAction(string commentId, string userId)
         {
             return DeleteCommentActionExecution(commentId, userId);
         }

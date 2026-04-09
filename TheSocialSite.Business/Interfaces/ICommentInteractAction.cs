@@ -17,9 +17,9 @@ namespace TheSocialSite.Business.Interfaces
 
         CommentActionResponse CreateCommentAction(string postId, string content, string userId);
 
-        DefaultActionResponse UpdateCommentAction(string commentId, string userId, string newContent);
+        CommentActionResponse UpdateCommentAction(string commentId, string userId, string newContent);
 
-        DefaultActionResponse DeleteCommentAction(string commentId, string userId);
+        CommentActionResponse DeleteCommentAction(string commentId, string userId);
     }
 }
 

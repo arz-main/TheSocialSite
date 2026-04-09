@@ -21,15 +21,15 @@ namespace TheSocialSite.Business.Structure
         {
             return GetUserPostsActionExecution(id);
         }
-        public DefaultActionResponse CreatePostAction(CreatePostDto postData, string userId)
+        public PostActionResponse CreatePostAction(CreatePostDto postData, string userId)
         {
             return CreatePostActionExecution(postData, userId);
         }
-        public PostActionResponse GetPostsByIdAction(string postId)
+        public PostActionResponse GetPostByIdAction(string postId)
         {
-            return GetPostsByIdActionExecution(postId);
+            return GetPostByIdActionExecution(postId);
         }
-        public DefaultActionResponse DeletePostAction(string id)
+        public PostActionResponse DeletePostAction(string id)
         {
             return DeletePostActionExecution(id);
         }

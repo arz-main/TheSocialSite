@@ -7,11 +7,11 @@ using TheSocialSite.Domain.Models.Badge;
 
 namespace TheSocialSite.Domain.Models.Response
 {
-    public class BadgeActionResponse
+    public class BadgeTemplateActionResponse
     {
         public bool IsValid { get; set; }
         public string Message { get; set; }
-        public BadgeDto? Badge { get; set; }
-        public List<BadgeDto>? Badges { get; set; }
+        public BadgeTemplateDto? BadgeTemplate { get; set; }
+        public List<BadgeTemplateDto>? BadgeTemplates { get; set; }
     }
 }

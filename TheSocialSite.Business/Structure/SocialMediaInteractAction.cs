@@ -7,7 +7,7 @@ using TheSocialSite.Business.Core;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Entities.User;
 using TheSocialSite.Domain.Models.Response;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.SocialMedia;
 
 namespace TheSocialSite.Business.Structure
 {
@@ -18,7 +18,7 @@ namespace TheSocialSite.Business.Structure
             return GetSocialMediaActionExecution(userId);
         }
 
-        public SocialMediaActionResponse CreateSocialMediaAction(SocialMediaDto links)
+        public SocialMediaActionResponse CreateSocialMediaAction(CreateSocialMediaDto links)
         {
             return CreateSocialMediaActionExecution(links);
         }

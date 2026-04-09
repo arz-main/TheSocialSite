@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TheSocialSite.Domain.Entities.User;
 
-namespace TheSocialSite.Domain.Entities.User
+namespace TheSocialSite.Domain.Entities.SocialMedia
 {
-    public class SocialMedia
+    public class SocialMediaData
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

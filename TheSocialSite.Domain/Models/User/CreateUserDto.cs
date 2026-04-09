@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TheSocialSite.Domain.Models.Response
 {
-    public class UserSignupDto
+    public class CreateUserDto
     {
         [MaxLength(100)]
         public string Username { get; set; }

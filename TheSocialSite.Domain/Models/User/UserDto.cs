@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheSocialSite.Domain.Entities.SocialMedia;
 using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Models.User
@@ -19,8 +20,7 @@ namespace TheSocialSite.Domain.Models.User
         public string? Bio { get; set; }
         public string? Location { get; set; }
         public string? Website { get; set; }
-        public SocialMedia? SocialLinks { get; set; }
-        public int? PostsCount { get; set; }
+        public SocialMediaData? SocialMedia { get; set; }
         public DateTime JoinedDate { get; set; }
     }
 }

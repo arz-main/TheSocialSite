@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using TheSocialSite.DataAccess.Context;
+using TheSocialSite.Domain.Entities.SocialMedia;
 using TheSocialSite.Domain.Entities.User;
 using TheSocialSite.Domain.Models.Response;
-using TheSocialSite.Domain.Models.User;
+using TheSocialSite.Domain.Models.SocialMedia;
 
 namespace TheSocialSite.Business.Core
 {
@@ -40,30 +42,30 @@ namespace TheSocialSite.Business.Core
                 {
                     IsValid = true,
                     Message = "Social links retrieved successfully",
-                    Links = dto
+                    SocialMediaDto = dto
                 };
             }
         }
 
         // --- Create ---
-        public SocialMediaActionResponse CreateSocialMediaActionExecution(SocialMediaDto dto)
+        public SocialMediaActionResponse CreateSocialMediaActionExecution(CreateSocialMediaDto dto)
         {
             using (var _userContext = new AppDbContext())
             {
                 var exists = _userContext.SocialMedia
-                    .Any(sl => sl.UserId == dto.UserId);
+                    .Any(sm => sm.UserId == dto.UserId);
 
                 if (exists)
                     return new SocialMediaActionResponse
                     {
                         IsValid = false,
-                        Message = "Social links already exist for this user"
+                        Message = "Social media already exists for this user"
                     };
 
                 // Map DTO to EF entity
-                var entity = new SocialMedia
+                var entity = new SocialMediaData
                 {
-                    UserId = dto.UserId,
+                    UserId  = dto.UserId,
                     Twitter = dto.Twitter,
                     YouTube = dto.YouTube,
                     Discord = dto.Discord,
@@ -78,7 +80,6 @@ namespace TheSocialSite.Business.Core
                 {
                     IsValid = true,
                     Message = "Social links created successfully",
-                    Links = dto
                 };
             }
         }
@@ -89,13 +90,13 @@ namespace TheSocialSite.Business.Core
             using (var _userContext = new AppDbContext())
             {
                 var existing = _userContext.SocialMedia
-                    .FirstOrDefault(sl => sl.UserId == dto.UserId);
+                    .FirstOrDefault(sm => sm.UserId == dto.UserId);
 
                 if (existing == null)
                     return new SocialMediaActionResponse
                     {
                         IsValid = false,
-                        Message = "Social links not found"
+                        Message = "Social media not found"
                     };
 
                 existing.Twitter = dto.Twitter;
@@ -109,8 +110,7 @@ namespace TheSocialSite.Business.Core
                 return new SocialMediaActionResponse
                 {
                     IsValid = true,
-                    Message = "Social links updated successfully",
-                    Links = dto
+                    Message = "Social media updated successfully",
                 };
             }
         }
@@ -127,7 +127,7 @@ namespace TheSocialSite.Business.Core
                     return new SocialMediaActionResponse
                     {
                         IsValid = false,
-                        Message = "Social links not found"
+                        Message = "Social media not found"
                     };
 
                 _userContext.SocialMedia.Remove(existing);
@@ -136,7 +136,7 @@ namespace TheSocialSite.Business.Core
                 return new SocialMediaActionResponse
                 {
                     IsValid = true,
-                    Message = "Social links deleted successfully"
+                    Message = "Social media deleted successfully"
                 };
             }
         }

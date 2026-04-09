@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheSocialSite.Domain.Models.User;
 
 namespace TheSocialSite.Domain.Models.Response
 {
-    public class SignupActionResponse
+    public class UserActionResponse
     {
-        public string Email { get; set; }
-        public string? Username { get; set; }
         public bool IsValid { get; set; }
-        public string? Message { get; set; }
+        public string Message { get; set; }
+        public UserDto? UserDto { get; set; }
+        public List<UserDto>? UserDtos { get; set; } = [];
     }
 }

@@ -12,8 +12,8 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260404230109_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260409211216_AddedBadgeTemplates")]
+    partial class AddedBadgeTemplates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,67 @@ namespace TheSocialSite.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BadgeTemplateData", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CriteriaTarget")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IconUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Tier")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BadgeTemplates");
+                });
+
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.Badge.UserBadgeData", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BadgeTemplateId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("EarnedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BadgeTemplateId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserBadges");
+                });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Comment.CommentData", b =>
                 {
@@ -104,7 +165,7 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.User.SocialMedia", b =>
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.SocialMedia.SocialMediaData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,7 +211,7 @@ namespace TheSocialSite.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Avatar")
+                    b.Property<string>("AvatarUrl")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
@@ -175,9 +236,6 @@ namespace TheSocialSite.DataAccess.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int?>("PostsCount")
-                        .HasColumnType("int");
-
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
@@ -193,6 +251,25 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.Badge.UserBadgeData", b =>
+                {
+                    b.HasOne("BadgeTemplateData", "BadgeTemplate")
+                        .WithMany("UserBadges")
+                        .HasForeignKey("BadgeTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BadgeTemplate");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Comment.CommentData", b =>
@@ -225,15 +302,20 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.User.SocialMedia", b =>
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.SocialMedia.SocialMediaData", b =>
                 {
                     b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "User")
-                        .WithOne("SocialLinks")
-                        .HasForeignKey("TheSocialSite.Domain.Entities.User.SocialMedia", "UserId")
+                        .WithOne("SocialMedia")
+                        .HasForeignKey("TheSocialSite.Domain.Entities.SocialMedia.SocialMediaData", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BadgeTemplateData", b =>
+                {
+                    b.Navigation("UserBadges");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostData", b =>
@@ -243,7 +325,7 @@ namespace TheSocialSite.DataAccess.Migrations
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
                 {
-                    b.Navigation("SocialLinks");
+                    b.Navigation("SocialMedia");
                 });
 #pragma warning restore 612, 618
         }
