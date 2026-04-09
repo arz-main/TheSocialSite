@@ -18,15 +18,13 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, []);
 
     useEffect(() => {
-        const requestInterceptor = axiosInstance.interceptors.request.use(
-            (config) => {
-                const token = localStorage.getItem("token");
-                if (token) {
-                    config.headers.Authorization = `Bearer ${token}`;
-                }
-                return config;
+        const requestInterceptor = axiosInstance.interceptors.request.use((config) => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
             }
-        );
+            return config;
+        });
 
         const responseInterceptor = axiosInstance.interceptors.response.use(
             (response: AxiosResponse) => response,
@@ -39,9 +37,6 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                         case 403:
                             navigate(paths.error.forbidden);
                             break;
-                        case 500:
-                            navigate(paths.error.internal_server_error);
-                            break;
                     }
                 }
                 return Promise.reject(error);
@@ -53,21 +48,7 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             axiosInstance.interceptors.response.eject(responseInterceptor);
         };
     }, [axiosInstance, navigate]);
-    //This replaces having to manually set the Authorization header in every service call, 
-    //Axios attaches it automatically on every request from now on
-    useEffect(() => {
-        const interceptor = axiosInstance.interceptors.request.use((config) => {
-            const token = localStorage.getItem("token");
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
-        });
 
-        return () => {
-            axiosInstance.interceptors.request.eject(interceptor);
-        };
-    }, [axiosInstance]);
     return (
         <AxiosContext.Provider value={{ axiosInstance }}>
             {children}

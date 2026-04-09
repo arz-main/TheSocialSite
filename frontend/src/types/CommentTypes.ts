@@ -1,9 +1,9 @@
 export interface Comment {
-    id: string
+    id: string;
 	postId: string;
 	authorId: string;
 	authorUsername: string; // optional because it might be null/undefined
-	authorAvatar?: string;   // optional
+	authorAvatarUrl?: string;   // optional
 	content: string;
 	createdAt: string;       // Date serialized as ISO string
 }

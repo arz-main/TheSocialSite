@@ -6,18 +6,27 @@ export type UsersContextType = {
     error: string | null;
     getUser: (userId: string) => Promise<User>;
     getAllUsers: () => Promise<User[]>;
-    updateUser: (userId: string, data: UpdateUserPayload) => Promise<UpdateUserPayload>;
+    updateUser: (userId: string, data: UpdateUserDto) => Promise<UpdateUserDto>;
     deleteUser: (userId: string) => Promise<void>;
+    createUser: (userData: CreateUserDto) => Promise<void>;
 };
 
-export type UpdateUserPayload = {
+export type UpdateUserDto = {
     email?: string;
     username?: string;
-    avatar?: string;
+    avatarUrl?: string;
     bio?: string;
     location?: string;
     website?: string;
     socialLinks?: SocialLinks;
+    role?: Role;
+};
+
+export interface CreateUserDto {
+    username: string,
+    email: string,
+    password: string
+    confirmPassword: string;
 };
 
 export type User = {
@@ -25,7 +34,7 @@ export type User = {
     email: string;
     username: string;
     role: Role;
-    avatar: string;
+    avatarUrl: string;
     bio: string;
     location: string;
     website: string;

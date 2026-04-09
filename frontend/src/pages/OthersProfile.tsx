@@ -32,7 +32,7 @@ export default function OthersProfile() {
 
     const { getUser } = useUsers();
     const { getUserPosts } = usePosts();
-    const { getComments, postComment } = useComments();
+    const { getComments, postComment, loading: loadingComments } = useComments();
     const { userId } = useParams();
 
     useEffect(() => {
@@ -76,7 +76,7 @@ export default function OthersProfile() {
             content: raw.content,
             authorId: raw.authorId,
             authorUsername: raw.authorUsername,
-            authorAvatar: raw.authorAvatar,
+            authorAvatarUrl: raw.authorAvatarUrl,
             createdAt: raw.createdAt,
         };
         setComments(prev => [...prev, normalized]);
@@ -119,7 +119,7 @@ export default function OthersProfile() {
                             {/* Avatar overlapping banner */}
                             <div className="absolute -top-14 left-8">
                                 <AvatarFallback
-                                    src={user.avatar}
+                                    src={user.avatarUrl}
                                     alt={user.username ?? ""}
                                     size={112}
                                     className="ring-4 ring-card shadow-lg"
@@ -341,6 +341,7 @@ export default function OthersProfile() {
                         likedDrawings={likedPosts}
                         imageIndex={imageIndex}
                         newComment={newComment}
+                        loading={loadingComments}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

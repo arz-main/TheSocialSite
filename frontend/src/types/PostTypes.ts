@@ -6,8 +6,9 @@ export interface Post {
 	id: string;
 	title: string,
 	description: string,
-	author: User;
 	authorId: string;
+	authorUsername: string;
+	authorAvatarUrl: string;
 	status: PostStatus;
 	imageUrl: string;
 	category: string;

@@ -67,13 +67,6 @@ const App = () => {
 						</ProtectedRoute>
 					} />
 
-					{/* admin only */}
-					<Route path={paths.admin.dashboard} element={
-						<ProtectedRoute allowedRoles={["Admin"]}>
-							<AdminDashboard />
-						</ProtectedRoute>
-					} />
-
 					<Route path={paths.admin.course_creator} element={
 						<ProtectedRoute allowedRoles={["Admin"]}>
 							<AdminCourseCreator />
@@ -86,6 +79,12 @@ const App = () => {
 					<Route path={paths.artist.messages} element={
 						<ProtectedRoute allowedRoles={["User", "Admin"]}>
 							<Messages />
+						</ProtectedRoute>
+					} />
+
+					<Route path={paths.admin.dashboard} element={
+						<ProtectedRoute allowedRoles={["Admin"]}>
+							<AdminDashboard />
 						</ProtectedRoute>
 					} />
 					<Route path={paths.practice} element={<Practice />} />

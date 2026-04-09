@@ -10,8 +10,8 @@ import { UsersProvider } from './providers/UsersProvider.tsx';
 import { SignalRProvider } from './providers/SignalRProvider.tsx';
 import { SocialMediaProvider } from './providers/SocialMediaProvider.tsx';
 import { ThemeProvider } from "next-themes";
-import { AdminProvider } from './providers/AdminProvider.tsx';
 import { CommentsProvider } from './providers/CommentsProvider.tsx';
+import { BadgeTemplatesProvider } from './providers/BadgeTemplatesProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -24,9 +24,9 @@ createRoot(document.getElementById('root')!).render(
                                 <UsersProvider>
                                     <PostsProvider>
                                         <SocialMediaProvider>
-                                            <AdminProvider>
+                                            <BadgeTemplatesProvider>
                                                 <App />
-                                            </AdminProvider>
+                                            </BadgeTemplatesProvider>
                                         </SocialMediaProvider>
                                     </PostsProvider>
                                 </UsersProvider>

@@ -4,55 +4,6 @@ import { ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, AreaChart, A
 import type { CategoryItem, StatisticsCardProp } from "../types/StatisticsPageTypes";
 import { computeStreak, formatMonthLabel, groupIntoWeeks } from "../utils/StatisticsPageUtils";
 
-// export function SpeedTrend({ data }: { data: SpeedData[] }) {
-//     return (
-//         <div className="rounded-2xl bg-card p-5 shadow-sm flex flex-col">
-//             <SectionHeader
-//                 title="Avg Drawing Time"
-//                 subtitle="Minutes per drawing — improving over time"
-//             />
-//             <div className="flex-1 min-h-0">
-//                 <ResponsiveContainer width="100%" height="100%">
-//                     <LineChart
-//                         data={data}
-//                         margin={{ top: 4, right: 4, left: -30, bottom: 0 }}
-//                     >
-//                         <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-//                         <XAxis
-//                             dataKey="name"
-//                             tick={{ fill: "var(--text-opaque)", fontSize: 10 }}
-//                             axisLine={false}
-//                             tickLine={false}
-//                         />
-//                         <YAxis
-//                             tick={{ fill: "var(--text-opaque)", fontSize: 10 }}
-//                             axisLine={false}
-//                             tickLine={false}
-//                         />
-//                         <Tooltip
-//                             contentStyle={{
-//                                 backgroundColor: "var(--card)",
-//                                 border: "none",
-//                                 borderRadius: 8,
-//                                 color: "var(--text)",
-//                                 fontSize: 12,
-//                             }}
-//                             labelStyle={{ color: "var(--text-opaque)" }}
-//                         />
-//                         <Line
-//                             type="monotone"
-//                             dataKey="minutes"
-//                             stroke="var(--accent)"
-//                             strokeWidth={2}
-//                             dot={{ fill: "var(--accent)", r: 3 }}
-//                         />
-//                     </LineChart>
-//                 </ResponsiveContainer>
-//             </div>
-//         </div>
-//     );
-// }
-
 export function StreakBanner({ streak, longestStreak, totalDays }: { streak: number; longestStreak: number; totalDays: number }) {
     return (
         <div className="rounded-2xl bg-linear-to-r from-primary to-primary/70 p-5 text-white shadow-sm flex flex-wrap gap-6 items-center">

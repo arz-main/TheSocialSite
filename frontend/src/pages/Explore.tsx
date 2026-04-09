@@ -10,14 +10,8 @@ import { usePosts } from "../hooks/usePosts";
 import { useComments } from "../hooks/useComments";
 import { Input } from "../components/BasicInput";
 import ErrorScreen from "../components/ErrorScreen";
-// import { useAuth } from "../hooks/useAuth";
 
 const PAGE_SIZE = 9;
-
-const safeDate = (str: string | null | undefined): string => {
-    if (!str) return new Date().toISOString();
-    return str.replace(/(\.\d{3})\d+/, "$1");
-};
 
 export default function ExplorePage() {
     // data
@@ -41,8 +35,7 @@ export default function ExplorePage() {
 
     // hooks
     const { getAllPosts, loading: loadingPosts, error: errorPosts } = usePosts();
-    const { getComments, postComment } = useComments();
-    // const { currentUser } = useAuth();
+    const { getComments, postComment, loading } = useComments();
 
     // fetch posts
     useEffect(() => {
@@ -94,19 +87,10 @@ export default function ExplorePage() {
     }, [getComments]);
 
     const handleSubmitComment = useCallback(async (postId: string, content: string) => {
-        const raw = await postComment(postId, content);
-        const normalized: Comment = {
-            id: raw.id,
-            postId: raw.postId,
-            content: raw.content,
-            authorId: raw.authorId,
-            authorUsername: raw.authorUsername,
-            authorAvatar: raw.authorAvatar,
-            createdAt: safeDate(raw.createdAt),
-        };
-        setComments((prev) => [...prev, normalized]);
+        const comment = await postComment(postId, content);
+        setComments((prev) => [...prev, comment]);
         setCommentCounts((prev) => ({ ...prev, [postId]: (prev[postId] ?? 0) + 1 }));
-        return normalized;
+        return comment;
     }, [postComment]);
 
     const closeModal = () => {
@@ -206,6 +190,7 @@ export default function ExplorePage() {
                         likedDrawings={likedDrawings}
                         imageIndex={imageIndex}
                         newComment={newComment}
+                        loading={loading}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

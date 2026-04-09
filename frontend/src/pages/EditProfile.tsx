@@ -5,8 +5,7 @@ import { Camera, Save, Palette, CheckCircle2, X, Trash2, AlertTriangle } from "l
 import { Button } from "../components/BasicButton";
 import { Card } from "../components/Card";
 import { Input } from "../components/BasicInput";
-import { Label } from "../components/LabelComponent";
-import { Textarea } from "../components/TextArea";
+import { Label } from "../components/Label";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
 import { useUsers } from "../hooks/useUsers";
@@ -15,6 +14,7 @@ import type { EditProfileForm, SocialLinks } from "../types/UserTypes";
 import { defaultEditProfileForm } from "../types/UserTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
 import LoadingScreen from "../components/LoadingScreen";
+import { Textarea } from "../components/Textrea";
 
 const socialPlatforms: { key: keyof SocialLinks; label: string; type: string }[] = [
     { key: "twitter", label: "Twitter / X", type: "url" },
@@ -59,7 +59,7 @@ export default function EditProfile() {
                     bio: userData.bio ?? "",
                     location: userData.location ?? "",
                     website: userData.website ?? "",
-                    avatar: userData.avatar ?? null,
+                    avatar: userData.avatarUrl ?? null,
                     socialMedia: {
                         twitter: social?.twitter ?? "",
                         pinterest: social?.pinterest ?? "",
@@ -127,7 +127,7 @@ export default function EditProfile() {
                 bio: form.bio,
                 location: form.location,
                 website: form.website,
-                avatar: form.avatar,
+                avatarUrl: form.avatar,
             });
 
             const socialPayload: SocialMediaDto = {

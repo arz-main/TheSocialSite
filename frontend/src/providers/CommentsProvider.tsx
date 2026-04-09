@@ -34,7 +34,6 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
             setLoading(true);
             setError(null);
             const { data } = await axios.post<CommentActionResponse>(`/comments/create`, { content, postId });
-            console.log("CommentActionResponse:", data);
             const comment = data.commentDto as Comment;
             const existing = cache.current.get(postId) ?? [];
             cache.current.set(postId, [...existing, comment]);

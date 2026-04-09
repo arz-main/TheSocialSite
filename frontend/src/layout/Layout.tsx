@@ -8,13 +8,11 @@ interface LayoutProps {
 
 const Layout = ({ noScroll = false }: LayoutProps) => {
     return (
-        <div className={`flex flex-col min-h-screen ${noScroll ? "overflow-hidden" : ""}`}>
+        <div className={`flex flex-col ${noScroll ? "h-screen overflow-hidden" : "min-h-screen"}`}>
             <Navbar />
-
-            <main className={`flex-1 pt-16 ${noScroll ? "overflow-hidden" : ""}`}>
+            <main className={`flex-1 pt-16 flex flex-col ${noScroll ? "overflow-auto" : ""}`}>
                 <Outlet />
             </main>
-
             {!noScroll && <Footer />}
         </div>
     );

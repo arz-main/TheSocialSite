@@ -43,8 +43,8 @@ export function UserBanner({
 						className="w-16 h-16 rounded-full overflow-hidden shrink-0 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
 						onClick={() => onUserClick(user.id)}
 					>
-						{user.avatar ? (
-							<img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
+						{user.avatarUrl ? (
+							<img src={user.avatarUrl} alt={user.username} className="w-full h-full object-cover" />
 						) : (
 							<div className="w-full h-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-2xl">
 								{user.username.charAt(0)}
@@ -86,6 +86,7 @@ interface CommentsModalProps {
 	likedDrawings: Set<string>;
 	imageIndex: number;
 	newComment: string;
+	loading: boolean;
 	onChangeImageIndex: (index: number) => void;
 	onChangeNewComment: (text: string) => void;
 	onSubmitComment?: (postId: string, content: string) => Promise<Comment>;
@@ -99,6 +100,7 @@ export function CommentsModal({
 	likedDrawings,
 	imageIndex,
 	newComment,
+	loading,
 	onChangeNewComment,
 	onSubmitComment,
 	toggleLike,
@@ -107,7 +109,7 @@ export function CommentsModal({
 	const commentsEndRef = useRef<HTMLDivElement>(null);
 	const navigate = useNavigate();
 	const { currentUser } = useAuth();
-	
+
 	const handleUserClick = (userId: string) => {
 		if (userId === currentUser?.id) navigate(paths.artist.profile);
 		else navigate(paths.explore.toUser(userId));
@@ -123,9 +125,13 @@ export function CommentsModal({
 
 	const submitComment = async () => {
 		const text = newComment.trim();
-		if (!text) return;
-		await onSubmitComment?.(post.id, text);
-		onChangeNewComment("");
+		if (!text || loading) return;
+		try {
+			await onSubmitComment?.(post.id, text);
+			onChangeNewComment("");
+		} catch (err) {
+			console.error("Failed to submit comment:", err);
+		}
 	};
 
 	useEffect(() => {
@@ -176,7 +182,7 @@ export function CommentsModal({
 					>
 						<ImageFallback
 							src={post.imageUrl}
-							alt={`Image by ${post.author.username}`}
+							alt={`Image by ${post.authorUsername}`}
 							className="object-contain w-full h-full"
 						/>
 					</motion.div>
@@ -198,22 +204,22 @@ export function CommentsModal({
 				<div className="flex items-center gap-3 px-4 py-3 border-b border-border shrink-0">
 					<div
 						className="w-8 h-8 rounded-full overflow-hidden shrink-0 cursor-pointer ring-1 ring-border hover:ring-primary transition-all"
-						onClick={() => handleUserClick(post.author.id)}
+						onClick={() => handleUserClick(post.authorId)}
 					>
-						{post.author.avatar ? (
-							<img src={post.author.avatar} alt={post.author.username} className="w-full h-full object-cover" />
+						{post.authorAvatarUrl ? (
+							<img src={post.authorAvatarUrl} alt={post.authorUsername} className="w-full h-full object-cover" />
 						) : (
 							<div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
-								{post.author.username?.charAt(0)?.toUpperCase()}
+								{post.authorUsername?.charAt(0)?.toUpperCase()}
 							</div>
 						)}
 					</div>
 					<div className="flex-1 min-w-0">
 						<span
 							className="text-text font-semibold text-sm cursor-pointer hover:underline block truncate"
-							onClick={() => handleUserClick(post.author.id)}
+							onClick={() => handleUserClick(post.authorId)}
 						>
-							{post.author.username}
+							{post.authorUsername}
 						</span>
 						<span className="text-muted text-xs">{formatDate(post.createdAt)}</span>
 					</div>
@@ -238,8 +244,8 @@ export function CommentsModal({
 								className="w-7 h-7 rounded-full bg-card border border-border flex items-center justify-center shrink-0 mt-0.5 cursor-pointer overflow-hidden group-hover:ring-2 group-hover:ring-primary/30 transition-all"
 								onClick={() => handleUserClick(comment.authorId)}
 							>
-								{comment.authorAvatar ? (
-									<img src={comment.authorAvatar} alt={comment.authorUsername} className="w-full h-full object-cover" />
+								{comment.authorAvatarUrl ? (
+									<img src={comment.authorAvatarUrl} alt={comment.authorUsername} className="w-full h-full object-cover" />
 								) : (
 									<span className="text-xs font-semibold text-muted">
 										{comment.authorUsername?.charAt(0)?.toUpperCase()}
@@ -274,8 +280,8 @@ export function CommentsModal({
 				<div className="px-4 py-3 border-t border-border shrink-0">
 					<div className="flex items-center gap-2.5 rounded-xl px-3 py-2 border border-border bg-background focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/20 transition-all">
 						<div className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-card border border-border flex items-center justify-center">
-							{currentUser?.avatar ? (
-								<img src={currentUser.avatar} alt={currentUser.username} className="w-full h-full object-cover" />
+							{currentUser?.avatarUrl ? (
+								<img src={currentUser.avatarUrl} alt={currentUser.username} className="w-full h-full object-cover" />
 							) : (
 								<span className="text-xs font-semibold text-muted">
 									{currentUser?.username?.charAt(0)?.toUpperCase()}
@@ -287,6 +293,7 @@ export function CommentsModal({
 							value={newComment}
 							onChange={(e) => onChangeNewComment(e.target.value)}
 							onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && submitComment()}
+							disabled = {loading}
 							placeholder="Add a comment…"
 							className="flex-1 bg-transparent text-text text-sm placeholder:text-muted focus:outline-none"
 						/>
@@ -449,7 +456,7 @@ export function PostCard({
 					>
 						<ImageFallback
 							src={post.imageUrl}
-							alt={`Drawing by ${post.author.username}`}
+							alt={`Drawing by ${post.authorUsername}`}
 							className="w-full h-full object-cover"
 						/>
 					</motion.div>
@@ -486,13 +493,13 @@ export function PostCard({
 					{/* Author avatar */}
 					<div
 						className="w-7 h-7 rounded-full overflow-hidden shrink-0 cursor-pointer ring-1 ring-muted hover:ring-primary transition-all"
-						onClick={(e) => handleUserClick(e, post.author.id)}
+						onClick={(e) => handleUserClick(e, post.authorId)}
 					>
-						{post.author.avatar ? (
-							<img src={post.author.avatar} alt={post.author.username} className="w-full h-full object-cover" />
+						{post.authorAvatarUrl ? (
+							<img src={post.authorAvatarUrl} alt={post.authorUsername} className="w-full h-full object-cover" />
 						) : (
 							<div className="w-full h-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
-								{post.author.username?.charAt(0)?.toUpperCase()}
+								{post.authorUsername?.charAt(0)?.toUpperCase()}
 							</div>
 						)}
 					</div>
@@ -501,9 +508,9 @@ export function PostCard({
 					<div className="flex-1 min-w-0">
 						<span
 							className="text-text text-xs font-semibold truncate block cursor-pointer hover:underline"
-							onClick={(e) => handleUserClick(e, post.author.id)}
+							onClick={(e) => handleUserClick(e, post.authorId)}
 						>
-							{post.author.username}
+							{post.authorUsername}
 						</span>
 						<span className="text-text/40 text-xs">{formatDate(post.createdAt)}</span>
 					</div>

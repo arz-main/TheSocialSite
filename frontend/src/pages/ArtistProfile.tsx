@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { CalendarDays, ExternalLink, MapPin, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { ExternalLink, MapPin, CalendarDays, Settings } from "lucide-react";
-import { FaPinterest, FaTwitter, FaDeviantart, FaYoutube, FaDiscord } from "react-icons/fa";
-import { Badge as BadgeUI } from "../components/Badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
-import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
-import { usePosts } from "../hooks/usePosts";
-import { useComments } from "../hooks/useComments";
-import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
+import { useEffect, useState } from "react";
+import { FaDeviantart, FaDiscord, FaPinterest, FaTwitter, FaYoutube } from "react-icons/fa";
+import { useNavigate } from "react-router";
 import { AvatarFallback } from "../components/AvatarFallback";
-import { useAuth } from "../hooks/useAuth";
-import { useSocialMedia } from "../hooks/useSocialMedia";
-import type { Post } from "../types/PostTypes";
-import type { Comment } from "../types/CommentTypes";
-import type { SocialMediaDto } from "../types/SocialMediaTypes";
-import paths from "../routes/paths";
+import { Badge as BadgeUI } from "../components/Badge";
 import { Card } from "../components/Card";
+import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
+import { useAuth } from "../hooks/useAuth";
+import { useComments } from "../hooks/useComments";
+import { usePosts } from "../hooks/usePosts";
+import { useSocialMedia } from "../hooks/useSocialMedia";
+import paths from "../routes/paths";
+import type { Comment } from "../types/CommentTypes";
+import type { Post } from "../types/PostTypes";
+import type { SocialMediaDto } from "../types/SocialMediaTypes";
+import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 
 export default function ArtistProfile() {
     // data
@@ -36,7 +36,7 @@ export default function ArtistProfile() {
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const { getUserPosts } = usePosts();
-    const { getComments, postComment } = useComments();
+    const { getComments, postComment, loading: loadingComments } = useComments();
     const { getSocialMedia } = useSocialMedia();
 
     useEffect(() => {
@@ -83,7 +83,7 @@ export default function ArtistProfile() {
             content: raw.content,
             authorId: raw.authorId,
             authorUsername: raw.authorUsername,
-            authorAvatar: raw.authorAvatar,
+            authorAvatarUrl: raw.authorAvatarUrl,
             createdAt: raw.createdAt,
         };
         setComments(prev => [...prev, normalized]);
@@ -100,7 +100,7 @@ export default function ArtistProfile() {
 
     // ─── Derived ──────────────────────────────────────────
     const hasSocialLinks = !!socialMedia && Object.values(socialMedia).some(v => v && v !== currentUser.id);
-    const earnedBadges = currentUser.badges ? currentUser.badges.filter((b: any) => b.earned) : [];
+    const earnedBadges = currentUser.badges ? currentUser.badges.filter((b: any) => b.isEarned) : [];
     const rankBadge = currentUser.level || "Advanced Sketcher";
     const streak = currentUser.streak ?? 0;
     const postsCount = userPosts.length;
@@ -125,7 +125,7 @@ export default function ArtistProfile() {
                             {/* Avatar */}
                             <div className="absolute -top-14 left-8">
                                 <AvatarFallback
-                                    src={currentUser.avatar}
+                                    src={currentUser.avatarUrl}
                                     alt={currentUser.username ?? ""}
                                     size={112}
                                     className="ring-4 ring-card shadow-lg"
@@ -352,6 +352,7 @@ export default function ArtistProfile() {
                         likedDrawings={likedPosts}
                         imageIndex={imageIndex}
                         newComment={newComment}
+                        loading={loadingComments}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

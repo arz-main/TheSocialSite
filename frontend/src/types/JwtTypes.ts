@@ -9,3 +9,9 @@ export type JwtPayload = {
     aud: string;
 	"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": Role;
 }
+
+export type JwtActionResponse = {
+    isValid: boolean;
+    message: string;
+    token: string;
+};

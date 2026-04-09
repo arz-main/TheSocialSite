@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card } from "../components/Card";
 import { Mail } from "lucide-react";
 import { useState } from "react";
-import { Label } from "../components/LabelComponent";
+import { Label } from "../components/Label";
 import { Button } from "../components/BasicButton";
 import paths from "../routes/paths";
 import { Input } from "../components/BasicInput";

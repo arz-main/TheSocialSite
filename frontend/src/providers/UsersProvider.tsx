@@ -2,7 +2,7 @@ import { createContext, useCallback, useRef, useState } from "react";
 import { type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import { type User } from "../types/UserTypes";
-import type { UpdateUserPayload, UsersContextType } from "../types/UserTypes";
+import type { CreateUserDto, UpdateUserDto, UsersContextType } from "../types/UserTypes";
 
 export const UsersContext = createContext<UsersContextType | undefined>(undefined);
 
@@ -11,23 +11,8 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     const cache = useRef<Map<string, User>>(new Map());
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    
-    async function updateUser(userId: string, data: UpdateUserPayload): Promise<UpdateUserPayload> {
-        try {
-            setLoading(true);
-            setError(null);
-            await axios.put(`/users/${userId}`, data);
-            cache.current.delete(userId); // force fresh fetch next time
-            return data; // ✅ return what you sent
-        } catch (err) {
-            setError("Failed to update profile");
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    }
-    // ─── User Fetching ─────────────────────────────────────────────────────
 
+    // ─── User Fetching ─────────────────────────────────────────────────────
     const getUser = useCallback(async (userId: string): Promise<User> => {
         if (cache.current.has(userId)) return cache.current.get(userId)!;
         try {
@@ -73,8 +58,36 @@ export function UsersProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    async function createUser(userData: CreateUserDto): Promise<void> {
+        try {
+            setLoading(true);
+            setError(null);
+            await axios.post(`/users/create`, userData);
+        } catch (err) {
+            setError("Failed to create account");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function updateUser(userId: string, data: UpdateUserDto): Promise<UpdateUserDto> {
+        try {
+            setLoading(true);
+            setError(null);
+            await axios.put(`/users/${userId}`, data);
+            cache.current.delete(userId); // force fresh fetch next time
+            return data; //  return what you sent
+        } catch (err) {
+            setError("Failed to update profile");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
-        <UsersContext.Provider value={{ deleteUser, getUser, getAllUsers, updateUser, loading, error, }}>
+        <UsersContext.Provider value={{ createUser, deleteUser, getUser, getAllUsers, updateUser, loading, error, }}>
             {children}
         </UsersContext.Provider>
     );

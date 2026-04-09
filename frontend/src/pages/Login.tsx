@@ -5,9 +5,10 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "../components/BasicButton";
 import { Card } from "../components/Card";
 import { Input } from "../components/BasicInput";
-import { Label } from "../components/LabelComponent";
+import { Label } from "../components/Label";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
+import { FeedbackMessage } from "../components/FeedbackMessage";
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
@@ -48,11 +49,7 @@ export default function Login() {
                 <Card className="p-8">
                     <form onSubmit={handleSubmit} className="space-y-5">
 
-                        {error && (
-                            <div className="p-3 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm">
-                                {error}
-                            </div>
-                        )}
+                        <FeedbackMessage error={error}></FeedbackMessage>
 
                         {/* Email */}
                         <div className="space-y-1.5">
