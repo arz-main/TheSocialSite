@@ -21,5 +21,6 @@ namespace TheSocialSite.Domain.Models.Post
         public string Category { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsLiked { get; set; }
     }
 }

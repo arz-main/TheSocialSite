@@ -13,8 +13,11 @@ export const SignalRProvider: React.FC<{ children: React.ReactNode }> = ({ child
     useEffect(() => {
         const token = localStorage.getItem("token");
 
+        // Don't attempt connection without a token
+        if (!token) return;
+        
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl("http://localhost:5000/messages", {
+            .withUrl("https://localhost:7037/messages", {
                 accessTokenFactory: () => token || "",
             })
             .withAutomaticReconnect()

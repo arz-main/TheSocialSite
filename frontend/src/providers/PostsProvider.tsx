@@ -1,53 +1,63 @@
 import { createContext, useCallback, useRef, useState } from "react";
 import { type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
-import { type Post } from "../types/PostTypes";
-import type { PostsContextType, UpdatePostPayload } from "../types/PostTypes";
+import { type PostDto } from "../types/PostTypes";
+import type { PostActionResponse, PostsContextType, UpdatePostPayload } from "../types/PostTypes";
 
 export const PostsContext = createContext<PostsContextType | undefined>(undefined);
 
 export function PostsProvider({ children }: { children: ReactNode }) {
     const axios = useAxios()!;
-    const cache = useRef<Map<string, Post>>(new Map());
+    const cache = useRef<Map<string, PostDto>>(new Map());
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [likeLoading, setLikeLoading] = useState(false); // <-- add this
 
-    // ─── Post Updates ─────────────────────────────────────────────────────
-    async function updatePost(postId: string, data: UpdatePostPayload): Promise<void> {
+    const updatePost = useCallback(async (postId: string, data: UpdatePostPayload): Promise<void> => {
         try {
             setLoading(true);
             setError(null);
             await axios.put(`/posts/${postId}`, data);
-            cache.current.delete(postId); // force fresh fetch next time
+            cache.current.delete(postId);
         } catch (err) {
             setError("Failed to update post");
             throw err;
         } finally {
             setLoading(false);
         }
-    }
+    }, [axios]);
 
-    async function deletePost(postId: string): Promise<void> {
+    const deletePost = useCallback(async (postId: string): Promise<void> => {
         try {
             setLoading(true);
             setError(null);
             await axios.delete(`/posts/${postId}`);
-            cache.current.delete(postId); // remove from cache
+            cache.current.delete(postId);
         } catch (err) {
             setError("Failed to delete post");
             throw err;
         } finally {
             setLoading(false);
         }
-    }
+    }, [axios]);
 
-    // ─── Post Fetching ───────────────────────────────────────────────────
-    const getPost = useCallback(async (postId: string): Promise<Post> => {
+    const toggleLikePost = useCallback(async (postId: string): Promise<PostActionResponse> => {
+        try {
+            const { data } = await axios.post<PostActionResponse>(`/posts/toggle-like/${postId}`);
+            cache.current.delete(postId);
+            return data;
+        } catch (err) {
+            throw err;
+        }
+    }, [axios]);
+
+    const getPost = useCallback(async (postId: string): Promise<PostDto> => {
         if (cache.current.has(postId)) return cache.current.get(postId)!;
         try {
             setLoading(true);
             setError(null);
-            const { data } = await axios.get<Post>(`/posts/${postId}`);
+            // controller returns Ok(response.PostDto) — a single PostDto
+            const { data } = await axios.get<PostDto>(`/posts/${postId}`);
             cache.current.set(postId, data);
             return data;
         } catch (err) {
@@ -58,11 +68,12 @@ export function PostsProvider({ children }: { children: ReactNode }) {
         }
     }, [axios]);
 
-    const getAllPosts = useCallback(async (): Promise<Post[]> => {
+    const getAllPosts = useCallback(async (): Promise<PostDto[]> => {
         try {
             setLoading(true);
             setError(null);
-            const { data } = await axios.get<Post[]>("/posts");
+            // controller returns Ok(response.PostDtos) — a raw array
+            const { data } = await axios.get<PostDto[]>("/posts");
             data.forEach(post => cache.current.set(post.id, post));
             return data;
         } catch (err) {
@@ -73,11 +84,12 @@ export function PostsProvider({ children }: { children: ReactNode }) {
         }
     }, [axios]);
 
-    const getUserPosts = useCallback(async (userId: string): Promise<Post[]> => {
+    const getUserPosts = useCallback(async (userId: string): Promise<PostDto[]> => {
         try {
             setLoading(true);
             setError(null);
-            const { data } = await axios.get<Post[]>(`/posts/user/${userId}`);
+            // controller returns Ok(response.PostDtos) — a raw array
+            const { data } = await axios.get<PostDto[]>(`/posts/user/${userId}`);
             data.forEach(post => cache.current.set(post.id, post));
             return data;
         } catch (err) {
@@ -91,15 +103,9 @@ export function PostsProvider({ children }: { children: ReactNode }) {
     return (
         <PostsContext.Provider
             value={{
-                loading,
-                error,
-                getPost,
-                getAllPosts,
-                getUserPosts,
-                updatePost,
-                deletePost,
-            }}
-        >
+                loading, error, getPost, getAllPosts, getUserPosts,
+                updatePost, deletePost, toggleLikePost
+            }}>
             {children}
         </PostsContext.Provider>
     );

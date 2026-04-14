@@ -25,7 +25,8 @@ namespace TheSocialSite.Api.Controllers
         [HttpGet]
         public IActionResult GetPosts()
         {
-            var response = _postAction.GetAllPostsAction();
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetAllPostsAction(userId);
             if (!response.IsValid)
                 return BadRequest("Could not find posts");
 
@@ -35,7 +36,8 @@ namespace TheSocialSite.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult GetPostById([FromRoute] string id)
         {
-            var response = _postAction.GetPostByIdAction(id);
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetPostByIdAction(id, userId);
             if (!response.IsValid)
                 return BadRequest("Could not find posts");
 
@@ -45,7 +47,8 @@ namespace TheSocialSite.Api.Controllers
         [HttpGet("user/{id}")]
         public IActionResult GetUserPosts([FromRoute] string id)
         {
-            var response = _postAction.GetUserPostsAction(id);
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetUserPostsAction(id, userId);
             if (!response.IsValid)
                 return BadRequest("Could not find posts");
 
@@ -71,15 +74,14 @@ namespace TheSocialSite.Api.Controllers
         [Authorize]
         public IActionResult DeletePost([FromRoute] string id)
         {
-            var postResponse = _postAction.GetPostByIdAction(id);
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var postResponse = _postAction.GetPostByIdAction(id, userId);
             if (!postResponse.IsValid)
                 return BadRequest(postResponse.Message);
 
             // get from jwt
             var isAdmin = User.IsInRole("Admin");
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub); 
-
-            if (!isAdmin && userId != id)
+            if (!isAdmin && userId != postResponse.PostDto.AuthorId)
                 return Forbid();
 
             var deleteResponse = _postAction.DeletePostAction(id);
@@ -88,6 +90,17 @@ namespace TheSocialSite.Api.Controllers
                 return BadRequest(deleteResponse.Message);
 
             return Ok(deleteResponse.Message);
+        }
+
+        [Authorize]
+        [HttpPost("toggle-like/{id}")]
+        public IActionResult ToggleLikePost([FromRoute] string id)
+        {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.ToggleLikePostAction(id, userId);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
+            return Ok(response);
         }
     }
 }

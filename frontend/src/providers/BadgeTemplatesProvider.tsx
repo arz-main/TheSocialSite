@@ -1,4 +1,4 @@
-import React, { createContext, useState, type ReactNode } from "react";
+import { createContext, useState, type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import type {
     BadgeTemplate,
@@ -15,18 +15,18 @@ export function BadgeTemplatesProvider({ children }: { children: ReactNode }) {
     const [error, setError] = useState<string | null>(null);
 
     async function createBadgeTemplate(badgeData: CreateBadgeTemplateDto): Promise<BadgeTemplate> {
-    try {
-        setLoading(true);
-        setError(null);
-        const { data } = await axios.post<BadgeTemplateActionResponse>(`/badge-templates/create`, badgeData);
-        return data.badgeTemplate;
-    } catch (err) {
-        setError("Failed to create badge template.");
-        throw err;
-    } finally {
-        setLoading(false);
+        try {
+            setLoading(true);
+            setError(null);
+            const { data } = await axios.post<BadgeTemplateActionResponse>(`/badge-templates/create`, badgeData);
+            return data.badgeTemplate;
+        } catch (err) {
+            setError("Failed to create badge template.");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     }
-}
 
     async function getAllBadgeTemplates(): Promise<BadgeTemplate[]> {
         try {
@@ -39,7 +39,7 @@ export function BadgeTemplatesProvider({ children }: { children: ReactNode }) {
             throw err;
         } finally {
             setLoading(false);
-        } 
+        }
     }
 
     async function deleteBadgeTemplate(badgeTemplateId: string): Promise<string> {
@@ -53,9 +53,9 @@ export function BadgeTemplatesProvider({ children }: { children: ReactNode }) {
             throw err;
         } finally {
             setLoading(false);
-        } 
+        }
     }
-    
+
     return (
         <BadgeTemplateContext.Provider value={{ createBadgeTemplate, deleteBadgeTemplate, getAllBadgeTemplates, loading, error }}>
             {children}

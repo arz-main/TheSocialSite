@@ -49,6 +49,7 @@ namespace TheSocialSite.Domain.Entities.Post
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // this does not make a separate table, but allows access to comments for a post
-        public List<CommentData> Comments { get; set; } = [];   // reverse navigation
+        public List<CommentData> Comments { get; set; } = new List<CommentData>();   // reverse navigation
+        public List<PostLikeData> PostLikes { get; set; } = new List<PostLikeData>(); // reverse navigation
     }
 }

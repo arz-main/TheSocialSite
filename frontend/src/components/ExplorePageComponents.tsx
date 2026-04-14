@@ -16,8 +16,9 @@ import { useNavigate } from "react-router-dom";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
 import type { User } from "../types/UserTypes";
-import type { Post } from "../types/PostTypes";
+import type { PostDto } from "../types/PostTypes";
 import type { Comment } from "../types/CommentTypes";
+import { formatDate } from "../utils/FormatDateUtil";
 
 // --- User Banner Component ---
 export function UserBanner({
@@ -81,29 +82,25 @@ export function UserBanner({
 
 // --- Comments Modal ---
 interface CommentsModalProps {
-	post: Post;
+	post: PostDto;
 	comments: Comment[];
-	likedDrawings: Set<string>;
 	imageIndex: number;
 	newComment: string;
 	loading: boolean;
 	onChangeImageIndex: (index: number) => void;
 	onChangeNewComment: (text: string) => void;
 	onSubmitComment?: (postId: string, content: string) => Promise<Comment>;
-	toggleLike: (postId: string) => void;
 	onClose: () => void;
 }
 
 export function CommentsModal({
 	post,
 	comments,
-	likedDrawings,
 	imageIndex,
 	newComment,
 	loading,
 	onChangeNewComment,
 	onSubmitComment,
-	toggleLike,
 	onClose,
 }: CommentsModalProps) {
 	const commentsEndRef = useRef<HTMLDivElement>(null);
@@ -113,14 +110,6 @@ export function CommentsModal({
 	const handleUserClick = (userId: string) => {
 		if (userId === currentUser?.id) navigate(paths.artist.profile);
 		else navigate(paths.explore.toUser(userId));
-	};
-
-	const formatDate = (dateString: string) => {
-		const diff = Date.now() - new Date(dateString).getTime();
-		const hours = Math.floor(diff / (1000 * 60 * 60));
-		if (hours < 1) return "just now";
-		if (hours < 24) return `${hours}h ago`;
-		return `${Math.floor(hours / 24)}d ago`;
 	};
 
 	const submitComment = async () => {
@@ -395,13 +384,13 @@ export function PostCardSkeleton() {
 
 // --- Post Card ---
 export function PostCard({
-	post,
-	index,
-	isLiked,
-	onToggleLike,
-	onOpenComments,
-	commentCount,
-	formatDate,
+    post,
+    index,
+    isLiked,
+    likeCount,      // <-- add this
+    onToggleLike,
+    onOpenComments,
+    commentCount,
 }: any) {
 	const [likeFlash, setLikeFlash] = useState(false);
 	const [hovered, setHovered] = useState(false);
@@ -526,7 +515,7 @@ export function PostCard({
 								className={`w-4 h-4 transition-all ${isLiked ? "fill-current scale-110" : "text-text/40 hover:text-[#C24A48]"}`}
 								style={{ color: isLiked ? "#C24A48" : undefined }}
 							/>
-							<span className="text-xs text-text/60">{post.likes + (isLiked ? 1 : 0)}</span>
+							<span className="text-xs text-text/60">{likeCount}</span>
 						</motion.button>
 
 						<button

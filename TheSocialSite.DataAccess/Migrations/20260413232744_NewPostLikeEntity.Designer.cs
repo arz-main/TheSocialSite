@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheSocialSite.DataAccess.Context;
 
@@ -11,9 +12,11 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413232744_NewPostLikeEntity")]
+    partial class NewPostLikeEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace TheSocialSite.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BadgeTemplates", (string)null);
+                    b.ToTable("BadgeTemplates");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Badge.UserBadgeData", b =>
@@ -80,7 +83,7 @@ namespace TheSocialSite.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserBadges", (string)null);
+                    b.ToTable("UserBadges");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Comment.CommentData", b =>
@@ -114,7 +117,7 @@ namespace TheSocialSite.DataAccess.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostData", b =>
@@ -159,7 +162,7 @@ namespace TheSocialSite.DataAccess.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostLike", b =>
@@ -185,7 +188,7 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.HasIndex("UserId", "PostId")
                         .IsUnique();
 
-                    b.ToTable("PostLikes", (string)null);
+                    b.ToTable("PostLikes");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.SocialMedia.SocialMediaData", b =>
@@ -225,7 +228,7 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("SocialMedia", (string)null);
+                    b.ToTable("SocialMedia");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.User.UserData", b =>
@@ -273,7 +276,7 @@ namespace TheSocialSite.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Badge.UserBadgeData", b =>

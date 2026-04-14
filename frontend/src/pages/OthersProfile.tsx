@@ -1,64 +1,103 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { ExternalLink, MapPin, CalendarDays } from "lucide-react";
 import { FaPinterest, FaTwitter, FaDeviantart, FaYoutube, FaDiscord, FaGlobe } from "react-icons/fa";
 import { Badge as BadgeUI } from "../components/Badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
-import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { usePosts } from "../hooks/usePosts";
 import { useComments } from "../hooks/useComments";
+import { useDebounce } from "../hooks/useDebounce";
+import { useRequireAuth } from "../hooks/useRequireAuth";
 import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
 import { AvatarFallback } from "../components/AvatarFallback";
-import type { Post } from "../types/PostTypes";
+import type { PostDto } from "../types/PostTypes";
 import type { Comment } from "../types/CommentTypes";
 import { Card } from "../components/Card";
 import { useUsers } from "../hooks/useUsers";
 import type { User } from "../types/UserTypes";
+import { formatDate } from "../utils/FormatDateUtil";
 
 export default function OthersProfile() {
-    // data
-    const [user, setUser] = useState<User | null>(null);
-    const [userPosts, setUserPosts] = useState<Post[]>([]);
-    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-    const [openedPost, setOpenedPost] = useState<Post | null>(null);
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
 
-    // ui
+    // ─── Data ─────────────────────────────────────────────
+    const [user, setUser] = useState<User | null>(null);
+    const [userPosts, setUserPosts] = useState<PostDto[]>([]);
+    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+    const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+    const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+    const [comments, setComments] = useState<Comment[]>([]);
+
+    // ─── UI ───────────────────────────────────────────────
     const [activeTab, setActiveTab] = useState("posts");
+    const [openedPost, setOpenedPost] = useState<PostDto | null>(null);
     const [imageIndex, setImageIndex] = useState(0);
     const [newComment, setNewComment] = useState("");
 
-    const { getUser } = useUsers();
-    const { getUserPosts } = usePosts();
-    const { getComments, postComment, loading: loadingComments } = useComments();
+    // ─── Hooks ────────────────────────────────────────────
     const { userId } = useParams();
+    const { getUser } = useUsers();
+    const { getUserPosts, toggleLikePost } = usePosts();
+    const { getComments, postComment, loading: loadingComments } = useComments();
+    const requireAuth = useRequireAuth();
 
+    // ─── Fetch ────────────────────────────────────────────
     useEffect(() => {
         if (!userId) return;
+
         getUser(userId).then(data => { if (data) setUser(data); });
-        getUserPosts(userId).then(data => { if (data) setUserPosts(data); });
+
+        getUserPosts(userId).then(data => {
+            if (!data) return;
+            setUserPosts(data);
+            setLikedPosts(new Set(data.filter(p => p.isLiked).map(p => p.id)));
+            const counts: Record<string, number> = {};
+            data.forEach(p => counts[p.id] = p.likes);
+            setLikeCounts(counts);
+        });
     }, [userId]);
 
     useEffect(() => {
         if (userPosts.length === 0) return;
-        userPosts.forEach(async (post) => {
-            const data = await getComments(post.id);
-            setCommentCounts(prev => ({ ...prev, [post.id]: data.length }))
+        userPosts.forEach((post) => {
+            getComments(post.id)
+                .then((data) => setCommentCounts(prev => ({ ...prev, [post.id]: data.length })))
+                .catch(() => { });
         });
     }, [userPosts]);
 
-    // ─── Handlers ─────────────────────────────────────────
-    const handleToggleLike = (postId: string) => {
+    // ─── Like Handlers ────────────────────────────────────
+    const sendLikeRequest = useDebounce(async (id: string) => {
+        try {
+            const response = await toggleLikePost(id);
+            setLikedPosts(prev => {
+                const next = new Set(prev);
+                response.isLiked ? next.add(id) : next.delete(id);
+                return next;
+            });
+            setLikeCounts(prev => ({ ...prev, [id]: response.likeCount }));
+        } catch {
+            setLikedPosts(prev => {
+                const next = new Set(prev);
+                next.has(id) ? next.delete(id) : next.add(id);
+                return next;
+            });
+        }
+    }, 600);
+
+    const toggleLike = (id: string) => {
         setLikedPosts(prev => {
             const next = new Set(prev);
-            next.has(postId) ? next.delete(postId) : next.add(postId);
+            next.has(id) ? next.delete(id) : next.add(id);
             return next;
         });
+        sendLikeRequest(id);
     };
 
-    const handleOpenComments = async (post: Post) => {
+    const handleLike = (id: string) => requireAuth(() => toggleLike(id));
+
+    // ─── Comment Handlers ─────────────────────────────────
+    const handleOpenComments = useCallback(async (post: PostDto) => {
         setOpenedPost(post);
         try {
             const data = await getComments(post.id);
@@ -66,22 +105,14 @@ export default function OthersProfile() {
         } catch {
             setComments([]);
         }
-    };
+    }, [getComments]);
 
-    const handleSubmitComment = async (postId: string, content: string) => {
-        const raw = await postComment(postId, content);
-        const normalized: Comment = {
-            id: raw.id,
-            postId: raw.postId,
-            content: raw.content,
-            authorId: raw.authorId,
-            authorUsername: raw.authorUsername,
-            authorAvatarUrl: raw.authorAvatarUrl,
-            createdAt: raw.createdAt,
-        };
-        setComments(prev => [...prev, normalized]);
-        return normalized;
-    };
+    const handleSubmitComment = useCallback(async (postId: string, content: string) => {
+        const comment = await postComment(postId, content);
+        setComments(prev => [...prev, comment]);
+        setCommentCounts(prev => ({ ...prev, [postId]: (prev[postId] ?? 0) + 1 }));
+        return comment;
+    }, [postComment]);
 
     const closeModal = () => {
         setOpenedPost(null);
@@ -99,6 +130,7 @@ export default function OthersProfile() {
     const streak = user.streak ?? 0;
     const postsCount = userPosts.length;
 
+    // ─── Render ───────────────────────────────────────────
     return (
         <div className="flex flex-col flex-1 bg-background text-text">
             <div className="w-full max-w-5xl mx-auto px-6 py-8">
@@ -109,14 +141,9 @@ export default function OthersProfile() {
                 >
                     {/* PROFILE CARD */}
                     <div className="rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
-
-                        {/* Banner */}
                         <div className="h-36 w-full" style={{ backgroundColor: "var(--button)" }} />
 
-                        {/* Profile body */}
                         <div className="px-8 pt-4 pb-6 relative">
-
-                            {/* Avatar overlapping banner */}
                             <div className="absolute -top-14 left-8">
                                 <AvatarFallback
                                     src={user.avatarUrl}
@@ -126,10 +153,8 @@ export default function OthersProfile() {
                                 />
                             </div>
 
-                            {/* Spacer for avatar */}
                             <div className="h-14" />
 
-                            {/* Name & handle */}
                             <div className="mt-2">
                                 <h1 className="text-2xl font-bold leading-tight">{user.username}</h1>
                                 <p className="text-sm text-muted mt-0.5">
@@ -137,12 +162,10 @@ export default function OthersProfile() {
                                 </p>
                             </div>
 
-                            {/* Bio */}
                             {user.bio && (
                                 <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{user.bio}</p>
                             )}
 
-                            {/* Meta row */}
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-sm text-muted">
                                 {user.location && (
                                     <span className="flex items-center gap-1.5">
@@ -165,7 +188,6 @@ export default function OthersProfile() {
                                 )}
                             </div>
 
-                            {/* Social links */}
                             {hasSocialLinks && (
                                 <div className="flex flex-wrap gap-2 mt-3">
                                     {user.socialLinks!.twitter && (
@@ -209,7 +231,6 @@ export default function OthersProfile() {
                                 </div>
                             )}
 
-                            {/* Followers / Following */}
                             <div className="flex items-center gap-1 mt-4 text-sm">
                                 <span className="font-bold">{user.followers?.length ?? 0}</span>
                                 <span className="text-muted mr-4">Followers</span>
@@ -217,7 +238,6 @@ export default function OthersProfile() {
                                 <span className="text-muted">Following</span>
                             </div>
 
-                            {/* Stats pills */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
                                     <span className="text-2xl font-bold">{postsCount}</span>
@@ -274,11 +294,10 @@ export default function OthersProfile() {
                                                         post={post}
                                                         index={index}
                                                         isLiked={likedPosts.has(post.id)}
-                                                        onToggleLike={handleToggleLike}
-                                                        onOpenComments={handleOpenComments}
-                                                        formatDate={formatDate}
-                                                        formatDuration={formatDuration}
+                                                        likeCount={likeCounts[post.id] ?? post.likes}
                                                         commentCount={commentCounts[post.id]}
+                                                        onToggleLike={handleLike}
+                                                        onOpenComments={handleOpenComments}
                                                     />
                                                 ))}
                                             </div>
@@ -338,14 +357,12 @@ export default function OthersProfile() {
                     <CommentsModal
                         post={openedPost}
                         comments={comments}
-                        likedDrawings={likedPosts}
                         imageIndex={imageIndex}
                         newComment={newComment}
                         loading={loadingComments}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}
-                        toggleLike={handleToggleLike}
                         onClose={closeModal}
                     />
                 )}

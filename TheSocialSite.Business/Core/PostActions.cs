@@ -18,7 +18,7 @@ namespace TheSocialSite.Business.Core
     public class PostActions
     {
         public PostActions() { }
-        public PostActionResponse GetAllPostsActionExecution()
+        public PostActionResponse GetAllPostsActionExecution(string userId)
         {
             using (var postContext = new AppDbContext())
             {
@@ -36,7 +36,8 @@ namespace TheSocialSite.Business.Core
                         ImageUrl = p.ImageUrl,
                         Category = p.Category,
                         Description = p.Description,
-                        CreatedAt = p.CreatedAt
+                        CreatedAt = p.CreatedAt,
+                        IsLiked = p.PostLikes.Any(pl => pl.UserId == userId)
                     })
                     .ToList();
 
@@ -49,21 +50,27 @@ namespace TheSocialSite.Business.Core
             }
         }
 
-        public PostActionResponse GetPostByIdActionExecution(string postId)
+        public PostActionResponse GetPostByIdActionExecution(string postId, string userId)
         {
             using (var _appDbContext = new AppDbContext())
             {
                 var p = _appDbContext.Posts
                     .Include(p => p.Author)
                     .FirstOrDefault(p => p.Id == postId);
+
                 if (p == null)
                 {
                     return new PostActionResponse
                     {
                         IsValid = false,
-                        Message = "Post not found"
+                        Message = "Post not found",
+                        IsLiked = false
                     };
                 }
+
+                var isLiked = _appDbContext.PostLikes
+                    .Any(pl => pl.PostId == postId && pl.UserId == userId);
+
                 var returnedPost = new PostDto
                 {
                     Id = p.Id,
@@ -83,23 +90,20 @@ namespace TheSocialSite.Business.Core
                 {
                     IsValid = true,
                     Message = "Post has been obtained",
-                    PostDto = returnedPost
+                    PostDto = returnedPost,
+                    IsLiked = isLiked
                 };
             }
         }
 
-        public PostActionResponse GetUserPostsActionExecution(string id)
+        public PostActionResponse GetUserPostsActionExecution(string id, string currentUserId)
         {
             using (var postContext = new AppDbContext())
             {
                 var posts = postContext.Posts
                     .Include(p => p.Author)
-                    .Where(p => p.AuthorId == id).ToList();
-                return new PostActionResponse
-                {
-                    IsValid = true,
-                    Message = "User posts have been obtained",
-                    PostDtos = posts.Select(p => new PostDto
+                    .Where(p => p.AuthorId == id)
+                    .Select(p => new PostDto
                     {
                         Id = p.Id,
                         AuthorUsername = p.Author.Username,
@@ -111,8 +115,16 @@ namespace TheSocialSite.Business.Core
                         ImageUrl = p.ImageUrl,
                         Category = p.Category,
                         Description = p.Description,
-                        CreatedAt = p.CreatedAt
-                    }).ToList()
+                        CreatedAt = p.CreatedAt,
+                        IsLiked = p.PostLikes.Any(pl => pl.UserId == currentUserId) // <--
+                    })
+                    .ToList();
+
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "User posts have been obtained",
+                    PostDtos = posts
                 };
             }
         }
@@ -194,6 +206,59 @@ namespace TheSocialSite.Business.Core
                 {
                     IsValid = true,
                     Message = "Post deleted successfully"
+                };
+            }
+        }
+
+        public PostActionResponse ToggleLikePostActionExecution(string postId, string userId)
+        {
+            using (var _appDbContext = new AppDbContext())
+            {
+                var post = _appDbContext.Posts.FirstOrDefault(p => p.Id == postId);
+                if (post == null)
+                {
+                    return new PostActionResponse
+                    {
+                        IsValid = false,
+                        Message = "Post not found"
+                    };
+                }
+
+                var existingLike = _appDbContext.PostLikes
+                    .FirstOrDefault(pl => pl.PostId == postId && pl.UserId == userId);
+
+                if (existingLike != null)
+                {
+                    _appDbContext.PostLikes.Remove(existingLike);
+                    post.Likes -= 1;
+                    _appDbContext.SaveChanges();
+
+                    return new PostActionResponse
+                    {
+                        IsValid = true,
+                        Message = "Post unliked successfully",
+                        IsLiked = false,          
+                        LikeCount = post.Likes    
+                    };
+                }
+                
+                var newLike = new PostLikeData
+                {
+                    PostId = postId,
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _appDbContext.PostLikes.Add(newLike);
+                post.Likes += 1;
+                _appDbContext.SaveChanges();
+
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "Post liked successfully",
+                    IsLiked = true,            
+                    LikeCount = post.Likes     
                 };
             }
         }

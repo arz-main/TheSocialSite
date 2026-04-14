@@ -13,5 +13,7 @@ namespace TheSocialSite.Domain.Models.Response
         public string Message { get; set; }
         public PostDto? PostDto{ get; set; }
         public List<PostDto>? PostDtos { get; set; }
+        public bool IsLiked { get; set; }
+        public int LikeCount { get; set; }
     }
 }

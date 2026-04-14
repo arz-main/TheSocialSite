@@ -55,7 +55,6 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy => policy.WithOrigins(
-            "http://localhost:5173",
             "https://localhost:5173")
         .AllowAnyMethod()
         .AllowAnyHeader()
@@ -77,30 +76,40 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]))
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/messages"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization(); // Add authorization service
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseHttpsRedirection();
 }
 
+app.UseHttpsRedirection(); // moved outside and BEFORE UseCors
 
-app.UseCors("AllowFrontend");
+app.UseCors("AllowFrontend"); // before routing/auth
 
-// SignalR hub for real-time messaging in messages page
-app.MapHub<MessageActions>("/messages");
-
-// Make sure these are in the right order
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<MessageActions>("/messages");
 app.MapControllers();
 
 app.Run();

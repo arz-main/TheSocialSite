@@ -7,7 +7,6 @@ import { AxiosProvider } from './providers/AxiosProvider.tsx';
 import { AuthProvider } from './providers/AuthProvider.tsx';
 import { PostsProvider } from './providers/PostsProvider.tsx';
 import { UsersProvider } from './providers/UsersProvider.tsx';
-import { SignalRProvider } from './providers/SignalRProvider.tsx';
 import { SocialMediaProvider } from './providers/SocialMediaProvider.tsx';
 import { ThemeProvider } from "next-themes";
 import { CommentsProvider } from './providers/CommentsProvider.tsx';
@@ -18,21 +17,19 @@ createRoot(document.getElementById('root')!).render(
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <BrowserRouter>
                 <AxiosProvider>
-                    <SignalRProvider>
-                        <AuthProvider>
-                            <CommentsProvider>
-                                <UsersProvider>
-                                    <PostsProvider>
-                                        <SocialMediaProvider>
-                                            <BadgeTemplatesProvider>
-                                                <App />
-                                            </BadgeTemplatesProvider>
-                                        </SocialMediaProvider>
-                                    </PostsProvider>
-                                </UsersProvider>
-                            </CommentsProvider>
-                        </AuthProvider>
-                    </SignalRProvider>
+                    <AuthProvider>
+                        <CommentsProvider>
+                            <UsersProvider>
+                                <PostsProvider>
+                                    <SocialMediaProvider>
+                                        <BadgeTemplatesProvider>
+                                            <App />
+                                        </BadgeTemplatesProvider>
+                                    </SocialMediaProvider>
+                                </PostsProvider>
+                            </UsersProvider>
+                        </CommentsProvider>
+                    </AuthProvider>
                 </AxiosProvider>
             </BrowserRouter>
         </ThemeProvider>

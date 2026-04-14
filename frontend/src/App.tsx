@@ -32,6 +32,7 @@ import LessonPage from "./pages/LessonPage";
 import paths from "./routes/paths";
 import { useAuth } from "./hooks/useAuth"
 import Layout from "./layout/Layout";
+import { SignalRProvider } from "./providers/SignalRProvider";
 
 const App = () => {
 	const { initializing } = useAuth();
@@ -78,7 +79,9 @@ const App = () => {
 				<Route element={<Layout noScroll />}>
 					<Route path={paths.artist.messages} element={
 						<ProtectedRoute allowedRoles={["User", "Admin"]}>
-							<Messages />
+							<SignalRProvider>
+								<Messages />
+							</SignalRProvider>
 						</ProtectedRoute>
 					} />
 

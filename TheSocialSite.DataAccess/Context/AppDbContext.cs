@@ -50,12 +50,18 @@ namespace TheSocialSite.DataAccess.Context
                 .WithOne(u => u.BadgeTemplate) // only one template per user badges
                 .HasForeignKey(b => b.BadgeTemplateId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Composite unique constraint — prevents duplicate likes
+            modelBuilder.Entity<PostLikeData>()
+                .HasIndex(pl => new { pl.UserId, pl.PostId })
+                .IsUnique();
         }
 
         // Single DbContext for everything
         public DbSet<UserData> Users { get; set; }
         public DbSet<SocialMediaData> SocialMedia { get; set; }
         public DbSet<PostData> Posts { get; set; }
+        public DbSet<PostLikeData> PostLikes { get; set; }
         public DbSet<CommentData> Comments { get; set; }
         public DbSet<BadgeTemplateData> BadgeTemplates { get; set; }
         public DbSet<UserBadgeData> UserBadges { get; set; }

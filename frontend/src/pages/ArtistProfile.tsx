@@ -1,6 +1,6 @@
 import { CalendarDays, ExternalLink, MapPin, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FaDeviantart, FaDiscord, FaPinterest, FaTwitter, FaYoutube } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { AvatarFallback } from "../components/AvatarFallback";
@@ -12,37 +12,55 @@ import { useAuth } from "../hooks/useAuth";
 import { useComments } from "../hooks/useComments";
 import { usePosts } from "../hooks/usePosts";
 import { useSocialMedia } from "../hooks/useSocialMedia";
+import { useDebounce } from "../hooks/useDebounce";
+import { useRequireAuth } from "../hooks/useRequireAuth";
 import paths from "../routes/paths";
 import type { Comment } from "../types/CommentTypes";
-import type { Post } from "../types/PostTypes";
+import type { PostDto } from "../types/PostTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
-import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
+import { formatDate } from "../utils/FormatDateUtil";
 
 export default function ArtistProfile() {
-    // data
-    const [userPosts, setUserPosts] = useState<Post[]>([]);
+
+    // ─── Data ─────────────────────────────────────────────
+    const [userPosts, setUserPosts] = useState<PostDto[]>([]);
     const [socialMedia, setSocialMedia] = useState<SocialMediaDto | null>(null);
     const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+    const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
     const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
     const [comments, setComments] = useState<Comment[]>([]);
 
-    // ui
+    // ─── UI ───────────────────────────────────────────────
     const [activeTab, setActiveTab] = useState("posts");
-    const [openedPost, setOpenedPost] = useState<Post | null>(null);
+    const [openedPost, setOpenedPost] = useState<PostDto | null>(null);
     const [imageIndex, setImageIndex] = useState(0);
     const [newComment, setNewComment] = useState("");
 
-    // hooks
+    // ─── Hooks ────────────────────────────────────────────
     const navigate = useNavigate();
     const { currentUser } = useAuth();
-    const { getUserPosts } = usePosts();
+    const { getUserPosts, toggleLikePost } = usePosts();
     const { getComments, postComment, loading: loadingComments } = useComments();
     const { getSocialMedia } = useSocialMedia();
+    const requireAuth = useRequireAuth();
 
+    // ─── Fetch ────────────────────────────────────────────
     useEffect(() => {
         if (!currentUser?.id) return;
-        getUserPosts(currentUser.id).then(data => { if (data) setUserPosts(data); });
-        getSocialMedia(currentUser.id).then(data => { if (data) setSocialMedia(data); });
+
+        getUserPosts(currentUser.id).then(data => {
+            if (!data) return;
+            // console.log("posts", data.map(p => ({ id: p.id, isLiked: p.isLiked })));
+            setUserPosts(data);
+            setLikedPosts(new Set(data.filter(p => p.isLiked).map(p => p.id)));
+            const counts: Record<string, number> = {};
+            data.forEach(p => counts[p.id] = p.likes);
+            setLikeCounts(counts);
+        });
+
+        getSocialMedia(currentUser.id).then(data => {
+            if (data) setSocialMedia(data);
+        });
     }, [currentUser?.id]);
 
     useEffect(() => {
@@ -56,16 +74,40 @@ export default function ArtistProfile() {
 
     if (!currentUser) return null;
 
-    // ─── Handlers ─────────────────────────────────────────
-    const handleToggleLike = (postId: string) => {
+    // ─── Like Handlers ────────────────────────────────────
+    const sendLikeRequest = useDebounce(async (id: string) => {
+        try {
+            const response = await toggleLikePost(id);
+            setLikedPosts(prev => {
+                const next = new Set(prev);
+                response.isLiked ? next.add(id) : next.delete(id);
+                return next;
+            });
+            setLikeCounts(prev => ({ ...prev, [id]: response.likeCount }));
+        } catch {
+            // revert on failure
+            setLikedPosts(prev => {
+                const next = new Set(prev);
+                next.has(id) ? next.delete(id) : next.add(id);
+                return next;
+            });
+        }
+    }, 600);
+
+    const toggleLike = (id: string) => {
+        // optimistic update
         setLikedPosts(prev => {
             const next = new Set(prev);
-            next.has(postId) ? next.delete(postId) : next.add(postId);
+            next.has(id) ? next.delete(id) : next.add(id);
             return next;
         });
+        sendLikeRequest(id);
     };
 
-    const handleOpenComments = async (post: Post) => {
+    const handleLike = (id: string) => requireAuth(() => toggleLike(id));
+
+    // ─── Comment Handlers ─────────────────────────────────
+    const handleOpenComments = useCallback(async (post: PostDto) => {
         setOpenedPost(post);
         try {
             const data = await getComments(post.id);
@@ -73,23 +115,14 @@ export default function ArtistProfile() {
         } catch {
             setComments([]);
         }
-    };
+    }, [getComments]);
 
-    const handleSubmitComment = async (postId: string, content: string) => {
-        const raw = await postComment(postId, content);
-        const normalized: Comment = {
-            id: raw.id,
-            postId: raw.postId,
-            content: raw.content,
-            authorId: raw.authorId,
-            authorUsername: raw.authorUsername,
-            authorAvatarUrl: raw.authorAvatarUrl,
-            createdAt: raw.createdAt,
-        };
-        setComments(prev => [...prev, normalized]);
+    const handleSubmitComment = useCallback(async (postId: string, content: string) => {
+        const comment = await postComment(postId, content);
+        setComments(prev => [...prev, comment]);
         setCommentCounts(prev => ({ ...prev, [postId]: (prev[postId] ?? 0) + 1 }));
-        return normalized;
-    };
+        return comment;
+    }, [postComment]);
 
     const closeModal = () => {
         setOpenedPost(null);
@@ -105,6 +138,7 @@ export default function ArtistProfile() {
     const streak = currentUser.streak ?? 0;
     const postsCount = userPosts.length;
 
+    // ─── Render ───────────────────────────────────────────
     return (
         <div className="flex flex-col flex-1 bg-background text-text">
             <div className="w-full max-w-5xl mx-auto px-6 py-8">
@@ -115,14 +149,9 @@ export default function ArtistProfile() {
                 >
                     {/* PROFILE CARD */}
                     <div className="rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
-
-                        {/* Banner */}
                         <div className="h-36 w-full" style={{ backgroundColor: "var(--button)" }} />
 
-                        {/* Profile body */}
                         <div className="px-8 pt-4 pb-6 relative">
-
-                            {/* Avatar */}
                             <div className="absolute -top-14 left-8">
                                 <AvatarFallback
                                     src={currentUser.avatarUrl}
@@ -132,7 +161,6 @@ export default function ArtistProfile() {
                                 />
                             </div>
 
-                            {/* Edit profile */}
                             <div className="flex justify-end pt-3">
                                 <button
                                     onClick={() => navigate(paths.artist.edit_profile)}
@@ -143,10 +171,8 @@ export default function ArtistProfile() {
                                 </button>
                             </div>
 
-                            {/* Spacer for avatar */}
                             <div className="h-8" />
 
-                            {/* Name & handle */}
                             <div className="mt-2">
                                 <h1 className="text-2xl font-bold leading-tight">{currentUser.username}</h1>
                                 <p className="text-sm text-muted mt-0.5">
@@ -154,12 +180,10 @@ export default function ArtistProfile() {
                                 </p>
                             </div>
 
-                            {/* Bio */}
                             {currentUser.bio && (
                                 <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{currentUser.bio}</p>
                             )}
 
-                            {/* Meta row */}
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-sm text-muted">
                                 {currentUser.location && (
                                     <span className="flex items-center gap-1.5">
@@ -182,7 +206,6 @@ export default function ArtistProfile() {
                                 )}
                             </div>
 
-                            {/* Social links */}
                             {hasSocialLinks && (
                                 <div className="flex flex-wrap gap-2 mt-3">
                                     {socialMedia!.twitter && (
@@ -220,7 +243,6 @@ export default function ArtistProfile() {
                                 </div>
                             )}
 
-                            {/* Followers / Following */}
                             <div className="flex items-center gap-1 mt-4 text-sm">
                                 <span className="font-bold">{currentUser.followers?.length ?? 0}</span>
                                 <span className="text-muted mr-4">Followers</span>
@@ -228,7 +250,6 @@ export default function ArtistProfile() {
                                 <span className="text-muted">Following</span>
                             </div>
 
-                            {/* Stats pills */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
                                     <span className="text-2xl font-bold">{postsCount}</span>
@@ -285,11 +306,11 @@ export default function ArtistProfile() {
                                                         post={post}
                                                         index={index}
                                                         isLiked={likedPosts.has(post.id)}
+                                                        likeCount={likeCounts[post.id] ?? post.likes}
                                                         commentCount={commentCounts[post.id]}
-                                                        onToggleLike={handleToggleLike}
+                                                        onToggleLike={handleLike}
                                                         onOpenComments={handleOpenComments}
                                                         formatDate={formatDate}
-                                                        formatDuration={formatDuration}
                                                     />
                                                 ))}
                                             </div>
@@ -349,14 +370,12 @@ export default function ArtistProfile() {
                     <CommentsModal
                         post={openedPost}
                         comments={comments}
-                        likedDrawings={likedPosts}
                         imageIndex={imageIndex}
                         newComment={newComment}
                         loading={loadingComments}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}
-                        toggleLike={handleToggleLike}
                         onClose={closeModal}
                     />
                 )}
