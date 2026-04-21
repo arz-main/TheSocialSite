@@ -33,6 +33,7 @@ import paths from "./routes/paths";
 import { useAuth } from "./hooks/useAuth"
 import Layout from "./layout/Layout";
 import { SignalRProvider } from "./providers/SignalRProvider";
+import BadgeTemplates from "./pages/BadgeTemplates";
 
 const App = () => {
 	const { initializing } = useAuth();
@@ -46,12 +47,22 @@ const App = () => {
 					<Route path={paths.home} element={<Home />} />
 					<Route path={paths.about} element={<About />} />
 					<Route path={paths.explore.page} element={<Explore />} />
-					<Route path={paths.explore.user} element={<OthersProfile />} />
 					<Route path={paths.roadmap.page} element={<Roadmap />} />
 					<Route path={paths.terms} element={<Terms />} />
 					<Route path={paths.privacy} element={<Privacy />} />
 					<Route path={paths.roadmap.course} element={<CourseRoadmap />} />
 					<Route path={paths.roadmap.lesson} element={<LessonPage />} />
+
+					<Route path={paths.explore.user} element={
+						<ProtectedRoute allowedRoles={["User", "Admin"]}>
+							<OthersProfile />
+						</ProtectedRoute>
+					} />
+					<Route path={paths.badge_templates} element={
+						<ProtectedRoute allowedRoles={["User", "Admin"]}>
+							<BadgeTemplates />
+						</ProtectedRoute>
+					} />
 					<Route path={paths.artist.statistics} element={
 						<ProtectedRoute allowedRoles={["User", "Admin"]}>
 							<Statistics />

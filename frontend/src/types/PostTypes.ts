@@ -47,8 +47,6 @@ export interface PostActionResponse {
 }
 
 export type PostsContextType = {
-	loading: boolean;
-	error: string | null;
 	getAllPosts: () => Promise<PostDto[] | null>;
 	getUserPosts: (userId: string) => Promise<PostDto[]>;
 	getPost: (postId: string) => Promise<PostDto>;

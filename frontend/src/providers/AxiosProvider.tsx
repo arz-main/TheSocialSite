@@ -4,21 +4,23 @@ import { useNavigate } from "react-router-dom";
 import paths from "../routes/paths";
 
 export const AxiosContext = createContext<{ axiosInstance: AxiosInstance } | undefined>(undefined);
-
 export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
+    const navigateRef = React.useRef(navigate);
+
+    useEffect(() => {
+        navigateRef.current = navigate;
+    }, [navigate]);
 
     const axiosInstance = useMemo(() => {
-        return axios.create({
+        const instance = axios.create({
             baseURL: "https://localhost:7037/api",
             headers: {
                 "Content-Type": "application/json",
             },
         });
-    }, []);
 
-    useEffect(() => {
-        const requestInterceptor = axiosInstance.interceptors.request.use((config) => {
+        instance.interceptors.request.use((config) => {
             const token = localStorage.getItem("token");
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
@@ -26,16 +28,16 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             return config;
         });
 
-        const responseInterceptor = axiosInstance.interceptors.response.use(
+        instance.interceptors.response.use(
             (response: AxiosResponse) => response,
             (error: AxiosError) => {
                 if (error.response) {
                     switch (error.response.status) {
                         case 401:
-                            navigate(paths.error.unauthorized);
+                            navigateRef.current(paths.error.unauthorized);
                             break;
                         case 403:
-                            navigate(paths.error.forbidden);
+                            navigateRef.current(paths.error.forbidden);
                             break;
                     }
                 }
@@ -43,11 +45,8 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
         );
 
-        return () => {
-            axiosInstance.interceptors.request.eject(requestInterceptor);
-            axiosInstance.interceptors.response.eject(responseInterceptor);
-        };
-    }, [axiosInstance, navigate]);
+        return instance;
+    }, []);
 
     return (
         <AxiosContext.Provider value={{ axiosInstance }}>

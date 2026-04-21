@@ -1,34 +1,24 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PostCard, CommentsModal, Dropdown, PostCardSkeleton } from "../components/ExplorePageComponents";
 import type { PostDto } from "../types/PostTypes";
-import type { Comment } from "../types/CommentTypes";
 import type { SearchByOption, SortByOption } from "../types/ExplorePageTypes";
 import { getSearchPlaceholder, searchByOptions, sortByOptions, filterPosts, sortPosts } from "../utils/ExplorePageUtils";
 import { Button } from "../components/BasicButton";
 import { usePosts } from "../hooks/usePosts";
-import { useComments } from "../hooks/useComments";
 import { Input } from "../components/BasicInput";
 import ErrorScreen from "../components/ErrorScreen";
-import { useDebounce } from "../hooks/useDebounce";
-import { useRequireAuth } from "../hooks/useRequireAuth";
 import { formatDate } from "../utils/FormatDateUtil";
+import { usePostInteractions } from "../hooks/usePostInteractions";
 
 const PAGE_SIZE = 9;
 
 export default function ExplorePage() {
 
     // ─── Data ─────────────────────────────────────────────
-    const [posts, setPosts] = useState<PostDto[]>([]);  // Post[] -> PostDto[]
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
-    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-
-    // ─── UI State ─────────────────────────────────────────
-    const [openedPost, setOpenedPost] = useState<PostDto | null>(null);
-    const [imageIndex, setImageIndex] = useState(0);
-    const [newComment, setNewComment] = useState("");
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [posts, setPosts] = useState<PostDto[]>([]);
+    const [localLoading, setLocalLoading] = useState(false);
+    const [localError, setLocalError] = useState<string | null>(null);
 
     // ─── Search & Sort ────────────────────────────────────
     const [searchQuery, setSearchQuery] = useState("");
@@ -36,39 +26,32 @@ export default function ExplorePage() {
     const [sortBy, setSortBy] = useState<SortByOption>("relevance");
     const [searchByOpen, setSearchByOpen] = useState(false);
     const [sortByOpen, setSortByOpen] = useState(false);
-
-    const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
     // ─── Hooks ────────────────────────────────────────────
-    const { getAllPosts, toggleLikePost, loading: loadingPosts, error: errorPosts } = usePosts();
-    const { getComments, postComment, loading: loadingComments } = useComments();
-    const requireAuth = useRequireAuth();
+    const { getAllPosts } = usePosts();
+    const {
+        likedPosts, likeCounts, commentCounts,
+        comments, openedPost, imageIndex, newComment,
+        setImageIndex, setNewComment,
+        initPostStates, fetchCommentCounts,
+        handleLike, handleOpenComments, handleSubmitComment, closeModal,
+    } = usePostInteractions();
 
-
-    // seed on fetch
+    // ─── Fetch ────────────────────────────────────────────
     useEffect(() => {
+        setLocalLoading(true);
+        setLocalError(null);
         getAllPosts()
-            .then((data) => {
+            .then(data => {
                 const fetched = data ?? [];
                 setPosts(fetched);
-                setLikedPosts(new Set(fetched.filter(p => p.isLiked).map(p => p.id)));
-                // seed like counts from server
-                const counts: Record<string, number> = {};
-                fetched.forEach(p => counts[p.id] = p.likes);
-                setLikeCounts(counts);
+                initPostStates(fetched);
+                fetchCommentCounts(fetched);
             })
-            .catch(() => { });
+            .catch(() => setLocalError("Failed to load posts."))
+            .finally(() => setLocalLoading(false));
     }, [getAllPosts]);
-
-    // ─── Fetch Comment Counts ─────────────────────────────
-    useEffect(() => {
-        if (!posts.length) return;
-        posts.forEach((post) => {
-            getComments(post.id)
-                .then((data) => setCommentCounts((prev) => ({ ...prev, [post.id]: data.length })))
-                .catch(() => { });
-        });
-    }, [posts]);
 
     // ─── Derived State ────────────────────────────────────
     const filteredPosts = useMemo(() => filterPosts(posts, searchQuery, searchBy), [posts, searchQuery, searchBy]);
@@ -83,64 +66,7 @@ export default function ExplorePage() {
     };
 
     const handleLoadMore = () =>
-        setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, sortedPosts.length));
-
-    const sendLikeRequest = useDebounce(async (id: string) => {
-        try {
-            const response = await toggleLikePost(id);
-            setLikedPosts((prev) => {
-                const next = new Set(prev);
-                response.isLiked ? next.add(id) : next.delete(id);
-                return next;
-            });
-            setLikeCounts(prev => ({ ...prev, [id]: response.likeCount }));
-        } catch {
-            // revert on failure
-            setLikedPosts((prev) => {
-                const next = new Set(prev);
-                next.has(id) ? next.delete(id) : next.add(id);
-                return next;
-            });
-        }
-    }, 600);
-
-    const toggleLike = (id: string) => {
-        // optimistic update — flip immediately for snappy UI
-        setLikedPosts((prev) => {
-            const next = new Set(prev);
-            next.has(id) ? next.delete(id) : next.add(id);
-            return next;
-        });
-        sendLikeRequest(id);
-    };
-
-    const handleLike = (id: string) => requireAuth(() => toggleLike(id));
-
-    const openComments = useCallback(async (post: PostDto) => {
-        setOpenedPost(post);
-        try {
-            const data = await getComments(post.id);
-            setComments(data);
-        } catch {
-            setComments([]);
-        }
-    }, [getComments]);
-
-    const handleOpenComments = (post: PostDto) => requireAuth(() => openComments(post));
-
-    const handleSubmitComment = useCallback(async (postId: string, content: string) => {
-        const comment = await postComment(postId, content);
-        setComments((prev) => [...prev, comment]);
-        setCommentCounts((prev) => ({ ...prev, [postId]: (prev[postId] ?? 0) + 1 }));
-        return comment;
-    }, [postComment]);
-
-    const closeModal = () => {
-        setOpenedPost(null);
-        setComments([]);
-        setImageIndex(0);
-        setNewComment("");
-    };
+        setVisibleCount(prev => Math.min(prev + PAGE_SIZE, sortedPosts.length));
 
     // ─── Render ───────────────────────────────────────────
     return (
@@ -182,9 +108,9 @@ export default function ExplorePage() {
                     {/* Posts Grid */}
                     <div className="flex-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {loadingPosts
+                            {localLoading
                                 ? Array.from({ length: 9 }).map((_, i) => <PostCardSkeleton key={i} />)
-                                : errorPosts
+                                : localError
                                     ? <div className="col-span-full"><ErrorScreen /></div>
                                     : visiblePosts.map((post, index) => (
                                         <PostCard
@@ -192,7 +118,7 @@ export default function ExplorePage() {
                                             post={post}
                                             index={index}
                                             isLiked={likedPosts.has(post.id)}
-                                            likeCount={likeCounts[post.id] ?? post.likes}   // <-- add this
+                                            likeCount={likeCounts[post.id] ?? post.likes}
                                             commentCount={commentCounts[post.id]}
                                             onToggleLike={handleLike}
                                             onOpenComments={handleOpenComments}
@@ -211,7 +137,6 @@ export default function ExplorePage() {
                 </motion.div>
             </section>
 
-            {/* Comments Modal */}
             <AnimatePresence>
                 {openedPost && (
                     <CommentsModal
@@ -219,7 +144,7 @@ export default function ExplorePage() {
                         comments={comments}
                         imageIndex={imageIndex}
                         newComment={newComment}
-                        loading={loadingComments}
+                        // loading={localLoading}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

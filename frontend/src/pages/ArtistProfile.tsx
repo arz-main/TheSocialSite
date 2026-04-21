@@ -1,48 +1,48 @@
-import { CalendarDays, ExternalLink, MapPin, Settings } from "lucide-react";
+import { CalendarDays, ExternalLink, MapPin, Medal, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { FaDeviantart, FaDiscord, FaPinterest, FaTwitter, FaYoutube } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { AvatarFallback } from "../components/AvatarFallback";
-import { Badge as BadgeUI } from "../components/Badge";
 import { Card } from "../components/Card";
 import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { useAuth } from "../hooks/useAuth";
-import { useComments } from "../hooks/useComments";
 import { usePosts } from "../hooks/usePosts";
 import { useSocialMedia } from "../hooks/useSocialMedia";
-import { useDebounce } from "../hooks/useDebounce";
-import { useRequireAuth } from "../hooks/useRequireAuth";
+import { usePostInteractions } from "../hooks/usePostInteractions";
 import paths from "../routes/paths";
-import type { Comment } from "../types/CommentTypes";
 import type { PostDto } from "../types/PostTypes";
 import type { SocialMediaDto } from "../types/SocialMediaTypes";
 import { formatDate } from "../utils/FormatDateUtil";
+import { type AwardedBadgeWithTemplate, type BadgeTier } from "../types/BadgeTypes";
+import { useAwardedBadges } from "../hooks/useAwardedBadges";
+import { BadgeCard } from "../components/badge/BadgeCard";
 
 export default function ArtistProfile() {
 
     // ─── Data ─────────────────────────────────────────────
     const [userPosts, setUserPosts] = useState<PostDto[]>([]);
     const [socialMedia, setSocialMedia] = useState<SocialMediaDto | null>(null);
-    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-    const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
-    const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [awardedBadges, setAwardedBadges] = useState<AwardedBadgeWithTemplate[]>([]);  // <-- new
+
 
     // ─── UI ───────────────────────────────────────────────
     const [activeTab, setActiveTab] = useState("posts");
-    const [openedPost, setOpenedPost] = useState<PostDto | null>(null);
-    const [imageIndex, setImageIndex] = useState(0);
-    const [newComment, setNewComment] = useState("");
 
     // ─── Hooks ────────────────────────────────────────────
     const navigate = useNavigate();
     const { currentUser } = useAuth();
-    const { getUserPosts, toggleLikePost } = usePosts();
-    const { getComments, postComment, loading: loadingComments } = useComments();
+    const { getUserPosts } = usePosts();
     const { getSocialMedia } = useSocialMedia();
-    const requireAuth = useRequireAuth();
+    const {
+        likedPosts, likeCounts, commentCounts,
+        comments, openedPost, imageIndex, newComment,
+        setImageIndex, setNewComment,
+        initPostStates, fetchCommentCounts,
+        handleLike, handleOpenComments, handleSubmitComment, closeModal,
+    } = usePostInteractions();
+    const { getAwardedBadgesByUserId } = useAwardedBadges();
 
     // ─── Fetch ────────────────────────────────────────────
     useEffect(() => {
@@ -50,90 +50,19 @@ export default function ArtistProfile() {
 
         getUserPosts(currentUser.id).then(data => {
             if (!data) return;
-            // console.log("posts", data.map(p => ({ id: p.id, isLiked: p.isLiked })));
             setUserPosts(data);
-            setLikedPosts(new Set(data.filter(p => p.isLiked).map(p => p.id)));
-            const counts: Record<string, number> = {};
-            data.forEach(p => counts[p.id] = p.likes);
-            setLikeCounts(counts);
+            initPostStates(data);
+            fetchCommentCounts(data);
         });
 
-        getSocialMedia(currentUser.id).then(data => {
-            if (data) setSocialMedia(data);
-        });
+        getSocialMedia(currentUser.id).then(data => setSocialMedia(data));
+        getAwardedBadgesByUserId(currentUser.id).then(data => setAwardedBadges(data));  // <-- new
     }, [currentUser?.id]);
-
-    useEffect(() => {
-        if (userPosts.length === 0) return;
-        userPosts.forEach((post) => {
-            getComments(post.id)
-                .then((data) => setCommentCounts(prev => ({ ...prev, [post.id]: data.length })))
-                .catch(() => { });
-        });
-    }, [userPosts]);
 
     if (!currentUser) return null;
 
-    // ─── Like Handlers ────────────────────────────────────
-    const sendLikeRequest = useDebounce(async (id: string) => {
-        try {
-            const response = await toggleLikePost(id);
-            setLikedPosts(prev => {
-                const next = new Set(prev);
-                response.isLiked ? next.add(id) : next.delete(id);
-                return next;
-            });
-            setLikeCounts(prev => ({ ...prev, [id]: response.likeCount }));
-        } catch {
-            // revert on failure
-            setLikedPosts(prev => {
-                const next = new Set(prev);
-                next.has(id) ? next.delete(id) : next.add(id);
-                return next;
-            });
-        }
-    }, 600);
-
-    const toggleLike = (id: string) => {
-        // optimistic update
-        setLikedPosts(prev => {
-            const next = new Set(prev);
-            next.has(id) ? next.delete(id) : next.add(id);
-            return next;
-        });
-        sendLikeRequest(id);
-    };
-
-    const handleLike = (id: string) => requireAuth(() => toggleLike(id));
-
-    // ─── Comment Handlers ─────────────────────────────────
-    const handleOpenComments = useCallback(async (post: PostDto) => {
-        setOpenedPost(post);
-        try {
-            const data = await getComments(post.id);
-            setComments(data);
-        } catch {
-            setComments([]);
-        }
-    }, [getComments]);
-
-    const handleSubmitComment = useCallback(async (postId: string, content: string) => {
-        const comment = await postComment(postId, content);
-        setComments(prev => [...prev, comment]);
-        setCommentCounts(prev => ({ ...prev, [postId]: (prev[postId] ?? 0) + 1 }));
-        return comment;
-    }, [postComment]);
-
-    const closeModal = () => {
-        setOpenedPost(null);
-        setComments([]);
-        setImageIndex(0);
-        setNewComment("");
-    };
-
     // ─── Derived ──────────────────────────────────────────
     const hasSocialLinks = !!socialMedia && Object.values(socialMedia).some(v => v && v !== currentUser.id);
-    const earnedBadges = currentUser.badges ? currentUser.badges.filter((b: any) => b.isEarned) : [];
     const rankBadge = currentUser.level || "Advanced Sketcher";
     const streak = currentUser.streak ?? 0;
     const postsCount = userPosts.length;
@@ -263,7 +192,7 @@ export default function ArtistProfile() {
                                     <span className="text-xs text-muted">Day Streak</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
-                                    <span className="text-2xl font-bold">{earnedBadges.length}</span>
+                                    <span className="text-2xl font-bold">{awardedBadges.length}</span>
                                     <span className="text-xs text-muted">Badges Earned</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
@@ -282,7 +211,7 @@ export default function ArtistProfile() {
                                     My Posts <span className="ml-1.5 text-xs opacity-60">{postsCount}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="badges" className="h-full text-sm font-semibold">
-                                    Badges <span className="ml-1.5 text-xs opacity-60">{earnedBadges.length}</span>
+                                    Badges <span className="ml-1.5 text-xs opacity-60">{awardedBadges.length}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="favorites" className="h-full text-sm font-semibold">
                                     Favorites <span className="ml-1.5 text-xs opacity-60">0</span>
@@ -320,23 +249,32 @@ export default function ArtistProfile() {
 
                                 <TabsContent value="badges">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                                        {earnedBadges.length > 0 ? (
+                                        <div className="flex items-center justify-between mb-4">
+                                            <p className="text-sm text-muted">{awardedBadges.length} badge{awardedBadges.length !== 1 ? "s" : ""} earned</p>
+                                            <button
+                                                onClick={() => navigate(paths.badge_templates)}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted/30 text-xs font-medium text-text transition-colors"
+                                            >
+                                                <Medal className="w-3.5 h-3.5" />
+                                                View All Badges
+                                            </button>
+                                        </div>
+
+                                        {awardedBadges.length > 0 ? (
                                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                {earnedBadges.map((badge: any, index: number) => (
-                                                    <motion.div key={badge.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index, duration: 0.3 }}>
-                                                        <Card className="p-5 hover:shadow-lg transition-all">
-                                                            <div className="flex items-start gap-4">
-                                                                <div className="text-4xl">{badge.icon}</div>
-                                                                <div className="flex-1">
-                                                                    <div className="flex items-center gap-2 mb-1">
-                                                                        <h4 className="font-semibold">{badge.name}</h4>
-                                                                        <BadgeUI variant="default" className="text-xs border">Earned</BadgeUI>
-                                                                    </div>
-                                                                    <p className="text-sm text-muted mb-2">{badge.description}</p>
-                                                                    {badge.earnedDate && <p className="text-xs text-muted">{formatDate(badge.earnedDate)}</p>}
-                                                                </div>
-                                                            </div>
-                                                        </Card>
+                                                {awardedBadges.map((badge, index) => (
+                                                    <motion.div
+                                                        key={badge.id}
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: 0.05 * index, duration: 0.3 }}
+                                                    >
+                                                        <BadgeCard
+                                                            title={badge.title}
+                                                            iconUrl={badge.iconUrl}
+                                                            tier={badge.tier as BadgeTier}
+                                                            description={badge.description}
+                                                        />
                                                     </motion.div>
                                                 ))}
                                             </div>
@@ -372,7 +310,6 @@ export default function ArtistProfile() {
                         comments={comments}
                         imageIndex={imageIndex}
                         newComment={newComment}
-                        loading={loadingComments}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

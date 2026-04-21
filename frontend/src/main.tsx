@@ -11,6 +11,7 @@ import { SocialMediaProvider } from './providers/SocialMediaProvider.tsx';
 import { ThemeProvider } from "next-themes";
 import { CommentsProvider } from './providers/CommentsProvider.tsx';
 import { BadgeTemplatesProvider } from './providers/BadgeTemplatesProvider.tsx';
+import { AwardedBadgesProvider } from './providers/AwardedBadgesProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -22,9 +23,11 @@ createRoot(document.getElementById('root')!).render(
                             <UsersProvider>
                                 <PostsProvider>
                                     <SocialMediaProvider>
-                                        <BadgeTemplatesProvider>
-                                            <App />
-                                        </BadgeTemplatesProvider>
+                                        <AwardedBadgesProvider>
+                                            <BadgeTemplatesProvider>
+                                                <App />
+                                            </BadgeTemplatesProvider>
+                                        </AwardedBadgesProvider>
                                     </SocialMediaProvider>
                                 </PostsProvider>
                             </UsersProvider>

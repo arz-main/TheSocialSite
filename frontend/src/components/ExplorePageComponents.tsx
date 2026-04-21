@@ -86,7 +86,6 @@ interface CommentsModalProps {
 	comments: Comment[];
 	imageIndex: number;
 	newComment: string;
-	loading: boolean;
 	onChangeImageIndex: (index: number) => void;
 	onChangeNewComment: (text: string) => void;
 	onSubmitComment?: (postId: string, content: string) => Promise<Comment>;
@@ -98,7 +97,6 @@ export function CommentsModal({
 	comments,
 	imageIndex,
 	newComment,
-	loading,
 	onChangeNewComment,
 	onSubmitComment,
 	onClose,
@@ -114,7 +112,7 @@ export function CommentsModal({
 
 	const submitComment = async () => {
 		const text = newComment.trim();
-		if (!text || loading) return;
+		if (!text) return;
 		try {
 			await onSubmitComment?.(post.id, text);
 			onChangeNewComment("");
@@ -282,7 +280,6 @@ export function CommentsModal({
 							value={newComment}
 							onChange={(e) => onChangeNewComment(e.target.value)}
 							onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && submitComment()}
-							disabled = {loading}
 							placeholder="Add a comment…"
 							className="flex-1 bg-transparent text-text text-sm placeholder:text-muted focus:outline-none"
 						/>

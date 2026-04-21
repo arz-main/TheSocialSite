@@ -103,7 +103,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
     return (
         <PostsContext.Provider
             value={{
-                loading, error, getPost, getAllPosts, getUserPosts,
+                getPost, getAllPosts, getUserPosts,
                 updatePost, deletePost, toggleLikePost
             }}>
             {children}

@@ -1,4 +1,4 @@
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import type {
     BadgeTemplate,
@@ -11,54 +11,25 @@ export const BadgeTemplateContext = createContext<BadgeTemplateContextType | und
 
 export function BadgeTemplatesProvider({ children }: { children: ReactNode }) {
     const axios = useAxios()!;
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
-    async function createBadgeTemplate(badgeData: CreateBadgeTemplateDto): Promise<BadgeTemplate> {
-        try {
-            setLoading(true);
-            setError(null);
-            const { data } = await axios.post<BadgeTemplateActionResponse>(`/badge-templates/create`, badgeData);
-            return data.badgeTemplate;
-        } catch (err) {
-            setError("Failed to create badge template.");
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    }
+    const createBadgeTemplate = useCallback(async (badgeData: CreateBadgeTemplateDto): Promise<BadgeTemplate> => {
+        const { data } = await axios.post<BadgeTemplateActionResponse>(`/badge-templates/create`, badgeData);
+        return data.badgeTemplate;
+    }, [axios]);
 
-    async function getAllBadgeTemplates(): Promise<BadgeTemplate[]> {
-        try {
-            setLoading(true);
-            setError(null);
-            const { data } = await axios.get<BadgeTemplateActionResponse>(`/badge-templates/`);
-            return data.badgeTemplates;
-        } catch (err) {
-            setError("Failed to retrieve badge templates.");
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    }
+    const getAllBadgeTemplates = useCallback(async (): Promise<BadgeTemplate[]> => {
+        const { data } = await axios.get<BadgeTemplateActionResponse>(`/badge-templates/`);
+        return data.badgeTemplates;
+    }, [axios]);
 
-    async function deleteBadgeTemplate(badgeTemplateId: string): Promise<string> {
-        try {
-            setLoading(true);
-            setError(null);
-            const { data } = await axios.delete<BadgeTemplateActionResponse>(`/badge-templates/${badgeTemplateId}`);
-            return data.message;
-        } catch (err) {
-            setError("Failed to delete badge template.");
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    }
+    const deleteBadgeTemplate = useCallback(async (badgeTemplateId: string): Promise<string> => {
+        const { data } = await axios.delete<BadgeTemplateActionResponse>(`/badge-templates/${badgeTemplateId}`);
+        return data.message;
+    }, [axios]);
 
     return (
-        <BadgeTemplateContext.Provider value={{ createBadgeTemplate, deleteBadgeTemplate, getAllBadgeTemplates, loading, error }}>
+        <BadgeTemplateContext.Provider value={{ createBadgeTemplate, deleteBadgeTemplate, getAllBadgeTemplates }}>
             {children}
         </BadgeTemplateContext.Provider>
-    )
+    );
 }

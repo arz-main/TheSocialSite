@@ -9,8 +9,6 @@ export interface Comment {
 }
 
 export type CommentsContextType = {
-    loading: boolean;
-    error: string | null;
     getComments: (postId: string) => Promise<Comment[]>;
     postComment: (postId: string, content: string) => Promise<Comment>;
 };
