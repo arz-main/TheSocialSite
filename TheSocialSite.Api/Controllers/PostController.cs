@@ -67,7 +67,7 @@ namespace TheSocialSite.Api.Controllers
             if (!response.IsValid)
                 return BadRequest(response.Message);
 
-            return Ok(response.Message);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]

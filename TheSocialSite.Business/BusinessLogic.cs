@@ -34,5 +34,9 @@ namespace TheSocialSite.Business
         {
             return new BadgeTemplateInteractAction();
         }
+        public IAwardedBadgeInteractAction AwardedBadgeInteractAction()
+        {
+            return new AwardedBadgeInteractAction();
+        }
     }
 }

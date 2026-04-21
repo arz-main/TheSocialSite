@@ -23,7 +23,6 @@ public class BadgeTemplateData
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string Id { get; set; }
-
     public string Title { get; set; }
     public string Description { get; set; }
     public string IconUrl { get; set; }
@@ -31,6 +30,5 @@ public class BadgeTemplateData
     public BadgeTier Tier { get; set; } = BadgeTier.Bronze;
     public int CriteriaTarget { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    public ICollection<UserBadgeData> UserBadges { get; set; }
+    public ICollection<AwardedBadgeData> AwardedBadges { get; set; }
 }

@@ -4,7 +4,7 @@ using TheSocialSite.Domain.Entities.Badge;
 using TheSocialSite.Domain.Models.Badge;
 using TheSocialSite.Domain.Models.Response;
 
-namespace TheSocialSite.Business.Core
+namespace TheSocialSite.Business.Core.Badges
 {
     public class BadgeTemplateActions
     {

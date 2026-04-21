@@ -180,10 +180,15 @@ namespace TheSocialSite.Business.Core
                 appDbContext.SaveChanges();
             }
 
+            // Badge evaluation after post is saved
+            var userSnapshot = new UserActivitySnapshotBuilder().Build(userId);
+            var newAwardedBadges = new BadgeEvaluationActions().EvaluateAndAward(userSnapshot);
+
             return new PostActionResponse
             {
                 IsValid = true,
-                Message = "Post created successfully"
+                Message = "Post created successfully",
+                NewlyAwardedBadges = newAwardedBadges  // <-- add this to PostActionResponse
             };
         }
 
@@ -253,12 +258,26 @@ namespace TheSocialSite.Business.Core
                 post.Likes += 1;
                 _appDbContext.SaveChanges();
 
+                // Check both the liker and the post author
+                var snapshotBuilder = new UserActivitySnapshotBuilder();
+                var evaluationService = new BadgeEvaluationActions();
+
+                // Liker may earn CommunitySupport badges
+                var likerSnapshot = snapshotBuilder.Build(userId);
+                var likerNewBadges = evaluationService.EvaluateAndAward(likerSnapshot);
+
+                // Post author may earn Engagement badges (likes received)
+                var authorSnapshot = snapshotBuilder.Build(post.AuthorId);
+                var authorNewBadges = evaluationService.EvaluateAndAward(authorSnapshot);
+
                 return new PostActionResponse
                 {
                     IsValid = true,
                     Message = "Post liked successfully",
-                    IsLiked = true,            
-                    LikeCount = post.Likes     
+                    IsLiked = true,
+                    LikeCount = post.Likes,
+                    NewlyAwardedBadges = likerNewBadges  // frontend notifies current user
+                                                         // authorNewBadges can be used for real-time notifications to the author later
                 };
             }
         }

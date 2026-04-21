@@ -9,7 +9,7 @@ using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Entities.Badge
 {
-    public class UserBadgeData
+    public class AwardedBadgeData
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,6 +20,7 @@ namespace TheSocialSite.Domain.Entities.Badge
         public UserData User { get; set; }
 
         public string BadgeTemplateId { get; set; }
+
         [ForeignKey("BadgeTemplateId")]
         public BadgeTemplateData BadgeTemplate { get; set; }
 

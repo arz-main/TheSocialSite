@@ -46,7 +46,7 @@ namespace TheSocialSite.DataAccess.Context
 
             // BadgeTemplate → UserBadge
             modelBuilder.Entity<BadgeTemplateData>()
-                .HasMany(b => b.UserBadges)
+                .HasMany(b => b.AwardedBadges)
                 .WithOne(u => u.BadgeTemplate) // only one template per user badges
                 .HasForeignKey(b => b.BadgeTemplateId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -64,6 +64,6 @@ namespace TheSocialSite.DataAccess.Context
         public DbSet<PostLikeData> PostLikes { get; set; }
         public DbSet<CommentData> Comments { get; set; }
         public DbSet<BadgeTemplateData> BadgeTemplates { get; set; }
-        public DbSet<UserBadgeData> UserBadges { get; set; }
+        public DbSet<AwardedBadgeData> AwardedBadges { get; set; }
     }
 }
