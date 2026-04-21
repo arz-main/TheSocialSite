@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TheSocialSite.Domain.Entities.SocialMedia;
 
 namespace TheSocialSite.Domain.Entities.User
 {
@@ -19,34 +20,32 @@ namespace TheSocialSite.Domain.Entities.User
         [Required]
         [EmailAddress]
         [MaxLength(150)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(256)] // hashed password length
-        public  string Password { get; set; }
+        public  string Password { get; set; } = string.Empty;
 
         [Required]
         public Role Role { get; set; } = Role.User;
 
         [Required]
         [MaxLength(50)]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         [MaxLength(250)]
-        public string? Avatar { get; set; }
+        public string? AvatarUrl { get; set; } = string.Empty;
 
         [MaxLength(500)]
-        public string? Bio { get; set; }
+        public string? Bio { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string? Location { get; set; }
+        public string? Location { get; set; } = string.Empty;
 
         [MaxLength(150)]
-        public string? Website { get; set; }
+        public string? Website { get; set; } = string.Empty;
 
-        public SocialMedia? SocialLinks { get; set; }
-       
-        public int? PostsCount { get; set; }
+        public SocialMediaData? SocialMedia { get; set; }
 
         [Required]
         public DateTime JoinedDate { get; set; } = DateTime.UtcNow;

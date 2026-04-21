@@ -1,18 +1,32 @@
-import type { User } from "./UserTypes";
-
 export type PostStatus = "Published" | "Draft" | "Flagged";
 
 export interface Post {
 	id: string;
 	title: string,
 	description: string,
-	author: User;
 	authorId: string;
+	authorUsername: string;
+	authorAvatarUrl: string;
 	status: PostStatus;
 	imageUrl: string;
 	category: string;
 	createdAt: string;
 	likes: number;
+}
+
+export interface PostDto {
+	id: string;
+	authorId: string;
+	authorUsername: string;
+	authorAvatarUrl: string;
+	status: PostStatus;
+	likes: number;
+	title: string;
+	imageUrl: string;
+	category: string;
+	description?: string;
+	createdAt: string;
+	isLiked: boolean;
 }
 
 export interface UpdatePostPayload {
@@ -23,12 +37,20 @@ export interface UpdatePostPayload {
 	category?: string;
 }
 
+export interface PostActionResponse {
+	isValid: boolean;
+	message: string;
+	postDto?: PostDto;
+	postDtos?: PostDto[];
+	isLiked: boolean;
+	likeCount: number;
+}
+
 export type PostsContextType = {
-	loading: boolean;
-	error: string | null;
-	getAllPosts: () => Promise<Post[] | null>;
-	getUserPosts: (userId: string) => Promise<Post[]>;
-	getPost: (postId: string) => Promise<Post>;
+	getAllPosts: () => Promise<PostDto[] | null>;
+	getUserPosts: (userId: string) => Promise<PostDto[]>;
+	getPost: (postId: string) => Promise<PostDto>;
 	updatePost: (postId: string, data: UpdatePostPayload) => Promise<void>;
 	deletePost: (postId: string) => Promise<void>;
+	toggleLikePost: (postId: string) => Promise<PostActionResponse>;
 };

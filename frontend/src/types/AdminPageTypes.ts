@@ -1,31 +1,15 @@
 import type { ReactNode } from "react";
-import type { SocialLinks, User } from "./UserTypes";
-import type { Role } from "./RolesTypes";
+import type { User } from "./UserTypes";
 import type { Post } from "./PostTypes";
-
-export type AdminUpdateUserPayload = {
-    email?: string;
-    username?: string;
-    avatar?: string;
-    bio?: string;
-    location?: string;
-    website?: string;
-    socialLinks?: SocialLinks;
-    role?: Role;
-}
-
-export type AdminContextType = {
-    loading: boolean;
-    error: string | null;
-    adminUpdateUser: (userId: string, data: AdminUpdateUserPayload) => Promise<AdminUpdateUserPayload>;
-    adminDeleteUser: (userId: string) => Promise<void>;
-    adminDeletePost: (postId: string) => Promise<void>;
-};
+import type { BadgeTemplate } from "./BadgeTypes";
 
 export type PostConfirm = { type: "delete"; id: string } | null;
 export type UserConfirm = { type: "delete" | "promote" | "demote"; id: string } | null;
+export type BadgeTemplateConfirm = { type: "delete"; id: string } | null;
 export type UserOptions = "delete" | "promote" | "demote";
 export type PostOptions = "delete";
+export type BadgeTemplateOptions = "delete";
+export type Options = "delete";
 
 export interface AdminUsersTableProps {
     filteredData: User[];
@@ -49,6 +33,18 @@ export interface AdminPostsTableProps {
     setConfirm: (id: PostConfirm | null) => void;
     executeConfirm: () => Promise<void>;
     targetPost: Post | null;
+}
+
+export interface AdminBadgeTemplatesTableProps {
+    filteredData: BadgeTemplate[];
+    loading: boolean;
+    error: string | null;
+    search: string;
+    onSearch: (val: string) => void;
+    confirm: BadgeTemplateConfirm | null;
+    setConfirm: (id: BadgeTemplateConfirm | null) => void;
+    executeConfirm: () => Promise<void>;
+    targetTemplateBadge: BadgeTemplate | null;
 }
 
 export interface Column<T> {

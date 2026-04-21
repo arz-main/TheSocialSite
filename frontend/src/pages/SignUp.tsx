@@ -5,7 +5,7 @@ import { Mail, Lock, User as UserIcon, Eye, EyeOff } from "lucide-react";
 import { Button } from "../components/BasicButton";
 import { Card } from "../components/Card";
 import { Input } from "../components/BasicInput";
-import { Label } from "../components/LabelComponent";
+import { Label } from "../components/Label";
 import paths from "../routes/paths";
 import { useAuth } from "../hooks/useAuth";
 export default function SignupPage() {
@@ -32,7 +32,7 @@ export default function SignupPage() {
         }
         setLoading(true);
         try {
-            await signup(formData.username, formData.email, formData.password);
+            await signup(formData);
             navigate(paths.login);
         } catch (err: any) {
             setError(err.response?.data ?? "Could not create account. Please try again.");

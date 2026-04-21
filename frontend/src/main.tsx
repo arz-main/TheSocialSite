@@ -7,32 +7,32 @@ import { AxiosProvider } from './providers/AxiosProvider.tsx';
 import { AuthProvider } from './providers/AuthProvider.tsx';
 import { PostsProvider } from './providers/PostsProvider.tsx';
 import { UsersProvider } from './providers/UsersProvider.tsx';
-import { SignalRProvider } from './providers/SignalRProvider.tsx';
 import { SocialMediaProvider } from './providers/SocialMediaProvider.tsx';
 import { ThemeProvider } from "next-themes";
-import { AdminProvider } from './providers/AdminProvider.tsx';
 import { CommentsProvider } from './providers/CommentsProvider.tsx';
+import { BadgeTemplatesProvider } from './providers/BadgeTemplatesProvider.tsx';
+import { AwardedBadgesProvider } from './providers/AwardedBadgesProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <BrowserRouter>
                 <AxiosProvider>
-                    <SignalRProvider>
-                        <AuthProvider>
-                            <CommentsProvider>
-                                <UsersProvider>
-                                    <PostsProvider>
-                                        <SocialMediaProvider>
-                                            <AdminProvider>
+                    <AuthProvider>
+                        <CommentsProvider>
+                            <UsersProvider>
+                                <PostsProvider>
+                                    <SocialMediaProvider>
+                                        <AwardedBadgesProvider>
+                                            <BadgeTemplatesProvider>
                                                 <App />
-                                            </AdminProvider>
-                                        </SocialMediaProvider>
-                                    </PostsProvider>
-                                </UsersProvider>
-                            </CommentsProvider>
-                        </AuthProvider>
-                    </SignalRProvider>
+                                            </BadgeTemplatesProvider>
+                                        </AwardedBadgesProvider>
+                                    </SocialMediaProvider>
+                                </PostsProvider>
+                            </UsersProvider>
+                        </CommentsProvider>
+                    </AuthProvider>
                 </AxiosProvider>
             </BrowserRouter>
         </ThemeProvider>

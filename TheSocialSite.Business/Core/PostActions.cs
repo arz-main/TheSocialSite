@@ -18,7 +18,7 @@ namespace TheSocialSite.Business.Core
     public class PostActions
     {
         public PostActions() { }
-        public PostActionResponse GetAllPostsActionExecution()
+        public PostActionResponse GetAllPostsActionExecution(string userId)
         {
             using (var postContext = new AppDbContext())
             {
@@ -27,36 +27,56 @@ namespace TheSocialSite.Business.Core
                     .Select(p => new PostDto
                     {
                         Id = p.Id,
-                        Author = p.Author,
+                        AuthorId = p.AuthorId,
+                        AuthorAvatarUrl = p.Author.AvatarUrl,
+                        AuthorUsername = p.Author.Username,
                         Status = p.Status,
                         Likes = p.Likes,
                         Title = p.Title,
                         ImageUrl = p.ImageUrl,
                         Category = p.Category,
                         Description = p.Description,
-                        CreatedAt = p.CreatedAt
+                        CreatedAt = p.CreatedAt,
+                        IsLiked = p.PostLikes.Any(pl => pl.UserId == userId)
                     })
                     .ToList();
 
                 return new PostActionResponse
                 {
                     IsValid = true,
-                    Message = "All posts have been obtained",
+                    Message = "All posts have been retrieved",
                     PostDtos = posts
                 };
             }
         }
 
-        public PostActionResponse GetPostsByIdActionExecution(string postId)
+        public PostActionResponse GetPostByIdActionExecution(string postId, string userId)
         {
             using (var _appDbContext = new AppDbContext())
             {
-                var p = _appDbContext.Posts.FirstOrDefault(p => p.Id == postId);
+                var p = _appDbContext.Posts
+                    .Include(p => p.Author)
+                    .FirstOrDefault(p => p.Id == postId);
+
+                if (p == null)
+                {
+                    return new PostActionResponse
+                    {
+                        IsValid = false,
+                        Message = "Post not found",
+                        IsLiked = false
+                    };
+                }
+
+                var isLiked = _appDbContext.PostLikes
+                    .Any(pl => pl.PostId == postId && pl.UserId == userId);
 
                 var returnedPost = new PostDto
                 {
                     Id = p.Id,
-                    Author = p.Author,
+                    AuthorAvatarUrl = p.Author.AvatarUrl,
+                    AuthorUsername = p.Author.Username,
+                    AuthorId = p.AuthorId,
                     Status = p.Status,
                     Likes = p.Likes,
                     Title = p.Title,
@@ -69,44 +89,51 @@ namespace TheSocialSite.Business.Core
                 return new PostActionResponse
                 {
                     IsValid = true,
-                    Message = "All posts have been obtained",
-                    PostDto = returnedPost
+                    Message = "Post has been obtained",
+                    PostDto = returnedPost,
+                    IsLiked = isLiked
                 };
             }
         }
 
-        public PostActionResponse GetUserPostsActionExecution(string id)
+        public PostActionResponse GetUserPostsActionExecution(string id, string currentUserId)
         {
             using (var postContext = new AppDbContext())
             {
                 var posts = postContext.Posts
                     .Include(p => p.Author)
-                    .Where(p => p.AuthorId == id).ToList();
-                return new PostActionResponse
-                {
-                    IsValid = true,
-                    Message = "User posts have been obtained",
-                    PostDtos = posts.Select(p => new PostDto
+                    .Where(p => p.AuthorId == id)
+                    .Select(p => new PostDto
                     {
                         Id = p.Id,
-                        Author = p.Author,
+                        AuthorUsername = p.Author.Username,
+                        AuthorId = p.AuthorId,
+                        AuthorAvatarUrl = p.Author.AvatarUrl,
                         Status = p.Status,
                         Likes = p.Likes,
                         Title = p.Title,
                         ImageUrl = p.ImageUrl,
                         Category = p.Category,
                         Description = p.Description,
-                        CreatedAt = p.CreatedAt
-                    }).ToList()
+                        CreatedAt = p.CreatedAt,
+                        IsLiked = p.PostLikes.Any(pl => pl.UserId == currentUserId) // <--
+                    })
+                    .ToList();
+
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "User posts have been obtained",
+                    PostDtos = posts
                 };
             }
         }
 
-        public DefaultActionResponse CreatePostActionExecution(CreatePostDto postData, string userId)
+        public PostActionResponse CreatePostActionExecution(CreatePostDto postData, string userId)
         {
             if (postData == null)
             {
-                return new DefaultActionResponse
+                return new PostActionResponse
                 {
                     IsValid = false,
                     Message = "No data provided"
@@ -115,7 +142,7 @@ namespace TheSocialSite.Business.Core
 
             if (string.IsNullOrWhiteSpace(postData.Title))
             {
-                return new DefaultActionResponse
+                return new PostActionResponse
                 {
                     IsValid = false,
                     Message = "Title is required"
@@ -128,7 +155,7 @@ namespace TheSocialSite.Business.Core
                 var author = appDbContext.Users.FirstOrDefault(u => u.Id == userId);
                 if (author == null)
                 {
-                    return new DefaultActionResponse
+                    return new PostActionResponse
                     {
                         IsValid = false,
                         Message = "Invalid user"
@@ -153,21 +180,26 @@ namespace TheSocialSite.Business.Core
                 appDbContext.SaveChanges();
             }
 
-            return new DefaultActionResponse
+            // Badge evaluation after post is saved
+            var userSnapshot = new UserActivitySnapshotBuilder().Build(userId);
+            var newAwardedBadges = new BadgeEvaluationActions().EvaluateAndAward(userSnapshot);
+
+            return new PostActionResponse
             {
                 IsValid = true,
-                Message = "Post created successfully"
+                Message = "Post created successfully",
+                NewlyAwardedBadges = newAwardedBadges  // <-- add this to PostActionResponse
             };
         }
 
-        public DefaultActionResponse DeletePostActionExecution(string id)
+        public PostActionResponse DeletePostActionExecution(string id)
         {
             using (var _appDbContext = new AppDbContext())
             {
                 var post = _appDbContext.Posts.FirstOrDefault(p => p.Id == id);
                 if (post == null)
                 {
-                    return new DefaultActionResponse
+                    return new PostActionResponse
                     {
                         IsValid = false,
                         Message = "Post not found"
@@ -175,10 +207,77 @@ namespace TheSocialSite.Business.Core
                 }
                 _appDbContext.Posts.Remove(post);
                 _appDbContext.SaveChanges();
-                return new DefaultActionResponse
+                return new PostActionResponse
                 {
                     IsValid = true,
                     Message = "Post deleted successfully"
+                };
+            }
+        }
+
+        public PostActionResponse ToggleLikePostActionExecution(string postId, string userId)
+        {
+            using (var _appDbContext = new AppDbContext())
+            {
+                var post = _appDbContext.Posts.FirstOrDefault(p => p.Id == postId);
+                if (post == null)
+                {
+                    return new PostActionResponse
+                    {
+                        IsValid = false,
+                        Message = "Post not found"
+                    };
+                }
+
+                var existingLike = _appDbContext.PostLikes
+                    .FirstOrDefault(pl => pl.PostId == postId && pl.UserId == userId);
+
+                if (existingLike != null)
+                {
+                    _appDbContext.PostLikes.Remove(existingLike);
+                    post.Likes -= 1;
+                    _appDbContext.SaveChanges();
+
+                    return new PostActionResponse
+                    {
+                        IsValid = true,
+                        Message = "Post unliked successfully",
+                        IsLiked = false,          
+                        LikeCount = post.Likes    
+                    };
+                }
+                
+                var newLike = new PostLikeData
+                {
+                    PostId = postId,
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _appDbContext.PostLikes.Add(newLike);
+                post.Likes += 1;
+                _appDbContext.SaveChanges();
+
+                // Check both the liker and the post author
+                var snapshotBuilder = new UserActivitySnapshotBuilder();
+                var evaluationService = new BadgeEvaluationActions();
+
+                // Liker may earn CommunitySupport badges
+                var likerSnapshot = snapshotBuilder.Build(userId);
+                var likerNewBadges = evaluationService.EvaluateAndAward(likerSnapshot);
+
+                // Post author may earn Engagement badges (likes received)
+                var authorSnapshot = snapshotBuilder.Build(post.AuthorId);
+                var authorNewBadges = evaluationService.EvaluateAndAward(authorSnapshot);
+
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "Post liked successfully",
+                    IsLiked = true,
+                    LikeCount = post.Likes,
+                    NewlyAwardedBadges = likerNewBadges  // frontend notifies current user
+                                                         // authorNewBadges can be used for real-time notifications to the author later
                 };
             }
         }

@@ -1,5 +1,6 @@
+import { useCallback } from "react";
 import type { SearchByOption, SortByOption } from "../types/ExplorePageTypes";
-import type { Post } from "../types/PostTypes";
+import type { Post, PostDto } from "../types/PostTypes";
 
 export const searchByOptions = [
 	{ value: "creator", label: "By Creator" },
@@ -16,10 +17,10 @@ export const sortByOptions = [
 ];
 
 export function filterPosts(
-	posts: Post[],
+	posts: PostDto[],
 	searchQuery: string,
 	searchBy: SearchByOption
-): Post[] {
+): PostDto[] {
 	const query = searchQuery.trim().toLowerCase();
 
 	if (!query) {
@@ -50,7 +51,7 @@ export function filterPosts(
 	}
 }
 
-export function sortPosts(posts: Post[], sortBy: SortByOption): Post[] {
+export function sortPosts(posts: PostDto[], sortBy: SortByOption): PostDto[] {
 	const sorted = [...posts];
 
 	switch (sortBy) {

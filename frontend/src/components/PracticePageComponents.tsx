@@ -174,13 +174,12 @@ export function ActiveSessionPanel({
                 {useCanvas ? (
                     <>
                         {/* Reference — 40% width, image letterboxed to fill */}
-                        <div className="w-2/5 relative flex items-center justify-center border-r border-border overflow-hidden bg-background p-2">
+                        <div className="w-2/5 relative border-r border-border overflow-hidden bg-black">
                             <img
                                 key={drawing.id}
                                 src={drawing.src}
                                 alt={drawing.label}
-                                className="rounded-lg shadow object-contain"
-                                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                                className="w-full h-full object-contain"
                             />
                             {sessionState === "paused" && (
                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
@@ -202,12 +201,12 @@ export function ActiveSessionPanel({
                     </>
                 ) : (
                     // No canvas — reference letterboxed, fills available space exactly
-                    <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-background">
+                    <div className="flex-1 relative overflow-hidden bg-black">
                         <img
                             key={drawing.id}
                             src={drawing.src}
                             alt={drawing.label}
-                            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                            className="w-full h-full object-contain"
                         />
                         {sessionState === "paused" && (
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
@@ -331,45 +330,56 @@ export function PostDrawingPanel({ result, onClose, onUploadToProfile, onSendToF
     );
 }
 
-// ── DrawingReviewGrid ─────────────────────────────────────────────────────────
 export function DrawingReviewGrid({ results, useCanvas, onSelectResult, onFinish }: DrawingReviewGridProps) {
     return (
-        <div className="flex flex-col h-full rounded-xl bg-card shadow p-5 gap-4 overflow-y-auto">
-            <div className="flex items-center justify-between flex-shrink-0">
+        <div className="flex flex-col h-full rounded-xl bg-card shadow p-5 gap-4 overflow-hidden">
+            <div className="flex items-center justify-between shrink-0">
                 <div>
                     <h2 className="text-xl font-bold text-text">🎉 Session Complete!</h2>
                     <p className="text-sm text-text-opaque mt-0.5">
                         {results.length} drawing{results.length > 1 ? "s" : ""} — click any to share or download
                     </p>
                 </div>
-                {/* Finish goes back to idle/setup */}
                 <Button variant="primary" onClick={onFinish}>
                     <CheckCircle2 className="w-4 h-4" /> Finish
                 </Button>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {results.map((result, i) => (
-                    <motion.div key={result.drawing.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.06 }}
-                        className="group relative rounded-xl overflow-hidden bg-black cursor-pointer hover:ring-2 hover:ring-primary transition-all aspect-square"
-                        onClick={() => onSelectResult(result)}>
-                        <img src={result.canvasDataUrl ?? result.drawing.src} alt={result.drawing.label}
-                            className="w-full h-full object-cover" />
-                        {useCanvas && result.canvasDataUrl && (
-                            <img src={result.drawing.src} alt="ref"
-                                className="absolute bottom-1 right-1 w-10 h-10 rounded-lg object-cover border-2 border-white/60 shadow" />
-                        )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                            <div className="flex flex-col items-center gap-1 text-white">
-                                <Upload className="w-5 h-5" />
-                                <span className="text-xs font-medium">Share</span>
+
+            <div className="flex-1 min-h-0 overflow-y-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {results.map((result, i) => (
+                        <motion.div
+                            key={result.drawing.id}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.06 }}
+                            className="group relative rounded-xl overflow-hidden bg-black cursor-pointer hover:ring-2 hover:ring-primary transition-all aspect-square"
+                            onClick={() => onSelectResult(result)}
+                        >
+                            <img
+                                src={result.canvasDataUrl ?? result.drawing.src}
+                                alt={result.drawing.label}
+                                className="w-full h-full object-cover"
+                            />
+                            {useCanvas && result.canvasDataUrl && (
+                                <img
+                                    src={result.drawing.src}
+                                    alt="ref"
+                                    className="absolute bottom-1 right-1 w-10 h-10 rounded-lg object-cover border-2 border-white/60 shadow"
+                                />
+                            )}
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                <div className="flex flex-col items-center gap-1 text-white">
+                                    <Upload className="w-5 h-5" />
+                                    <span className="text-xs font-medium">Share</span>
+                                </div>
                             </div>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-2 pt-4 pb-1">
-                            <p className="text-white text-[10px] leading-tight truncate">{result.drawing.label}</p>
-                        </div>
-                    </motion.div>
-                ))}
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-2 pt-4 pb-1">
+                                <p className="text-white text-[10px] leading-tight truncate">{result.drawing.label}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </div>
     );

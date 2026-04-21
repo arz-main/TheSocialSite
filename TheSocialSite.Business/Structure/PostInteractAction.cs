@@ -13,26 +13,29 @@ namespace TheSocialSite.Business.Structure
 {
     public class PostInteractAction : PostActions, IPostInteractAction
     {
-        public PostActionResponse GetAllPostsAction()
+        public PostActionResponse GetAllPostsAction(string userId)
         {
-            return GetAllPostsActionExecution();
+            return GetAllPostsActionExecution(userId);
         }
-        public PostActionResponse GetUserPostsAction(string id)
+        public PostActionResponse GetUserPostsAction(string id, string userId)
         {
-            return GetUserPostsActionExecution(id);
+            return GetUserPostsActionExecution(id, userId);
         }
-        public DefaultActionResponse CreatePostAction(CreatePostDto postData, string userId)
+        public PostActionResponse CreatePostAction(CreatePostDto postData, string userId)
         {
             return CreatePostActionExecution(postData, userId);
         }
-        public PostActionResponse GetPostsByIdAction(string postId)
+        public PostActionResponse GetPostByIdAction(string postId, string userId)
         {
-            return GetPostsByIdActionExecution(postId);
+            return GetPostByIdActionExecution(postId, userId);
         }
-        public DefaultActionResponse DeletePostAction(string id)
+        public PostActionResponse DeletePostAction(string id)
         {
             return DeletePostActionExecution(id);
         }
-
+        public PostActionResponse ToggleLikePostAction(string postId, string userId)
+        {
+            return ToggleLikePostActionExecution(postId, userId); 
+        }
     }
 }

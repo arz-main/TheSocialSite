@@ -5,10 +5,10 @@ import { Badge } from "./Badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { Button } from "./BasicButton";
 import { Calendar, Heart } from "lucide-react";
-import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
 import { ImageFallback } from "../components/ImageFallback";
 import { PostCard } from "./ExplorePageComponents";
 import type { TabsPageProps } from "../types/ProfilePageTypes";
+import { formatDate } from "../utils/FormatDateUtil";
 
 const PAGE_SIZE = 6;
 
@@ -126,7 +126,7 @@ export const TabsPage: React.FC<TabsPageProps> = ({
                                     <div className="p-4">
                                         <div className="flex items-center justify-between mb-2">
                                             <Badge variant="secondary" className="text-xs">{drawing.category}</Badge>
-                                            <span className="text-sm text-muted-foreground">{formatDuration(drawing.duration)}</span>
+                                            <span className="text-sm text-muted-foreground">{formatDate(drawing.duration.toString())}</span>
                                         </div>
                                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                             <div className="flex items-center gap-1">
@@ -179,8 +179,6 @@ export const TabsPage: React.FC<TabsPageProps> = ({
                                         isLiked={likedPosts.has(post.id)}
                                         onToggleLike={handleToggleLike}
                                         onOpenComments={handleOpenComments}
-                                        formatDate={formatDate}
-                                        formatDuration={formatDuration}
                                     />
                                 ))}
                             </div>

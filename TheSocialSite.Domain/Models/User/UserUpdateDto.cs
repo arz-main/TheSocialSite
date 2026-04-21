@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheSocialSite.Domain.Entities.User;
+﻿using TheSocialSite.Domain.Entities.User;
+using TheSocialSite.Domain.Models.SocialMedia;
 
 namespace TheSocialSite.Domain.Models.User
 {
     public class UpdateUserDto
     {
-        [MaxLength(50)] public string? Username { get; set; }
-        [MaxLength(150)] public string? Email { get; set; }
-        [MaxLength(100)] public string? Location { get; set; }
-        [MaxLength(150)] public string? Website { get; set; }
-        [MaxLength(500)] public string? Bio { get; set; }
-        [MaxLength(250)] public string? Avatar { get; set; } // URL to image
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public string? Location { get; set; }
+        public string? Website { get; set; }
+        public string? Bio { get; set; }
+        public string? Avatar { get; set; } // URL to image
         public Role? Role { get; set; }
-        public SocialMediaDto? SocialLinks { get; set; }
+        public SocialMediaDto? SocialMedia { get; set; }
     }
 }

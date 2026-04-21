@@ -138,11 +138,10 @@ export default function Practice() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col overflow-hidden"
-                        style={{ height: "calc(100dvh - 64px)" }}
+                        className="flex flex-col h-full overflow-hidden"
                     >
                         {isDone ? (
-                            <div className="flex-1 p-4 overflow-y-auto">
+                            <div className="flex-1 h-full p-4 overflow-hidden min-h-0">
                                 <DrawingReviewGrid
                                     results={results}
                                     useCanvas={useCanvas}

@@ -25,33 +25,33 @@ namespace TheSocialSite.Api.Controllers
         [HttpGet]
         public IActionResult GetPosts()
         {
-            var response = _postAction.GetAllPostsAction();
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetAllPostsAction(userId);
             if (!response.IsValid)
-            {
                 return BadRequest("Could not find posts");
-            }
+
             return Ok(response.PostDtos);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetPostById([FromRoute] string id)
         {
-            var response = _postAction.GetPostsByIdAction(id);
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetPostByIdAction(id, userId);
             if (!response.IsValid)
-            {
                 return BadRequest("Could not find posts");
-            }
+
             return Ok(response.PostDto);
         }
 
         [HttpGet("user/{id}")]
         public IActionResult GetUserPosts([FromRoute] string id)
         {
-            var response = _postAction.GetUserPostsAction(id);
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetUserPostsAction(id, userId);
             if (!response.IsValid)
-            {
                 return BadRequest("Could not find posts");
-            }
+
             return Ok(response.PostDtos);
         }
 
@@ -63,25 +63,26 @@ namespace TheSocialSite.Api.Controllers
                 return BadRequest("No data provided");
 
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            DefaultActionResponse data = _postAction.CreatePostAction(postData, userId);
-            if (!data.IsValid)
-                return BadRequest(data.Message);
+            var response = _postAction.CreatePostAction(postData, userId);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
 
-            return Ok(data);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
         [Authorize]
-        public IActionResult AdminDeletePost([FromRoute] string id)
+        public IActionResult DeletePost([FromRoute] string id)
         {
-            var postResponse = _postAction.GetPostsByIdAction(id);
-            if (!postResponse.IsValid)
-                return NotFound();
-
-            var userIdFromPost = postResponse.PostDto.Author.Id;
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            if (userIdFromPost != userId)
-                return Forbid("You can only delete your own posts");
+            var postResponse = _postAction.GetPostByIdAction(id, userId);
+            if (!postResponse.IsValid)
+                return BadRequest(postResponse.Message);
+
+            // get from jwt
+            var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && userId != postResponse.PostDto.AuthorId)
+                return Forbid();
 
             var deleteResponse = _postAction.DeletePostAction(id);
 
@@ -89,6 +90,17 @@ namespace TheSocialSite.Api.Controllers
                 return BadRequest(deleteResponse.Message);
 
             return Ok(deleteResponse.Message);
+        }
+
+        [Authorize]
+        [HttpPost("toggle-like/{id}")]
+        public IActionResult ToggleLikePost([FromRoute] string id)
+        {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.ToggleLikePostAction(id, userId);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
+            return Ok(response);
         }
     }
 }

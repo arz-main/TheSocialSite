@@ -26,16 +26,22 @@ namespace TheSocialSite.Api.Controllers
         [HttpGet("post/{postId}")]
         public IActionResult GetCommentsByPostId(string postId)
         {
-            var result = _commentActions.GetCommentsByPostIdAction(postId);
-            return Ok(result.CommentDtos);
+            var response = _commentActions.GetCommentsByPostIdAction(postId);
+            if (!response.IsValid || response.CommentDtos == null) 
+                return NotFound();
+
+            return Ok(response.CommentDtos);
         }
 
         // GET: api/comments/{id}
         [HttpGet("{id}")]
         public IActionResult GetCommentById(string id)
         {
-            var result = _commentActions.GetCommentById(id);
-            return Ok(result.CommentDto);
+            var response = _commentActions.GetCommentById(id);
+            if (!response.IsValid || response.CommentDto == null)
+                return NotFound();
+
+            return Ok(response.CommentDto);
         }
 
         // POST: api/comments
@@ -44,12 +50,12 @@ namespace TheSocialSite.Api.Controllers
         public IActionResult CreateComment([FromBody] CreateCommentDto dto)
         {
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub); // get JWT sub
-            if (userId == null) return Unauthorized();
+            if (userId == null) return NotFound();
 
-            var result = _commentActions.CreateCommentAction(dto.PostId, dto.Content, userId);
-            if (!result.IsValid) return BadRequest(result.Message);
+            var response = _commentActions.CreateCommentAction(dto.PostId, dto.Content, userId);
+            if (!response.IsValid) return BadRequest(response.Message);
 
-            return Ok(result);
+            return Ok(response);
         }
 
         // PUT: api/comments/{id}
@@ -60,12 +66,12 @@ namespace TheSocialSite.Api.Controllers
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub); // get JWT sub
             if (userId == null) return Unauthorized();
 
-            var result = _commentActions.UpdateCommentAction(id, userId, dto.Content);
-            if (!result.IsValid) return BadRequest(result.Message);
+            var response = _commentActions.UpdateCommentAction(id, userId, dto.Content);
+            if (!response.IsValid) return BadRequest(response.Message);
 
-            return Ok(result.Message);
+            return Ok(response.Message);
         }
-
+        
         // DELETE: api/comments/{id}
         [HttpDelete("{id}")]
         [Authorize]
@@ -74,10 +80,10 @@ namespace TheSocialSite.Api.Controllers
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub); // get JWT sub
             if (userId == null) return Unauthorized();
 
-            var result = _commentActions.DeleteCommentAction(id, userId);
-            if (!result.IsValid) return BadRequest(result.Message);
+            var response = _commentActions.DeleteCommentAction(id, userId);
+            if (!response.IsValid) return BadRequest(response.Message);
 
-            return Ok(result.Message);
+            return Ok(response.Message);
         }
     }
 }

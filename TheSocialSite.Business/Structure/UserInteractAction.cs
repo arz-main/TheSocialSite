@@ -14,23 +14,23 @@ namespace TheSocialSite.Business.Structure
 {
     public class UserInteractAction : UserActions, IUserInteractAction
     {
-        public List<UserDto> GetAllUsersAction()
+        public UserActionResponse GetAllUsersAction()
         {
             return GetAllUsersActionExecution();
         }
-        public SignupActionResponse CreateUserAction(UserSignupDto userData)
+        public UserActionResponse CreateUserAction(CreateUserDto userData)
         {
             return CreateUserActionExecution(userData);
         }
-        public DefaultActionResponse UpdateUserAction(string userId, UpdateUserDto data)
+        public UserActionResponse UpdateUserAction(string userId, UpdateUserDto data)
         {
             return UpdateUserActionExecution(userId, data);
         }
-        public UserDto GetUserByIdAction(string userId)
+        public UserActionResponse GetUserByIdAction(string userId)
         {
             return GetUserByIdActionExecution(userId);
         }
-        public DefaultActionResponse DeleteUserAction(string userId)
+        public UserActionResponse DeleteUserAction(string userId)
         {
             return DeleteUserActionExecution(userId);
         }
