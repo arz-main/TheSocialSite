@@ -5,6 +5,8 @@ import {
     BookOpen, PenLine, Play, Image as ImageIcon, Check,
     Save, Eye, X, Layers, Sparkles, Copy
 } from 'lucide-react';
+import { useCourses } from '../hooks/useCourses';
+import type { BlockType } from '../types/CourseTypes';
 
 type LessonType = 'reading' | 'practice' | 'video';
 type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced';
@@ -274,9 +276,18 @@ function ChapterEditor({ chapter, chapterIndex, onUpdate, onDelete }: {
     );
 }
 
+const lessonTypeToBlockType = (t: LessonType): BlockType => {
+    if (t === 'video') return 'Video';
+    if (t === 'practice') return 'PracticeSession';
+    return 'Text';
+};
+
 export default function AdminCourseCreator() {
+    const { createCourse, createChapter, createLesson, createBlock } = useCourses();
     const [course, setCourse] = useState<DraftCourse>(blankCourse);
     const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
     const [preview, setPreview] = useState(false);
     const [showTemplates, setShowTemplates] = useState(false);
 
@@ -301,9 +312,51 @@ export default function AdminCourseCreator() {
     const addChapter = () =>
         setCourse(prev => ({ ...prev, chapters: [...prev.chapters, blankChapter()] }));
 
-    const handleSave = () => {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2500);
+    const handleSave = async () => {
+        if (!course.title.trim()) { setSaveError('Course title is required'); return; }
+        setSaving(true);
+        setSaveError(null);
+        try {
+            const savedCourse = await createCourse({
+                name: course.title,
+                description: course.description,
+                thumbnailUrl: course.image || undefined,
+            });
+
+            for (let ci = 0; ci < course.chapters.length; ci++) {
+                const ch = course.chapters[ci];
+                const savedChapter = await createChapter({
+                    name: ch.title,
+                    courseId: savedCourse.id,
+                    order: ci + 1,
+                });
+
+                for (let li = 0; li < ch.lessons.length; li++) {
+                    const l = ch.lessons[li];
+                    const savedLesson = await createLesson({
+                        name: l.title,
+                        description: l.description,
+                        chapterId: savedChapter.id,
+                        order: li + 1,
+                    });
+
+                    await createBlock({
+                        type: lessonTypeToBlockType(l.type),
+                        lessonId: savedLesson.id,
+                        order: 1,
+                        textContent: l.type === 'reading' ? l.description : undefined,
+                        practiceConfig: l.type === 'practice' ? JSON.stringify({ refs: l.practiceRefs }) : undefined,
+                    });
+                }
+            }
+
+            setSaved(true);
+            setTimeout(() => setSaved(false), 2500);
+        } catch {
+            setSaveError('Failed to save course. Check the console for details.');
+        } finally {
+            setSaving(false);
+        }
     };
 
     const totalLessons = course.chapters.reduce((a, ch) => a + ch.lessons.length, 0);
@@ -325,11 +378,15 @@ export default function AdminCourseCreator() {
                     >
                         <Eye className="w-4 h-4" /> Preview
                     </button>
+                    {saveError && (
+                        <span className="text-xs text-danger">{saveError}</span>
+                    )}
                     <button
                         onClick={handleSave}
-                        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${saved ? 'bg-green-500 text-white' : 'bg-primary text-white hover:bg-primary/90'}`}
+                        disabled={saving}
+                        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed ${saved ? 'bg-green-500 text-white' : 'bg-primary text-white hover:bg-primary/90'}`}
                     >
-                        {saved ? <><Check className="w-4 h-4" /> Saved!</> : <><Save className="w-4 h-4" /> Save Course</>}
+                        {saved ? <><Check className="w-4 h-4" /> Saved!</> : saving ? <><Save className="w-4 h-4" /> Saving…</> : <><Save className="w-4 h-4" /> Save Course</>}
                     </button>
                 </div>
             </div>

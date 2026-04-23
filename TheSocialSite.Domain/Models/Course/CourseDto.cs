@@ -15,4 +15,5 @@ namespace TheSocialSite.Domain.Models.Course
         public bool IsPublished { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<ChapterDto>? Chapters { get; set; }
+    }
 }

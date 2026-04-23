@@ -10,4 +10,5 @@ namespace TheSocialSite.Domain.Models.Course
         public int ChapterId { get; set; }
         public int Order { get; set; }
         public List<BlockDto>? Blocks { get; set; }
+    }
 }
