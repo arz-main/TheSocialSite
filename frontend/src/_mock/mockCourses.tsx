@@ -1,5 +1,5 @@
 export interface LessonSection {
-    type: 'text' | 'image' | 'tip' | 'callout' | 'example' | 'steps';
+    type: 'text' | 'image' | 'tip' | 'callout' | 'example' | 'steps' | 'video';
     heading?: string;
     body?: string;
     src?: string;
@@ -16,6 +16,7 @@ export interface Lesson {
     completed: boolean;
     description: string;
     practiceRefs?: string[];
+    countdownSeconds?: number;
 
     content?: LessonSection[];
     videoUrl?: string;
@@ -39,6 +40,9 @@ export interface Course {
     badgeText?: string;
     isFavourite: boolean;
     chapterData?: Chapter[];
+    authorId?: string;
+    authorUsername?: string;
+    authorAvatarUrl?: string;
 }
 
 

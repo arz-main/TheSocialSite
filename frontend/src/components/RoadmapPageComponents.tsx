@@ -237,14 +237,14 @@ export function CourseBanner({ course, chapters, totalLessons, progressPct, isFu
             <div className="absolute top-0 right-0 w-64 h-full opacity-[0.03]"
                 style={{ background: 'radial-gradient(circle at 100% 50%, var(--primary) 0%, transparent 70%)' }} />
             <div className="relative flex items-stretch">
-                <div className="flex-1 px-8 py-6">
+                <div className="flex-1 px-8 py-6 min-w-0">
                     <button onClick={() => navigate(paths.roadmap.page)}
                         className="flex items-center gap-2 text-muted hover:text-primary text-xs font-black uppercase tracking-widest mb-4 group w-fit transition-colors">
                         <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> Learning Paths
                     </button>
                     <div className="flex items-start gap-4">
                         <div className="w-1 self-stretch rounded-full bg-primary mt-0.5 shrink-0" />
-                        <div>
+                        <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2 flex-wrap">
                                 {diff && (
                                     <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${diff.bg} ${diff.text}`}>
@@ -257,8 +257,20 @@ export function CourseBanner({ course, chapters, totalLessons, progressPct, isFu
                                     </span>
                                 )}
                             </div>
-                            <h1 className="text-3xl font-black text-text leading-tight mb-1">{course.title}</h1>
-                            <p className="text-sm text-muted leading-relaxed max-w-lg">{course.description}</p>
+                            <h1 className="text-3xl font-black text-text leading-tight mb-2">{course.title}</h1>
+                            <p className="text-sm text-muted leading-relaxed mb-4">{course.description}</p>
+                            {course.authorUsername && (
+                                <button
+                                    onClick={() => navigate(paths.explore.toUser(course.authorId ?? ''))}
+                                    className="flex items-center gap-2 hover:opacity-75 transition-opacity w-fit"
+                                >
+                                    {course.authorAvatarUrl
+                                        ? <img src={course.authorAvatarUrl} alt={course.authorUsername} className="w-6 h-6 rounded-full object-cover border border-border" />
+                                        : <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-black">{course.authorUsername[0].toUpperCase()}</div>
+                                    }
+                                    <span className="text-xs text-muted font-semibold">{course.authorUsername}</span>
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -392,8 +404,8 @@ export function LessonRow({ lesson, index, isDone, courseId, onMarkDone, onPract
                     </div>
                 </div>
                 <div className="flex flex-col gap-2 shrink-0 items-end">
-                    {lesson.type === 'practice' && lesson.practiceRefs?.length ? (
-                        <button onClick={() => onPractice(lesson)}
+                    {lesson.type === 'practice' ? (
+                        <button onClick={e => { e.stopPropagation(); onPractice(lesson); }}
                             className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-black hover:bg-primary/90 active:scale-[0.97] transition-all shadow-md shadow-primary/25 flex items-center gap-2">
                             <PenLine className="w-4 h-4" /> Practice
                         </button>

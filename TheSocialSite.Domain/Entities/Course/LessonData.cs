@@ -14,7 +14,7 @@ namespace TheSocialSite.Domain.Entities.Course
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
 
-        [MaxLength(500)]
+        [Column(TypeName = "nvarchar(max)")]
         public string? Description { get; set; }
 
         [Required]
