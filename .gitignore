@@ -75,6 +75,8 @@ coverage
 .env.production.local
 .env.production
 
+# certificates for https communication
+certs/
 #################################
 # App settings
 #################################

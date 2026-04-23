@@ -1,31 +1,34 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TheSocialSite.Domain.Entities.Comment;
+using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.Domain.Entities.Post
 {
     public enum PostStatus
     {
-        Published,
-        Draft,
-        Flagged
+        Published, // visible to everyone
+        Draft,     // only visible to the author and admins, not shown in public feeds or search results
+        Flagged    // marked by users for review, hidden from public until reviewed by admins
     }
 
     public class PostData
     {
-        // --- Server managed, never set by user ---
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
 
-        public string? Author { get; set; }      // set from JWT
-        public string? AuthorId { get; set; }    // set from JWT
+        [Required]
+        public string AuthorId { get; set; }             // foreign key to user
+
+        [ForeignKey("AuthorId")]
+        public UserData Author { get; set; }             // navigation property
 
         public PostStatus Status { get; set; } = PostStatus.Draft;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public int Likes { get; set; } = 0;
-        public int Comments { get; set; } = 0;
 
-        // --- Required from user ---
         [Required]
         [MaxLength(200)]
         public string Title { get; set; }
@@ -36,18 +39,17 @@ namespace TheSocialSite.Domain.Entities.Post
 
         [Required]
         [MaxLength(50)]
+        // later add categories in the db as entities
         public string Category { get; set; }
 
-        [Required]
-        public int Duration { get; set; } // in seconds
-
-        // --- Optional from user ---
+        // optional from user
         [MaxLength(1000)]
         public string? Description { get; set; }
 
-        [MaxLength(500)]
-        public string? ReferenceUrl { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public bool ShowWithReference { get; set; } = false;
+        // this does not make a separate table, but allows access to comments for a post
+        public List<CommentData> Comments { get; set; } = new List<CommentData>();   // reverse navigation
+        public List<PostLikeData> PostLikes { get; set; } = new List<PostLikeData>(); // reverse navigation
     }
 }

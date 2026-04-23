@@ -3,10 +3,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Brush } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { mockDrawings, mockCategories } from "../_mock/mockPracticePage";
-import { PracticeCard, CanvasToggle } from "../components/ui/PracticePageUIComponents";
-import { ActiveSessionPanel, DrawingReviewGrid, PostDrawingPanel } from "../components/ui/PracticePageComponents";
+import { PracticeCard, CanvasToggle } from "../components/PracticePageUIComponents";
+import { ActiveSessionPanel, DrawingReviewGrid, PostDrawingPanel } from "../components/PracticePageComponents";
 import { formatTime } from "../utils/PracticePageUtils";
-import { Button } from "../components/ui/BasicButton";
+import { Button } from "../components/BasicButton";
 import type { SessionState, SessionResult } from "../types/PracticePageTypes";
 
 export default function Practice() {
@@ -138,11 +138,10 @@ export default function Practice() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col overflow-hidden"
-                        style={{ height: "calc(100dvh - 64px)" }}
+                        className="flex flex-col h-full overflow-hidden"
                     >
                         {isDone ? (
-                            <div className="flex-1 p-4 overflow-y-auto">
+                            <div className="flex-1 h-full p-4 overflow-hidden min-h-0">
                                 <DrawingReviewGrid
                                     results={results}
                                     useCanvas={useCanvas}
@@ -219,11 +218,11 @@ export default function Practice() {
                                             <span>10s</span><span>5m</span>
                                         </div>
                                     </div>
-                                    <div className="pt-1">
+                                    <div className="flex items-center justify-between pt-1">
                                         <CanvasToggle checked={useCanvas} onChange={setUseCanvas} />
                                         {useCanvas && (
-                                            <p className="text-xs text-text-opaque mt-1.5 ml-14">
-                                                Draw alongside the reference — sketches saved at end.
+                                            <p className="text-xs text-text-opaque">
+                                                Draw alongside the reference.
                                             </p>
                                         )}
                                     </div>
@@ -234,7 +233,7 @@ export default function Practice() {
                             </div>
 
                             {/* RIGHT — preview */}
-                            <div className="flex flex-col items-center justify-center rounded-xl bg-card shadow p-6 gap-4 min-h-[300px]">
+                            <div className="flex flex-col items-center justify-center rounded-xl bg-card shadow p-6 gap-4 min-h-75">
                                 <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
                                     <Brush className="w-12 h-12 text-primary" />
                                 </div>

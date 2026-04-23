@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using TheSocialSite.Business.Core;
 using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Domain.Models.Post;
 using TheSocialSite.Domain.Models.Response;
@@ -23,42 +25,82 @@ namespace TheSocialSite.Api.Controllers
         [HttpGet]
         public IActionResult GetPosts()
         {
-            var posts = _postAction.GetAllPostsAction();
-            if (posts == null)
-            {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetAllPostsAction(userId);
+            if (!response.IsValid)
                 return BadRequest("Could not find posts");
-            }
-            return Ok(posts);
+
+            return Ok(response.PostDtos);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetPostById([FromRoute] string id)
+        {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetPostByIdAction(id, userId);
+            if (!response.IsValid)
+                return BadRequest("Could not find posts");
+
+            return Ok(response.PostDto);
         }
 
         [HttpGet("user/{id}")]
         public IActionResult GetUserPosts([FromRoute] string id)
         {
-            var posts = _postAction.GetUserPostsAction(id);
-            if (posts == null)
-            {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.GetUserPostsAction(id, userId);
+            if (!response.IsValid)
                 return BadRequest("Could not find posts");
-            }
-            return Ok(posts);
+
+            return Ok(response.PostDtos);
         }
 
         [Authorize]
         [HttpPost("create")]
-        public IActionResult CreatePost([FromBody] PostCreationDto postData)
+        public IActionResult CreatePost([FromBody] CreatePostDto postData)
         {
             if (postData == null)
-            {
                 return BadRequest("No data provided");
-            }
+
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var username = User.FindFirstValue(JwtRegisteredClaimNames.Name);
-            Console.WriteLine(userId);
-            ActionResponse validationInfo = _postAction.PostCreationAction(postData, userId, username);
-            if (!validationInfo.IsValid)
-            {
-                return BadRequest(validationInfo.Message);
-            }
-            return Ok(validationInfo);
+            var response = _postAction.CreatePostAction(postData, userId);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
+
+            return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public IActionResult DeletePost([FromRoute] string id)
+        {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var postResponse = _postAction.GetPostByIdAction(id, userId);
+            if (!postResponse.IsValid)
+                return BadRequest(postResponse.Message);
+
+            // get from jwt
+            var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && userId != postResponse.PostDto.AuthorId)
+                return Forbid();
+
+            var deleteResponse = _postAction.DeletePostAction(id);
+
+            if (!deleteResponse.IsValid)
+                return BadRequest(deleteResponse.Message);
+
+            return Ok(deleteResponse.Message);
+        }
+
+        [Authorize]
+        [HttpPost("toggle-like/{id}")]
+        public IActionResult ToggleLikePost([FromRoute] string id)
+        {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var response = _postAction.ToggleLikePostAction(id, userId);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
+            return Ok(response);
         }
     }
 }

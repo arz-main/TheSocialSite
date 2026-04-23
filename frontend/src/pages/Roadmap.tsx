@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MOCK_COURSES, type Course } from '../_mock/mockCourses';
-import { RoadmapHero, FilterBar, CourseGrid } from '../components/ui/RoadmapPageComponents';
+import { RoadmapHero, FilterBar, CourseGrid } from '../components/RoadmapPageComponents';
 import { useRoadmapStats, useFilteredCourses } from '../utils/RoadmapPageUtils';
 import type { DifficultyFilter, ProgressFilter, SortOption } from '../types/RoadmapPageTypes';
 

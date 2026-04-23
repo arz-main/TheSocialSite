@@ -1,19 +1,11 @@
-type Badge = {
-	id: string;
-	name: string;
-	description: string;
-	icon: string;
-	earned: boolean;
-	earnedDate?: string;
-}
-
+/*
 export const badges: Badge[] = [
 	{
 		id: "1",
-		name: "First Steps",
+		title: "First Steps",
 		description: "Complete your first drawing session",
-		icon: "🎨",
-		earned: true,
+		iconUrl: "🎨",
+		isEarned: true,
 		earnedDate: "2026-01-15",
 	},
 	{
@@ -55,3 +47,4 @@ export const badges: Badge[] = [
 		earned: false,
 	},
 ];
+*/

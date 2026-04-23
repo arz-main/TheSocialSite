@@ -1,212 +1,154 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search } from "lucide-react";
-import { useNavigate } from "react-router";
-import { CommentsModal, Dropdown, PostCard } from "../components/ui/ExplorePageComponents";
+import { PostCard, CommentsModal, Dropdown, PostCardSkeleton } from "../components/ExplorePageComponents";
+import type { PostDto } from "../types/PostTypes";
 import type { SearchByOption, SortByOption } from "../types/ExplorePageTypes";
 import { getSearchPlaceholder, searchByOptions, sortByOptions, filterPosts, sortPosts } from "../utils/ExplorePageUtils";
-import paths from "../routes/paths";
-import { Button } from "../components/ui/BasicButton";
-import type { Post } from "../types/PostTypes";
-import useAxios from "../hooks/useAxios";
-import LoadingScreen from "../components/ui/LoadingScreen";
-import ErrorScreen from "../components/ui/ErrorScreen";
+import { Button } from "../components/BasicButton";
+import { usePosts } from "../hooks/usePosts";
+import { Input } from "../components/BasicInput";
+import ErrorScreen from "../components/ErrorScreen";
+import { formatDate } from "../utils/FormatDateUtil";
+import { usePostInteractions } from "../hooks/usePostInteractions";
 
 const PAGE_SIZE = 9;
 
-// --- Main Page ---
 export default function ExplorePage() {
-    const navigate = useNavigate();
-    const [likedDrawings, setLikedDrawings] = useState<Set<string>>(new Set());
+
+    // ─── Data ─────────────────────────────────────────────
+    const [posts, setPosts] = useState<PostDto[]>([]);
+    const [localLoading, setLocalLoading] = useState(false);
+    const [localError, setLocalError] = useState<string | null>(null);
+
+    // ─── Search & Sort ────────────────────────────────────
     const [searchQuery, setSearchQuery] = useState("");
     const [searchBy, setSearchBy] = useState<SearchByOption>("creator");
     const [sortBy, setSortBy] = useState<SortByOption>("relevance");
-    const [openedPost, setOpenedPost] = useState<Post | null>(null);
+    const [searchByOpen, setSearchByOpen] = useState(false);
+    const [sortByOpen, setSortByOpen] = useState(false);
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string>();
-    const axiosInstance = useAxios();
+    // ─── Hooks ────────────────────────────────────────────
+    const { getAllPosts } = usePosts();
+    const {
+        likedPosts, likeCounts, commentCounts,
+        comments, openedPost, imageIndex, newComment,
+        setImageIndex, setNewComment,
+        initPostStates, fetchCommentCounts,
+        handleLike, handleOpenComments, handleSubmitComment, closeModal,
+    } = usePostInteractions();
 
+    // ─── Fetch ────────────────────────────────────────────
     useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                setLoading(true);
-                const response = await axiosInstance.get<Post[]>("/posts");
+        setLocalLoading(true);
+        setLocalError(null);
+        getAllPosts()
+            .then(data => {
+                const fetched = data ?? [];
+                setPosts(fetched);
+                initPostStates(fetched);
+                fetchCommentCounts(fetched);
+            })
+            .catch(() => setLocalError("Failed to load posts."))
+            .finally(() => setLocalLoading(false));
+    }, [getAllPosts]);
 
-                if (typeof response.data === "string") {
-                    throw new Error("Got HTML instead of JSON — backend may be down");
-                }
-                console.log(response.data);
-                setPosts(response.data);
-            } catch (err) {
-                console.error(err);
-                setError("Failed to load posts");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPosts();
-    }, [axiosInstance]);
-
-    const formatDate = (dateString: string) => {
-        const diffHours = Math.floor(
-            (Date.now() - new Date(dateString).getTime()) / (1000 * 60 * 60)
-        );
-        if (diffHours < 1) return "Just now";
-        if (diffHours < 24) return `${diffHours}h ago`;
-        return `${Math.floor(diffHours / 24)}d ago`;
-    };
-
-    const formatDuration = (seconds: number) => {
-        if (seconds >= 60) return `${Math.floor(seconds / 60)} min`;
-        return `${seconds}s`;
-    };
-
-    const toggleLike = useCallback((drawingId: string) => {
-        setLikedDrawings((prev) => {
-            const next = new Set(prev);
-            if (next.has(drawingId)) next.delete(drawingId);
-            else next.add(drawingId);
-            return next;
-        });
-    }, []);
-
-    const filteredPosts = useMemo(() => {
-        return filterPosts(posts, searchQuery, searchBy);
-    }, [posts, searchQuery, searchBy]);
-
-    const sortedPosts = useMemo(() => {
-        return sortPosts(filteredPosts, sortBy);
-    }, [filteredPosts, sortBy]);
-
-    const visiblePosts = useMemo(
-        () => sortedPosts.slice(0, visibleCount),
-        [sortedPosts, visibleCount]
-    );
-
+    // ─── Derived State ────────────────────────────────────
+    const filteredPosts = useMemo(() => filterPosts(posts, searchQuery, searchBy), [posts, searchQuery, searchBy]);
+    const sortedPosts = useMemo(() => sortPosts(filteredPosts, sortBy), [filteredPosts, sortBy]);
+    const visiblePosts = useMemo(() => sortedPosts.slice(0, visibleCount), [sortedPosts, visibleCount]);
     const hasMore = !searchQuery && visibleCount < sortedPosts.length;
 
-    const handleLoadMore = () => {
-        setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, sortedPosts.length));
-    };
-
-    // Reset pagination when search changes
+    // ─── Handlers ─────────────────────────────────────────
     const handleSearch = (val: string) => {
         setSearchQuery(val);
         setVisibleCount(PAGE_SIZE);
     };
 
-    if (loading) return <LoadingScreen />
-    if (error) return <ErrorScreen />;
+    const handleLoadMore = () =>
+        setVisibleCount(prev => Math.min(prev + PAGE_SIZE, sortedPosts.length));
 
+    // ─── Render ───────────────────────────────────────────
     return (
         <>
-            <section className="flex flex-col flex-1 w-full p-6 bg-background">
+            <section className="flex flex-col flex-1 w-full min-h-screen bg-background text-text p-6">
                 <motion.div
+                    className="flex-1 flex flex-col"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    {/* Search and Filter Bar */}
-                    <div className="flex gap-4 mb-8">
-                        {/* Mobile toggle button */}
-                        <button
-                            onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-                            className="md:hidden w-10 h-10 bg-card text-text border border-muted rounded-lg flex items-center justify-center"
-                        >
-                            <Search className="w-5 h-5" />
-                        </button>
-
-                        {/* Search input */}
-                        <div className={`${isSearchExpanded ? "flex" : "hidden"} md:flex flex-1 max-w-2xl relative`}>
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text opacity-50 pointer-events-none" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => handleSearch(e.target.value)}
-                                placeholder={getSearchPlaceholder(searchBy)}
-                                className="flex-1 w-full text-text h-10 px-10 bg-card border border-muted rounded-lg outline-none"
-                            />
-                        </div>
-
-                        {/* Filter Dropdowns - Always show */}
-                        {/* Search By Dropdown */}
-                        <div className="hidden md:block">
-                            <Dropdown
-                                label="Search by"
-                                value={searchBy}
-                                options={searchByOptions}
-                                onChange={(val) => setSearchBy(val as SearchByOption)}
-                            />
-                        </div>
-
-                        {/* Sort By Dropdown - Hide for user search */}
-                        {
-                            <Dropdown
-                                label="Sort by"
-                                value={sortBy}
-                                options={sortByOptions}
-                                onChange={(val) => setSortBy(val as SortByOption)}
-                            />
-                        }
+                    {/* Search & Filters */}
+                    <div className="flex items-center gap-3 mb-8">
+                        <Input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            placeholder={getSearchPlaceholder(searchBy)}
+                            className="flex-1"
+                        />
+                        <Dropdown
+                            label="Search by"
+                            value={searchBy}
+                            options={searchByOptions}
+                            onChange={(val: string) => setSearchBy(val as SearchByOption)}
+                            isOpen={searchByOpen}
+                            onToggle={() => setSearchByOpen(p => !p)}
+                        />
+                        <Dropdown
+                            label="Sort by"
+                            value={sortBy}
+                            options={sortByOptions}
+                            onChange={(val: string) => setSortBy(val as SortByOption)}
+                            isOpen={sortByOpen}
+                            onToggle={() => setSortByOpen(p => !p)}
+                        />
                     </div>
 
-                    <>
-                        {/* Cards Grid */}
-                        <div className="bg-background grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {visiblePosts.length > 0 ? (
-                                visiblePosts.map((post: Post, index: number) => (
-                                    <PostCard
-                                        key={post.id}
-                                        post={post}
-                                        index={index}
-                                        pageSize={PAGE_SIZE}
-                                        isLiked={likedDrawings.has(post.id)}
-                                        onToggleLike={toggleLike}
-                                        onOpenComments={setOpenedPost}
-                                        formatDate={formatDate}
-                                        formatDuration={formatDuration}
-                                    />
-                                ))
-                            ) : (
-                                <div className="col-span-3 text-center py-16 text-text opacity-50">
-                                    {searchBy === "reference" ? (
-                                        <>No reference search available yet</>
-                                    ) : (
-                                        <>No results found matching "{searchQuery}"</>
-                                    )}
-                                </div>
-                            )}
+                    {/* Posts Grid */}
+                    <div className="flex-1">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {localLoading
+                                ? Array.from({ length: 9 }).map((_, i) => <PostCardSkeleton key={i} />)
+                                : localError
+                                    ? <div className="col-span-full"><ErrorScreen /></div>
+                                    : visiblePosts.map((post, index) => (
+                                        <PostCard
+                                            key={post.id}
+                                            post={post}
+                                            index={index}
+                                            isLiked={likedPosts.has(post.id)}
+                                            likeCount={likeCounts[post.id] ?? post.likes}
+                                            commentCount={commentCounts[post.id]}
+                                            onToggleLike={handleLike}
+                                            onOpenComments={handleOpenComments}
+                                            formatDate={formatDate}
+                                        />
+                                    ))
+                            }
                         </div>
+                    </div>
 
-                        {/* Load More */}
-                        {hasMore && (
-                            <div className="mt-12 text-center">
-                                <Button
-                                    variant={"primary"}
-                                    onClick={handleLoadMore}
-                                >
-                                    Load More
-                                </Button>
-                            </div>
-                        )}
-                    </>
+                    {hasMore && (
+                        <div className="mt-12 text-center">
+                            <Button variant="primary" onClick={handleLoadMore}>Load More</Button>
+                        </div>
+                    )}
                 </motion.div>
             </section>
 
-            {/* Comments Modal */}
             <AnimatePresence>
                 {openedPost && (
                     <CommentsModal
                         post={openedPost}
-                        //onSubmitComment={ }
-                        onClose={() => setOpenedPost(null)}
-                        likedDrawings={likedDrawings}
-                        toggleLike={toggleLike}
-                        initialImageIndex={0}
+                        comments={comments}
+                        imageIndex={imageIndex}
+                        newComment={newComment}
+                        // loading={localLoading}
+                        onChangeImageIndex={setImageIndex}
+                        onChangeNewComment={setNewComment}
+                        onSubmitComment={handleSubmitComment}
+                        onClose={closeModal}
                     />
                 )}
             </AnimatePresence>

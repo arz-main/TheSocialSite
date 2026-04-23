@@ -1,64 +1,73 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { CalendarDays, ExternalLink, MapPin, Medal, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { ExternalLink, MapPin, CalendarDays, Settings } from "lucide-react";
-import {
-    FaPinterest,
-    FaTwitter,
-    FaDeviantart,
-    FaYoutube,
-    FaDiscord,
-    FaGlobe,
-} from "react-icons/fa";
-import { Badge as BadgeUI } from "../components/ui/Badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs";
-import { formatDate, formatDuration } from "../utils/ProfilePageUtils";
-import { usePost } from "../hooks/usePost";
-import { CommentsModal, PostCard } from "../components/ui/ExplorePageComponents";
-import { ImageWithFallback } from "../components/ui/ImageWithFallBack";
+import { useEffect, useState } from "react";
+import { FaDeviantart, FaDiscord, FaPinterest, FaTwitter, FaYoutube } from "react-icons/fa";
+import { useNavigate } from "react-router";
+import { AvatarFallback } from "../components/AvatarFallback";
+import { Card } from "../components/Card";
+import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { useAuth } from "../hooks/useAuth";
-import type { Post } from "../types/PostTypes";
+import { usePosts } from "../hooks/usePosts";
+import { useSocialMedia } from "../hooks/useSocialMedia";
+import { usePostInteractions } from "../hooks/usePostInteractions";
 import paths from "../routes/paths";
-import { Card } from "../components/ui/Card";
+import type { PostDto } from "../types/PostTypes";
+import type { SocialMediaDto } from "../types/SocialMediaTypes";
+import { formatDate } from "../utils/FormatDateUtil";
+import { type AwardedBadgeWithTemplate, type BadgeTier } from "../types/BadgeTypes";
+import { useAwardedBadges } from "../hooks/useAwardedBadges";
+import { BadgeCard } from "../components/badge/BadgeCard";
 
 export default function ArtistProfile() {
-    const [activeTab, setActiveTab] = useState("drawings");
-    const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-    const [openedPost, setOpenedPost] = useState<any>(null);
-    const [userPosts, setUserPosts] = useState<Post[]>([]);
 
+    // ─── Data ─────────────────────────────────────────────
+    const [userPosts, setUserPosts] = useState<PostDto[]>([]);
+    const [socialMedia, setSocialMedia] = useState<SocialMediaDto | null>(null);
+    const [awardedBadges, setAwardedBadges] = useState<AwardedBadgeWithTemplate[]>([]);  // <-- new
+
+
+    // ─── UI ───────────────────────────────────────────────
+    const [activeTab, setActiveTab] = useState("posts");
+
+    // ─── Hooks ────────────────────────────────────────────
     const navigate = useNavigate();
-    const { user } = useAuth();
-    const { fetchUserPosts } = usePost();
+    const { currentUser } = useAuth();
+    const { getUserPosts } = usePosts();
+    const { getSocialMedia } = useSocialMedia();
+    const {
+        likedPosts, likeCounts, commentCounts,
+        comments, openedPost, imageIndex, newComment,
+        setImageIndex, setNewComment,
+        initPostStates, fetchCommentCounts,
+        handleLike, handleOpenComments, handleSubmitComment, closeModal,
+    } = usePostInteractions();
+    const { getAwardedBadgesByUserId } = useAwardedBadges();
 
+    // ─── Fetch ────────────────────────────────────────────
     useEffect(() => {
-        if (user?.id)
-            fetchUserPosts(user.id)
-                .then(data => { if (data) setUserPosts(data) });
-    }, [user?.id]);
+        if (!currentUser?.id) return;
 
-    const handleToggleLike = (postId: string) => {
-        setLikedPosts(prev => {
-            const next = new Set(prev);
-            next.has(postId) ? next.delete(postId) : next.add(postId);
-            return next;
+        getUserPosts(currentUser.id).then(data => {
+            if (!data) return;
+            setUserPosts(data);
+            initPostStates(data);
+            fetchCommentCounts(data);
         });
-    };
 
-    const handleOpenComments = (post: any) => setOpenedPost(post);
+        getSocialMedia(currentUser.id).then(data => setSocialMedia(data));
+        getAwardedBadgesByUserId(currentUser.id).then(data => setAwardedBadges(data));  // <-- new
+    }, [currentUser?.id]);
 
-    const DUMMY_BIO =
-        "Digital artist and illustrator passionate about character design and anatomy studies. Always learning, always creating.";
+    if (!currentUser) return null;
 
-    if (!user) return null;
+    // ─── Derived ──────────────────────────────────────────
+    const hasSocialLinks = !!socialMedia && Object.values(socialMedia).some(v => v && v !== currentUser.id);
+    const rankBadge = currentUser.level || "Advanced Sketcher";
+    const streak = currentUser.streak ?? 0;
+    const postsCount = userPosts.length;
 
-    const bio = user.bio || DUMMY_BIO;
-    const hasSocialLinks = user.socialLinks && Object.values(user.socialLinks).some(Boolean);
-    const earnedBadges = user.badges ? user.badges.filter((b: any) => b.earned) : [];
-    const rankBadge = user.level || "Advanced Sketcher";
-    const streak = user.streak ?? 15;
-    const drawingsCount = userPosts.length || 387;
-
+    // ─── Render ───────────────────────────────────────────
     return (
         <div className="flex flex-col flex-1 bg-background text-text">
             <div className="w-full max-w-5xl mx-auto px-6 py-8">
@@ -69,22 +78,18 @@ export default function ArtistProfile() {
                 >
                     {/* PROFILE CARD */}
                     <div className="rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
+                        <div className="h-36 w-full" style={{ backgroundColor: "var(--button)" }} />
 
-                        {/* Banner */}
-                        <div className="h-36 w-full" style={{ backgroundColor: 'var(--button)' }} />
-
-                        {/* Profile body */}
-                        <div className="px-8 pb-8 relative">
-                            {/* Avatar overlapping banner */}
-                            <div className="absolute -top-14 left-8 w-28 h-28 rounded-full bg-card ring-4 ring-card overflow-hidden shadow-lg">
-                                <ImageWithFallback
-                                    src={user?.avatar}
-                                    alt={user?.username}
-                                    className="w-full h-full object-cover"
+                        <div className="px-8 pt-4 pb-6 relative">
+                            <div className="absolute -top-14 left-8">
+                                <AvatarFallback
+                                    src={currentUser.avatarUrl}
+                                    alt={currentUser.username ?? ""}
+                                    size={112}
+                                    className="ring-4 ring-card shadow-lg"
                                 />
                             </div>
 
-                            {/* Edit profile top-right */}
                             <div className="flex justify-end pt-3">
                                 <button
                                     onClick={() => navigate(paths.artist.edit_profile)}
@@ -95,92 +100,89 @@ export default function ArtistProfile() {
                                 </button>
                             </div>
 
-                            {/* Name & handle */}
-                            <div className="mt-8">
-                                <h1 className="text-2xl font-bold leading-tight">{user.username}</h1>
-                                <p className="text-sm text-muted mt-0.5">@{(user.username || "artist").toLowerCase().replace(/\s/g, "")}</p>
+                            <div className="h-8" />
+
+                            <div className="mt-2">
+                                <h1 className="text-2xl font-bold leading-tight">{currentUser.username}</h1>
+                                <p className="text-sm text-muted mt-0.5">
+                                    @{(currentUser.username ?? "artist").toLowerCase().replace(/\s/g, "")}
+                                </p>
                             </div>
 
-                            {/* Bio */}
-                            <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{bio}</p>
+                            {currentUser.bio && (
+                                <p className="mt-3 text-sm text-text/80 leading-relaxed max-w-2xl">{currentUser.bio}</p>
+                            )}
 
-                            {/* Meta row */}
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-sm text-muted">
-                                {user.location && (
+                                {currentUser.location && (
                                     <span className="flex items-center gap-1.5">
                                         <MapPin className="w-4 h-4 shrink-0" />
-                                        {user.location}
+                                        {currentUser.location}
                                     </span>
                                 )}
-                                {user.website && (
-                                    <a href={user.website} target="_blank" rel="noopener noreferrer"
+                                {currentUser.website && (
+                                    <a href={currentUser.website} target="_blank" rel="noopener noreferrer"
                                         className="flex items-center gap-1.5 text-primary hover:underline transition-colors">
                                         <ExternalLink className="w-4 h-4 shrink-0" />
-                                        {user.website.replace(/^https?:\/\//, '')}
+                                        {currentUser.website.replace(/^https?:\/\//, "")}
                                     </a>
                                 )}
-                                <span className="flex items-center gap-1.5">
-                                    <CalendarDays className="w-4 h-4 shrink-0" />
-                                    Joined {formatDate(user.joinedDate)}
-                                </span>
+                                {currentUser.joinedDate && (
+                                    <span className="flex items-center gap-1.5">
+                                        <CalendarDays className="w-4 h-4 shrink-0" />
+                                        Joined {formatDate(currentUser.joinedDate)}
+                                    </span>
+                                )}
                             </div>
 
-                            {/* Social icon buttons */}
                             {hasSocialLinks && (
                                 <div className="flex flex-wrap gap-2 mt-3">
-                                    {user.socialLinks!.x && (
-                                        <a href={user.socialLinks!.x} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.twitter && (
+                                        <a href={socialMedia!.twitter} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaTwitter className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.pinterest && (
-                                        <a href={user.socialLinks!.pinterest} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.pinterest && (
+                                        <a href={socialMedia!.pinterest} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaPinterest className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.deviantart && (
-                                        <a href={user.socialLinks!.deviantart} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.deviantArt && (
+                                        <a href={socialMedia!.deviantArt} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaDeviantart className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.youtube && (
-                                        <a href={user.socialLinks!.youtube} target="_blank" rel="noopener noreferrer"
+                                    {socialMedia!.youTube && (
+                                        <a href={socialMedia!.youTube} target="_blank" rel="noopener noreferrer"
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaYoutube className="w-4 h-4" />
                                         </a>
                                     )}
-                                    {user.socialLinks!.discord && (
-                                        <button onClick={() => navigator.clipboard.writeText(user.socialLinks!.discord!)}
-                                            title={`Copy: ${user.socialLinks!.discord}`}
+                                    {socialMedia!.discord && (
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(socialMedia!.discord!)}
+                                            title={`Copy: ${socialMedia!.discord}`}
                                             className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
                                             <FaDiscord className="w-4 h-4" />
                                         </button>
                                     )}
-                                    {user.website && (
-                                        <a href={user.website} target="_blank" rel="noopener noreferrer"
-                                            className="w-9 h-9 flex items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/30 text-muted hover:text-text transition-colors">
-                                            <FaGlobe className="w-4 h-4" />
-                                        </a>
-                                    )}
                                 </div>
                             )}
 
-                            {/* Followers / Following */}
                             <div className="flex items-center gap-1 mt-4 text-sm">
-                                <span className="font-bold">1.2K</span>
+                                <span className="font-bold">{currentUser.followers?.length ?? 0}</span>
                                 <span className="text-muted mr-4">Followers</span>
-                                <span className="font-bold">342</span>
+                                <span className="font-bold">{currentUser.following?.length ?? 0}</span>
                                 <span className="text-muted">Following</span>
                             </div>
 
-                            {/* Stats pills row */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
-                                    <span className="text-2xl font-bold">{drawingsCount}</span>
-                                    <span className="text-xs text-muted">Drawings</span>
+                                    <span className="text-2xl font-bold">{postsCount}</span>
+                                    <span className="text-xs text-muted">Posts</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
                                     <div className="flex items-center gap-1">
@@ -190,7 +192,7 @@ export default function ArtistProfile() {
                                     <span className="text-xs text-muted">Day Streak</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
-                                    <span className="text-2xl font-bold">{earnedBadges.length || 4}</span>
+                                    <span className="text-2xl font-bold">{awardedBadges.length}</span>
                                     <span className="text-xs text-muted">Badges Earned</span>
                                 </div>
                                 <div className="flex flex-col gap-1 px-4 py-3 rounded-xl bg-background border border-border">
@@ -205,25 +207,25 @@ export default function ArtistProfile() {
                     <div className="mt-4">
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
                             <TabsList className="w-full grid grid-cols-3 h-12">
-                                <TabsTrigger value="drawings" className="h-full text-sm font-semibold">
-                                    My Drawings <span className="ml-1.5 text-xs opacity-60">{drawingsCount}</span>
+                                <TabsTrigger value="posts" className="h-full text-sm font-semibold">
+                                    My Posts <span className="ml-1.5 text-xs opacity-60">{postsCount}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="badges" className="h-full text-sm font-semibold">
-                                    Badges <span className="ml-1.5 text-xs opacity-60">{earnedBadges.length || 4}</span>
+                                    Badges <span className="ml-1.5 text-xs opacity-60">{awardedBadges.length}</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="favorites" className="h-full text-sm font-semibold">
-                                    Favorites <span className="ml-1.5 text-xs opacity-60">12</span>
+                                    Favorites <span className="ml-1.5 text-xs opacity-60">0</span>
                                 </TabsTrigger>
                             </TabsList>
 
                             <div className="mt-5">
-                                <TabsContent value="drawings">
+                                <TabsContent value="posts">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
                                         {userPosts.length === 0 ? (
                                             <Card className="p-20 text-center">
                                                 <div className="text-5xl mb-4">🎨</div>
                                                 <h3 className="text-lg font-semibold mb-2">No Drawings Yet</h3>
-                                                <p className="text-muted-foreground">Start practicing to see your drawings here</p>
+                                                <p className="text-muted">Start practicing to see your drawings here</p>
                                             </Card>
                                         ) : (
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -232,12 +234,12 @@ export default function ArtistProfile() {
                                                         key={post.id}
                                                         post={post}
                                                         index={index}
-                                                        pageSize={userPosts.length}
                                                         isLiked={likedPosts.has(post.id)}
-                                                        onToggleLike={handleToggleLike}
+                                                        likeCount={likeCounts[post.id] ?? post.likes}
+                                                        commentCount={commentCounts[post.id]}
+                                                        onToggleLike={handleLike}
                                                         onOpenComments={handleOpenComments}
                                                         formatDate={formatDate}
-                                                        formatDuration={formatDuration}
                                                     />
                                                 ))}
                                             </div>
@@ -247,23 +249,32 @@ export default function ArtistProfile() {
 
                                 <TabsContent value="badges">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                                        {user.badges && user.badges.filter((b: any) => b.earned).length > 0 ? (
+                                        <div className="flex items-center justify-between mb-4">
+                                            <p className="text-sm text-muted">{awardedBadges.length} badge{awardedBadges.length !== 1 ? "s" : ""} earned</p>
+                                            <button
+                                                onClick={() => navigate(paths.badge_templates)}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted/30 text-xs font-medium text-text transition-colors"
+                                            >
+                                                <Medal className="w-3.5 h-3.5" />
+                                                View All Badges
+                                            </button>
+                                        </div>
+
+                                        {awardedBadges.length > 0 ? (
                                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                {user.badges.filter((b: any) => b.earned).map((badge: any, index: number) => (
-                                                    <motion.div key={badge.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index, duration: 0.3 }}>
-                                                        <Card className="p-5 hover:shadow-lg transition-all">
-                                                            <div className="flex items-start gap-4">
-                                                                <div className="text-4xl">{badge.icon}</div>
-                                                                <div className="flex-1">
-                                                                    <div className="flex items-center gap-2 mb-1">
-                                                                        <h4 className="font-semibold">{badge.name}</h4>
-                                                                        <BadgeUI variant="default" className="text-xs border border-2">Earned</BadgeUI>
-                                                                    </div>
-                                                                    <p className="text-sm text-muted-foreground mb-2">{badge.description}</p>
-                                                                    {badge.earnedDate && <p className="text-xs text-muted-foreground">{formatDate(badge.earnedDate)}</p>}
-                                                                </div>
-                                                            </div>
-                                                        </Card>
+                                                {awardedBadges.map((badge, index) => (
+                                                    <motion.div
+                                                        key={badge.id}
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: 0.05 * index, duration: 0.3 }}
+                                                    >
+                                                        <BadgeCard
+                                                            title={badge.title}
+                                                            iconUrl={badge.iconUrl}
+                                                            tier={badge.tier as BadgeTier}
+                                                            description={badge.description}
+                                                        />
                                                     </motion.div>
                                                 ))}
                                             </div>
@@ -271,7 +282,7 @@ export default function ArtistProfile() {
                                             <Card className="p-20 text-center">
                                                 <div className="text-5xl mb-4">🏅</div>
                                                 <h3 className="text-lg font-semibold mb-2">No Badges Yet</h3>
-                                                <p className="text-muted-foreground">Complete challenges to earn badges</p>
+                                                <p className="text-muted">Complete challenges to earn badges</p>
                                             </Card>
                                         )}
                                     </motion.div>
@@ -282,14 +293,13 @@ export default function ArtistProfile() {
                                         <Card className="p-20 text-center">
                                             <div className="text-5xl mb-4">❤️</div>
                                             <h3 className="text-lg font-semibold mb-2">No Favorites Yet</h3>
-                                            <p className="text-muted-foreground">Posts you favorite will appear here</p>
+                                            <p className="text-muted">Posts you favorite will appear here</p>
                                         </Card>
                                     </motion.div>
                                 </TabsContent>
                             </div>
                         </Tabs>
                     </div>
-
                 </motion.div>
             </div>
 
@@ -297,13 +307,16 @@ export default function ArtistProfile() {
                 {openedPost && (
                     <CommentsModal
                         post={openedPost}
-                        onClose={() => setOpenedPost(null)}
-                        likedDrawings={likedPosts}
-                        toggleLike={handleToggleLike}
-                        initialImageIndex={0}
+                        comments={comments}
+                        imageIndex={imageIndex}
+                        newComment={newComment}
+                        onChangeImageIndex={setImageIndex}
+                        onChangeNewComment={setNewComment}
+                        onSubmitComment={handleSubmitComment}
+                        onClose={closeModal}
                     />
                 )}
             </AnimatePresence>
         </div>
     );
-} 
+}

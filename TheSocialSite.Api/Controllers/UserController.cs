@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 using TheSocialSite.Business;
 using TheSocialSite.Business.Interfaces;
+using TheSocialSite.Business.Structure;
 using TheSocialSite.DataAccess.Context;
 using TheSocialSite.Domain.Models.Response;
+using TheSocialSite.Domain.Models.User;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TheSocialSite.Api.Controllers
 {
@@ -24,80 +28,76 @@ namespace TheSocialSite.Api.Controllers
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var users = _userAction.GetAllUsersAction();
-            if (users == null)
-                return BadRequest("Could not find users");
+            var response = _userAction.GetAllUsersAction();
+            if (!response.IsValid)
+                return BadRequest(response.Message);
 
-            return Ok(users);
+            return Ok(response.UserDtos);
         }
-
 
         [HttpGet("{id}")]
         public IActionResult GetUser([FromRoute] string id)
         {
-            var user = _userAction.GetUserByIdAction(id);
-            if (user == null)
-            {
-                return BadRequest("Could not find user");
-            }
-            return Ok(user);
+            var response = _userAction.GetUserByIdAction(id);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
+
+            return Ok(response.UserDto);
         }
 
         [HttpPost("create")]
-        public IActionResult CreateUser([FromBody] UserSignupDto userData)
+        public IActionResult CreateUser([FromBody] CreateUserDto userData)
         {
-            var validation = _userAction.UserCreationAction(userData);
-            if (!validation.IsValid)
-                return BadRequest(validation.Message);
+            var response = _userAction.CreateUserAction(userData);
+            if (!response.IsValid)
+                return BadRequest(response.Message);
 
-            return Ok(new { message = "User created successfully" });
+            return Ok(response.Message);
         }
 
-        [HttpGet("profile")]
+        [HttpPut("{id}")]
         [Authorize]
-        public IActionResult GetProfile()
-        {
-            // Read the user ID that was baked into the token at login time
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Jti);
-            if (userId == null)
-                return Unauthorized();
-
-            using var ctx = new UserContext();
-            var user = ctx.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null)
-                return NotFound("User not found.");
-
-            return Ok(new
-            {
-                user.Id,
-                user.Username,
-                user.Email,
-                user.Avatar,
-                user.Bio,
-                user.Location,
-                user.Website,
-                user.PostsCount,
-                user.JoinedDate,
-                SocialLinks = user.SocialLinks
-            });
-        }
-
-        [HttpPut("profile")]
-        [Authorize]
-        public IActionResult UpdateProfile([FromBody] UpdateProfileDto profileData)
+        public IActionResult UpdateProfile([FromRoute] string id, [FromBody] UpdateUserDto profileData)
         {
             if (profileData == null)
                 return BadRequest("No data provided");
 
-            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Jti);
-            if (userId == null)
-                return Unauthorized();
+            var response = _userAction.GetUserByIdAction(id);
+            if (!response.IsValid) 
+                return BadRequest(response.Message);
 
-            var result = _userAction.UpdateProfileAction(userId, profileData);
+            // if a user tries to update another person's account, forbid the action
+            var isAdmin = User.IsInRole("Admin");
+            var userIdFromToken = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (!isAdmin && userIdFromToken != id)
+                return Forbid();
+
+            var result = _userAction.UpdateUserAction(id, profileData);
             if (!result.IsValid)
                 return BadRequest(result.Message);
 
-            return Ok(result);
+            return Ok(result.Message);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public IActionResult DeleteUser([FromRoute] string id)
+        {
+            var response = _userAction.GetUserByIdAction(id);
+            if (!response.IsValid) return BadRequest(response.Message);
+
+            // if a user tries to delete another person's account, forbid the action
+            var isAdmin = User.IsInRole("Admin");
+            var userIdFromToken = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (!isAdmin && userIdFromToken != id)
+                return Forbid();
+
+            var result = _userAction.DeleteUserAction(id);
+
+            if (!result.IsValid)
+                return BadRequest(result.Message);
+
+            return Ok(result.Message);
         }
     }
 }

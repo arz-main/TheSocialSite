@@ -6,9 +6,9 @@ namespace TheSocialSite.Business
     public class BusinessLogic
     {
         public BusinessLogic() { }
-        public IUserAuthAction UserAuthAction()
+        public IAuthInteractAction UserAuthAction()
         {
-            return new UserAuthAction();
+            return new AuthInteractAction();
         }
         public IUserInteractAction UserInteractAction()
         {
@@ -18,9 +18,25 @@ namespace TheSocialSite.Business
         {
             return new PostInteractAction();
         }
-        public IJwtServiceAction JwtService()
+        public IJwtInteractAction JwtInteractAction()
         {
-            return new JwtServiceAction();
+            return new JwtInteractAction();
+        }
+        public ISocialMediaInteractAction SocialMediaInteractAction()
+        {
+            return new SocialMediaInteractAction();
+        }
+        public ICommentInteractAction CommentInteractAction()
+        {
+            return new CommentInteractAction();
+        }
+        public IBadgeTemplateInteractAction BadgeInteractAction()
+        {
+            return new BadgeTemplateInteractAction();
+        }
+        public IAwardedBadgeInteractAction AwardedBadgeInteractAction()
+        {
+            return new AwardedBadgeInteractAction();
         }
     }
 }

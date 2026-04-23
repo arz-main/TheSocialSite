@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import { MOCK_COURSES } from '../_mock/mockCourses';
 import type { Lesson } from '../_mock/mockCourses';
-import { CourseBanner, ChapterSpine, LessonsPanel, EmptyChapterState } from '../components/ui/RoadmapPageComponents';
+import { CourseBanner, ChapterSpine, LessonsPanel, EmptyChapterState } from '../components/RoadmapPageComponents';
 import { computeCourseProgress } from '../utils/RoadmapPageUtils';
-import LessonPracticeModal from '../components/ui/LessonPracticeModal';
+import LessonPracticeModal from '../components/LessonPracticeModal';
 
 export default function CourseRoadmap() {
     const { courseId } = useParams<{ courseId: string }>();

@@ -1,9 +1,10 @@
-import type { User } from "./UserTypes";
+import type { CreateUserDto, User } from "./UserTypes";
 
 export type AuthContextType = {
-    user: User | undefined;
+    currentUser: User | undefined;
     initializing: boolean;
     login: (credential: string, password: string) => Promise<User>;
     logout: () => void;
-    signup: (username: string, email: string, password: string) => Promise<void>;
+    signup: (userData: CreateUserDto) => Promise<void>;
+    refreshToken(): Promise<void>;
 };

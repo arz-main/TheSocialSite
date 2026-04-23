@@ -3,9 +3,60 @@ import type { MockDrawing } from "../_mock/mockPracticePage";
 
 export type SessionState = "idle" | "active" | "paused" | "done";
 
+
+// -----------------------------
+// TYPES
+// -----------------------------
+
+export type Badge = {
+    id: string;
+    icon: string;
+    name: string;
+    description: string;
+    earned: boolean;
+    earnedDate?: string;
+};
+
+export type FollowersData = {
+    date: string;
+    followers: number;
+};
+
+export type PostsData = {
+    date: string;
+    posts: number;
+};
+
+export type SpeedData = {
+    name: string;
+    minutes: number;
+};
+
 export type TimerBarProps = {
     timeLeft: number;
     total: number;
+};
+
+export type StatisticsCardProp = {
+    icon: LucideIcon;
+    value: string | number;
+    title: string;
+    trend?: string;
+    trendUp?: boolean;
+    tooltip?: string; // <-- New optional tooltip prop
+};
+
+export type CategoryItem = {
+    name: string;
+    value: number;
+    fill: string;
+    icon: string;
+};
+
+export type DailyContribution = {
+    date: string;   // e.g. "2026-04-02"
+    count: number;  // number of drawings that day
+    level?: number;
 };
 
 export type PracticeCardProp = {

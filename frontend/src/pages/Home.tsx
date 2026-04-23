@@ -1,8 +1,8 @@
 ﻿
-import { HomeCard } from "../components/ui/HomePageComponents";
+import { HomeCard } from "../components/HomePageComponents";
 import paths from "../routes/paths";
 import MockCards from "../_mock/mockHomeCards";
-import { LinkButton } from "../components/ui/LinkButton";
+import { LinkButton } from "../components/LinkButton";
 
 import SketchCircle from "../assets/Sketches/CoolFace.svg?react";
 import SketchNameArt from "../assets/Sketches/NameArt.svg?react";
@@ -116,7 +116,7 @@ const MarqueeStrip = () => (
 			{[...words, ...words].map((w, i) => (
 				<span key={i} className="text-white font-black tracking-[0.3em] text-sm flex items-center gap-10">
 					{w}
-					<span className="inline-block w-2 h-2 rounded-full bg-white opacity-60 mx-[-1.5rem]" />
+					<span className="inline-block w-2 h-2 rounded-full bg-white opacity-60 -mx-6" />
 				</span>
 			))}
 		</div>
@@ -156,13 +156,13 @@ const Home = () => {
 			`}</style>
 
 			{/* Outer wrapper — position:relative so absolute sketches are scoped here */}
-			<div className="relative flex flex-col flex-1 bg-background text-primary overflow-x-hidden">
+			<div className="relative bg-background text-primary overflow-x-hidden">
 
 				{/* Floating sketches rendered behind all content */}
 				{FLOAT_SLOTS.map((slot, i) => <FloatingSketch key={i} {...slot} index={i} />)}
 
 				{/* ── HERO ──────────────────────────────────────────────── */}
-				<section className="relative w-full flex flex-col items-center gap-3 p-6 pb-20 bg-background overflow-hidden min-h-[520px] justify-center">
+				<section className="relative w-full flex flex-col items-center gap-3 p-6 pb-20 bg-background overflow-hidden min-h-130 justify-center">
 					<DotGrid className="text-primary opacity-[0.06]" />
 					<HeroStrokes />
 					<span aria-hidden="true" className="absolute -bottom-10 -left-6 text-[22vw] font-black text-primary opacity-[0.04] leading-none select-none pointer-events-none">SF</span>
@@ -181,7 +181,7 @@ const Home = () => {
 						<h1 className="hero-word text-text text-5xl md:text-6xl font-black tracking-tight leading-tight mb-1">Master Your Art</h1>
 						<h1 className="hero-word text-text text-5xl md:text-6xl font-black tracking-tight leading-tight mb-1">Through</h1>
 						<div className="hero-word relative inline-block">
-							<h1 className="text-primary text-5xl md:text-6xl font-black tracking-tight leading-tight mb-4">Daily Practice</h1>
+							<h1 className="text-primary text-5xl md:text-6xl font-black tracking-tight leading-tight mb-4">SketchFlow</h1>
 							<svg viewBox="0 0 280 12" className="absolute -bottom-1 left-0 w-full" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M4 8 Q40 2 80 8 Q120 14 160 8 Q200 2 240 8 Q260 11 276 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-primary" />
 							</svg>
@@ -206,7 +206,7 @@ const Home = () => {
 					<Crosshatch className="text-primary opacity-[0.04]" />
 					<InkAccent size={280} className="bg-primary opacity-[0.05] -top-16 right-0 blur-3xl" />
 					<SwordDude
-						className="absolute -bottom-10 -right-80 h-[720px] w-auto pointer-events-none text-primary opacity-[0.30]"
+						className="absolute -bottom-10 -right-80 h-180 w-auto pointer-events-none text-primary opacity-[0.30]"
 						aria-hidden="true"
 						
 					/>
