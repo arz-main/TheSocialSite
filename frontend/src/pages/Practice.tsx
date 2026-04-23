@@ -177,9 +177,9 @@ export default function Practice() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col flex-1 p-6 overflow-y-auto"
+                        className="flex flex-col flex-1 min-h-0 p-6 overflow-y-auto lg:overflow-hidden"
                     >
-                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6 lg:flex-1 lg:min-h-0">
                             {/* LEFT — settings */}
                             <div className="flex flex-col rounded-xl bg-card shadow p-6 gap-4">
                                 <h2 className="text-text font-semibold text-sm uppercase tracking-wide opacity-60">Categories</h2>

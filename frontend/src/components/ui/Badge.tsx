@@ -4,18 +4,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/ClassNameMergeUtil";
 
 const badgeVariants = cva(
-    "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-danger/20 aria-invalid:border-danger transition-[color,box-shadow] overflow-hidden",
+    "inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs font-semibold w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1.5 [&>svg]:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 aria-invalid:ring-danger/20 aria-invalid:border-danger transition-all duration-200 overflow-hidden tracking-wider",
     {
         variants: {
             variant: {
                 default:
-                    "border-transparent bg-primary text-text-opposite",
+                    "border-transparent bg-primary text-text-opposite shadow-[0_2px_12px_color-mix(in_srgb,var(--primary)_40%,transparent)] hover:shadow-[0_4px_18px_color-mix(in_srgb,var(--primary)_55%,transparent)] hover:scale-105",
                 secondary:
-                    "border-border bg-card text-text-opaque",
+                    "border-border bg-card text-text-opaque shadow-sm hover:border-primary/40 hover:shadow-[0_2px_10px_color-mix(in_srgb,var(--primary)_15%,transparent)]",
                 danger:
-                    "border-transparent bg-danger text-text-opposite",
+                    "border-transparent bg-danger text-text-opposite shadow-[0_2px_12px_color-mix(in_srgb,var(--danger)_40%,transparent)] hover:shadow-[0_4px_18px_color-mix(in_srgb,var(--danger)_55%,transparent)] hover:scale-105",
                 outline:
-                    "border-border bg-transparent text-text",
+                    "border-primary/60 bg-primary-soft/30 text-primary hover:bg-primary-soft/60 hover:border-primary hover:shadow-[0_2px_10px_color-mix(in_srgb,var(--primary)_20%,transparent)]",
             },
         },
         defaultVariants: {
