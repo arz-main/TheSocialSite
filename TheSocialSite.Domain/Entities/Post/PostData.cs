@@ -34,7 +34,7 @@ namespace TheSocialSite.Domain.Entities.Post
         public string Title { get; set; }
 
         [Required]
-        [MaxLength(500)]
+        [Column(TypeName = "nvarchar(max)")]
         public string ImageUrl { get; set; }
 
         [Required]

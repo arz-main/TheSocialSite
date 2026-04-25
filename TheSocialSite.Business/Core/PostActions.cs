@@ -178,18 +178,38 @@ namespace TheSocialSite.Business.Core
 
                 appDbContext.Posts.Add(postEntity);
                 appDbContext.SaveChanges();
+
+                var createdDto = new PostDto
+                {
+                    Id = postEntity.Id,
+                    AuthorId = postEntity.AuthorId,
+                    AuthorUsername = author.Username,
+                    AuthorAvatarUrl = author.AvatarUrl,
+                    Status = postEntity.Status,
+                    Likes = postEntity.Likes,
+                    Title = postEntity.Title,
+                    ImageUrl = postEntity.ImageUrl,
+                    Category = postEntity.Category,
+                    Description = postEntity.Description,
+                    CreatedAt = postEntity.CreatedAt,
+                    IsLiked = false
+                };
+
+                // Badge evaluation after post is saved
+                var userSnapshot = new UserActivitySnapshotBuilder().Build(userId);
+                var newAwardedBadges = new BadgeEvaluationActions().EvaluateAndAward(userSnapshot);
+
+                return new PostActionResponse
+                {
+                    IsValid = true,
+                    Message = "Post created successfully",
+                    PostDto = createdDto,
+                    NewlyAwardedBadges = newAwardedBadges
+                };
             }
 
-            // Badge evaluation after post is saved
-            var userSnapshot = new UserActivitySnapshotBuilder().Build(userId);
-            var newAwardedBadges = new BadgeEvaluationActions().EvaluateAndAward(userSnapshot);
-
-            return new PostActionResponse
-            {
-                IsValid = true,
-                Message = "Post created successfully",
-                NewlyAwardedBadges = newAwardedBadges  // <-- add this to PostActionResponse
-            };
+            // unreachable but satisfies compiler
+            return new PostActionResponse { IsValid = false, Message = "Unexpected error" };
         }
 
         public PostActionResponse DeletePostActionExecution(string id)
