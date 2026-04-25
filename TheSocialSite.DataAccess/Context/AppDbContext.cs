@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheSocialSite.Domain.Entities.Badge;
 using TheSocialSite.Domain.Entities.Comment;
+using TheSocialSite.Domain.Entities.Course;
 using TheSocialSite.Domain.Entities.Post;
 using TheSocialSite.Domain.Entities.SocialMedia;
 using TheSocialSite.Domain.Entities.User;
@@ -55,6 +56,34 @@ namespace TheSocialSite.DataAccess.Context
             modelBuilder.Entity<PostLikeData>()
                 .HasIndex(pl => new { pl.UserId, pl.PostId })
                 .IsUnique();
+
+            // Course → Author (User)
+            modelBuilder.Entity<CourseData>()
+                .HasOne(c => c.Author)
+                .WithMany()
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Course → Chapters
+            modelBuilder.Entity<ChapterData>()
+                .HasOne(ch => ch.Course)
+                .WithMany(c => c.Chapters)
+                .HasForeignKey(ch => ch.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Chapter → Lessons
+            modelBuilder.Entity<LessonData>()
+                .HasOne(l => l.Chapter)
+                .WithMany(ch => ch.Lessons)
+                .HasForeignKey(l => l.ChapterId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Lesson → Blocks
+            modelBuilder.Entity<BlockData>()
+                .HasOne(b => b.Lesson)
+                .WithMany(l => l.Blocks)
+                .HasForeignKey(b => b.LessonId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         // Single DbContext for everything
@@ -65,5 +94,9 @@ namespace TheSocialSite.DataAccess.Context
         public DbSet<CommentData> Comments { get; set; }
         public DbSet<BadgeTemplateData> BadgeTemplates { get; set; }
         public DbSet<AwardedBadgeData> AwardedBadges { get; set; }
+        public DbSet<CourseData> Courses { get; set; }
+        public DbSet<ChapterData> Chapters { get; set; }
+        public DbSet<LessonData> Lessons { get; set; }
+        public DbSet<BlockData> Blocks { get; set; }
     }
 }

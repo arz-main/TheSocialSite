@@ -1,16 +1,54 @@
-import { useState } from 'react';
-import { MOCK_COURSES, type Course } from '../_mock/mockCourses';
+import { useState, useEffect } from 'react';
+import type { Course } from '../_mock/mockCourses';
 import { RoadmapHero, FilterBar, CourseGrid } from '../components/RoadmapPageComponents';
 import { useRoadmapStats, useFilteredCourses } from '../utils/RoadmapPageUtils';
 import type { DifficultyFilter, ProgressFilter, SortOption } from '../types/RoadmapPageTypes';
+import { useCourses } from '../hooks/useCourses';
+import type { CourseDto } from '../types/CourseTypes';
+import LoadingScreen from '../components/LoadingScreen';
+import ErrorScreen from '../components/ErrorScreen';
+
+function mapApiCourse(c: CourseDto): Course {
+    const totalLessons = c.chapters?.reduce((sum, ch) => sum + (ch.lessons?.length ?? 0), 0) ?? 0;
+    let progress = 0;
+    if (totalLessons > 0) {
+        try {
+            const completed: number[] = JSON.parse(localStorage.getItem(`completed-lessons-${c.id}`) ?? '[]');
+            progress = Math.round((completed.length / totalLessons) * 100);
+        } catch { /* ignore */ }
+    }
+    return {
+        id: c.id,
+        image: c.thumbnailUrl ?? '',
+        title: c.name,
+        description: c.description,
+        progress,
+        chapters: c.chapters?.length ?? 0,
+        lessons: totalLessons,
+        isFavourite: false,
+        difficulty: undefined,
+        badgeText: undefined,
+        chapterData: undefined,
+    };
+}
 
 export default function Roadmap() {
-    const [courses, setCourses] = useState<Course[]>(MOCK_COURSES);
+    const { getAllCourses } = useCourses();
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [showFavourites, setShowFavourites] = useState(false);
     const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('All');
     const [progressFilter, setProgressFilter] = useState<ProgressFilter>('All');
     const [sortOption, setSortOption] = useState<SortOption>('Default');
     const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        getAllCourses()
+            .then(data => setCourses(data.filter(c => c.isPublished).map(mapApiCourse)))
+            .catch(() => setError('Failed to load courses'))
+            .finally(() => setLoading(false));
+    }, []);
 
     const toggleFavourite = (index: number) =>
         setCourses(prev => prev.map((c, i) => i === index ? { ...c, isFavourite: !c.isFavourite } : c));
@@ -20,6 +58,9 @@ export default function Roadmap() {
 
     const hasActiveFilters = showFavourites || difficultyFilter !== 'All' || progressFilter !== 'All' || sortOption !== 'Default' || searchQuery.trim() !== '';
     const clearFilters = () => { setShowFavourites(false); setDifficultyFilter('All'); setProgressFilter('All'); setSortOption('Default'); setSearchQuery(''); };
+
+    if (loading) return <LoadingScreen />;
+    if (error) return <ErrorScreen message={error} />;
 
     return (
         <div className="flex flex-col flex-1 w-full bg-background text-text">
@@ -35,7 +76,7 @@ export default function Roadmap() {
                 filteredCount={filteredCourses.length} totalCount={courses.length}
             />
 
-            <div className="flex-1 py-8 px-10">
+            <div className="flex-1 py-6 sm:py-8 px-4 sm:px-10">
                 <div className="max-w-7xl mx-auto">
                     <CourseGrid
                         filteredCourses={filteredCourses}

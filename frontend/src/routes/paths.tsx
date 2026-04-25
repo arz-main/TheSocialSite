@@ -34,6 +34,9 @@ const paths = {
 		reset_password: "/admin/reset-password",
 		user_requests: "/admin/user-requests",
 		course_creator: "/admin/course-creator",
+		course_drafts: "/admin/course-drafts",
+		course_creator_edit_route: "/admin/course-creator/edit/:courseId",
+		course_creator_edit: (id: number | string) => `/admin/course-creator/edit/${id}`,
 	},
 	error: {
 		unauthorized: "/unauthorized",

@@ -46,10 +46,18 @@ export interface PostActionResponse {
 	likeCount: number;
 }
 
+export interface CreatePostPayload {
+	title: string;
+	imageUrl: string;
+	category: string;
+	description?: string;
+}
+
 export type PostsContextType = {
 	getAllPosts: () => Promise<PostDto[] | null>;
 	getUserPosts: (userId: string) => Promise<PostDto[]>;
 	getPost: (postId: string) => Promise<PostDto>;
+	createPost: (data: CreatePostPayload) => Promise<PostDto>;
 	updatePost: (postId: string, data: UpdatePostPayload) => Promise<void>;
 	deletePost: (postId: string) => Promise<void>;
 	toggleLikePost: (postId: string) => Promise<PostActionResponse>;

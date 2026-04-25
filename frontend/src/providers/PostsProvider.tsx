@@ -2,7 +2,7 @@ import { createContext, useCallback, useRef, useState } from "react";
 import { type ReactNode } from "react";
 import useAxios from "../hooks/useAxios";
 import { type PostDto } from "../types/PostTypes";
-import type { PostActionResponse, PostsContextType, UpdatePostPayload } from "../types/PostTypes";
+import type { PostActionResponse, PostsContextType, UpdatePostPayload, CreatePostPayload } from "../types/PostTypes";
 
 export const PostsContext = createContext<PostsContextType | undefined>(undefined);
 
@@ -84,6 +84,18 @@ export function PostsProvider({ children }: { children: ReactNode }) {
         }
     }, [axios]);
 
+    const createPost = useCallback(async (data: CreatePostPayload): Promise<PostDto> => {
+        const { data: response } = await axios.post<{ postDto: PostDto }>("/posts/create", {
+            title: data.title,
+            imageUrl: data.imageUrl,
+            category: data.category,
+            description: data.description,
+        });
+        const post = response.postDto;
+        cache.current.set(post.id, post);
+        return post;
+    }, [axios]);
+
     const getUserPosts = useCallback(async (userId: string): Promise<PostDto[]> => {
         try {
             setLoading(true);
@@ -104,7 +116,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
         <PostsContext.Provider
             value={{
                 getPost, getAllPosts, getUserPosts,
-                updatePost, deletePost, toggleLikePost
+                createPost, updatePost, deletePost, toggleLikePost
             }}>
             {children}
         </PostsContext.Provider>

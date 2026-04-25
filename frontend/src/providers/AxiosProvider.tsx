@@ -14,7 +14,7 @@ export const AxiosProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const axiosInstance = useMemo(() => {
         const instance = axios.create({
-            baseURL: "https://localhost:7037/api",
+            baseURL: "http://localhost:5000/api",
             headers: {
                 "Content-Type": "application/json",
             },

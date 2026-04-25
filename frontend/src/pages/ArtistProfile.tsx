@@ -1,4 +1,4 @@
-import { CalendarDays, ExternalLink, MapPin, Medal, Settings } from "lucide-react";
+import { CalendarDays, ExternalLink, MapPin, Medal, Plus, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { FaDeviantart, FaDiscord, FaPinterest, FaTwitter, FaYoutube } from "react-icons/fa";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { AvatarFallback } from "../components/AvatarFallback";
 import { Card } from "../components/Card";
 import { CommentsModal, PostCard } from "../components/ExplorePageComponents";
+import { CreatePostModal } from "../components/CreatePostModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/Tabs";
 import { useAuth } from "../hooks/useAuth";
 import { usePosts } from "../hooks/usePosts";
@@ -29,6 +30,7 @@ export default function ArtistProfile() {
 
     // ─── UI ───────────────────────────────────────────────
     const [activeTab, setActiveTab] = useState("posts");
+    const [showCreatePost, setShowCreatePost] = useState(false);
 
     // ─── Hooks ────────────────────────────────────────────
     const navigate = useNavigate();
@@ -221,29 +223,39 @@ export default function ArtistProfile() {
                             <div className="mt-5">
                                 <TabsContent value="posts">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                                        {userPosts.length === 0 ? (
-                                            <Card className="p-20 text-center">
-                                                <div className="text-5xl mb-4">🎨</div>
-                                                <h3 className="text-lg font-semibold mb-2">No Drawings Yet</h3>
-                                                <p className="text-muted">Start practicing to see your drawings here</p>
-                                            </Card>
-                                        ) : (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                {userPosts.map((post, index) => (
-                                                    <PostCard
-                                                        key={post.id}
-                                                        post={post}
-                                                        index={index}
-                                                        isLiked={likedPosts.has(post.id)}
-                                                        likeCount={likeCounts[post.id] ?? post.likes}
-                                                        commentCount={commentCounts[post.id]}
-                                                        onToggleLike={handleLike}
-                                                        onOpenComments={handleOpenComments}
-                                                        formatDate={formatDate}
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {/* New Post card — always first */}
+                                            <motion.button
+                                                initial={{ opacity: 0, y: 12 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                onClick={() => setShowCreatePost(true)}
+                                                className="relative rounded-2xl overflow-hidden border border-dashed border-border hover:border-primary/60 transition-all group aspect-[4/3] flex flex-col items-center justify-center gap-3 bg-background"
+                                            >
+                                                {/* blurry placeholder bg */}
+                                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 group-hover:from-primary/10 group-hover:to-primary/20 transition-all" />
+                                                <div className="relative z-10 flex flex-col items-center gap-2">
+                                                    <div className="w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+                                                        <Plus className="w-5 h-5 text-primary" />
+                                                    </div>
+                                                    <span className="text-sm font-bold text-text">New Post</span>
+                                                    <span className="text-xs text-muted">Share your artwork</span>
+                                                </div>
+                                            </motion.button>
+
+                                            {userPosts.map((post, index) => (
+                                                <PostCard
+                                                    key={post.id}
+                                                    post={post}
+                                                    index={index + 1}
+                                                    isLiked={likedPosts.has(post.id)}
+                                                    likeCount={likeCounts[post.id] ?? post.likes}
+                                                    commentCount={commentCounts[post.id]}
+                                                    onToggleLike={handleLike}
+                                                    onOpenComments={handleOpenComments}
+                                                    formatDate={formatDate}
+                                                />
+                                            ))}
+                                        </div>
                                     </motion.div>
                                 </TabsContent>
 
@@ -302,6 +314,19 @@ export default function ArtistProfile() {
                     </div>
                 </motion.div>
             </div>
+
+            <AnimatePresence>
+                {showCreatePost && (
+                    <CreatePostModal
+                        onClose={() => setShowCreatePost(false)}
+                        userPosts={userPosts}
+                        onCreated={post => {
+                            setUserPosts(prev => [post, ...prev]);
+                            initPostStates([post, ...userPosts]);
+                        }}
+                    />
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {openedPost && (

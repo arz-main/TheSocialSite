@@ -38,5 +38,9 @@ namespace TheSocialSite.Business
         {
             return new AwardedBadgeInteractAction();
         }
+        public ICourseCreatorAction CourseCreateInteractAction()
+        {
+            return new CourseCreateInteractAction();
+        }
     }
 }
