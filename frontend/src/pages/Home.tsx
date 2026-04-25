@@ -50,12 +50,6 @@ const InkAccent = ({ size, className = "" }: { size: number; className?: string 
 	<span className={`absolute rounded-full pointer-events-none ${className}`} style={{ width: size, height: size }} />
 );
 
-/* ─── Floating sketch placement configuration ────────────────────────────────
-   Positions are relative to the full page height.
-   left/right values push the sketch into the side gutter.
-   Adjust these freely once you see how they look on your actual layout.
-────────────────────────────────────────────────────────────────────────────── */
-
 const FLOAT_SLOTS = [
 	{ top: "5%", left: "30%", right: "auto", size: 200, rotate: -14, opacity: 0.18, delay: "0s", duration: "8s", sketch: "coolface" },
 	{ top: "10%", left: "auto", right: "15%", size: 170, rotate: 10, opacity: 0.16, delay: "1.5s", duration: "10s", sketch: "appname" },
