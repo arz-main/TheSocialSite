@@ -27,6 +27,7 @@ import ScrollToTop from "./components/ScrollToTop";
 
 import CourseRoadmap from "./pages/CourseRoadmap";
 import AdminCourseCreator from "./pages/AdminCourseCreator";
+import CourseCreatorDrafts from "./pages/CourseCreatorDrafts";
 import LessonPage from "./pages/LessonPage";
 
 import paths from "./routes/paths";
@@ -82,6 +83,16 @@ const App = () => {
 					<Route path={paths.admin.course_creator} element={
 						<ProtectedRoute allowedRoles={["Admin"]}>
 							<AdminCourseCreator />
+						</ProtectedRoute>
+					} />
+					<Route path={paths.admin.course_creator_edit_route} element={
+						<ProtectedRoute allowedRoles={["Admin"]}>
+							<AdminCourseCreator />
+						</ProtectedRoute>
+					} />
+					<Route path={paths.admin.course_drafts} element={
+						<ProtectedRoute allowedRoles={["Admin"]}>
+							<CourseCreatorDrafts />
 						</ProtectedRoute>
 					} />
 				</Route>

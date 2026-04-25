@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     Plus, Trash2, GripVertical, ChevronDown, ChevronUp,
     BookOpen, PenLine, Play, Image as ImageIcon, Check,
-    Save, Eye, X, Layers, Sparkles, Copy, AlignLeft,
+    Save, Eye, X, Layers, Sparkles, Copy, AlignLeft, ArrowLeft,
 } from 'lucide-react';
 import { useCourses } from '../hooks/useCourses';
-import type { BlockType } from '../types/CourseTypes';
+import type { BlockType, CourseDto } from '../types/CourseTypes';
+import paths from '../routes/paths';
+import LoadingScreen from '../components/LoadingScreen';
 
 type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced';
 
@@ -331,16 +334,72 @@ function ChapterEditor({ chapter, chapterIndex, onUpdate, onDelete }: {
     );
 }
 
+// ── API → Draft mappers ───────────────────────────────────────────────────────
+
+function apiToDraft(dto: CourseDto): DraftCourse {
+    return {
+        title: dto.name,
+        description: dto.description ?? '',
+        image: dto.thumbnailUrl ?? '',
+        difficulty: 'Beginner',
+        badgeText: '',
+        chapters: (dto.chapters ?? []).map(ch => ({
+            id: uid(),
+            title: ch.name,
+            expanded: true,
+            lessons: (ch.lessons ?? []).map(l => ({
+                id: uid(),
+                title: l.name,
+                description: l.description ?? '',
+                expanded: false,
+                blocks: (l.blocks ?? []).map(b => ({
+                    id: uid(),
+                    type: b.type,
+                    textContent: b.textContent ?? '',
+                    videoUrl: b.videoUrl ?? '',
+                    imageUrl: b.imageUrl ?? '',
+                    caption: b.caption ?? '',
+                    countdownSeconds: b.durationSeconds?.toString() ?? '',
+                    practiceRefs: (() => {
+                        try { const p = JSON.parse(b.practiceConfig ?? '[]'); return Array.isArray(p) ? p : []; } catch { return []; }
+                    })(),
+                })),
+            })),
+        })),
+    };
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function AdminCourseCreator() {
-    const { createCourse, createChapter, createLesson, createBlock } = useCourses();
+    const { courseId } = useParams<{ courseId: string }>();
+    const navigate = useNavigate();
+    const isEditMode = Boolean(courseId);
+
+    const { getCourseById, createCourse, updateCourse, deleteChapter, createChapter, createLesson, createBlock } = useCourses();
     const [course, setCourse] = useState<DraftCourse>(blankCourse);
+    const [loadingEdit, setLoadingEdit] = useState(isEditMode);
+    const [editCourseId, setEditCourseId] = useState<number | null>(null);
+    const [existingChapterIds, setExistingChapterIds] = useState<number[]>([]);
     const [saved, setSaved] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
     const [preview, setPreview] = useState(false);
     const [showTemplates, setShowTemplates] = useState(false);
+
+    useEffect(() => {
+        if (!courseId) return;
+        getCourseById(Number(courseId))
+            .then(dto => {
+                setEditCourseId(dto.id);
+                setExistingChapterIds((dto.chapters ?? []).map(ch => ch.id));
+                setCourse(apiToDraft(dto));
+            })
+            .catch(() => setSaveError('Failed to load course for editing'))
+            .finally(() => setLoadingEdit(false));
+    }, [courseId]);
+
+    if (loadingEdit) return <LoadingScreen />;
 
     const applyTemplate = (t: typeof TEMPLATES[0]) => {
         setCourse(prev => ({
@@ -358,42 +417,47 @@ export default function AdminCourseCreator() {
     const delChapter = (id: string) => setCourse(prev => ({ ...prev, chapters: prev.chapters.filter(x => x.id !== id) }));
     const addChapter = () => setCourse(prev => ({ ...prev, chapters: [...prev.chapters, blankChapter()] }));
 
+    const saveChapters = async (targetCourseId: number) => {
+        for (let ci = 0; ci < course.chapters.length; ci++) {
+            const ch = course.chapters[ci];
+            const savedChapter = await createChapter({ name: ch.title, courseId: targetCourseId, order: ci + 1 });
+
+            for (let li = 0; li < ch.lessons.length; li++) {
+                const l = ch.lessons[li];
+                const savedLesson = await createLesson({ name: l.title, description: l.description, chapterId: savedChapter.id, order: li + 1 });
+
+                for (let bi = 0; bi < l.blocks.length; bi++) {
+                    const b = l.blocks[bi];
+                    await createBlock({
+                        type: b.type,
+                        lessonId: savedLesson.id,
+                        order: bi + 1,
+                        textContent: b.type === 'Text' ? (b.textContent || undefined) : undefined,
+                        videoUrl: b.type === 'Video' ? (b.videoUrl || undefined) : undefined,
+                        imageUrl: b.type === 'Image' ? (b.imageUrl || undefined) : undefined,
+                        caption: b.type === 'Image' ? (b.caption || undefined) : undefined,
+                        durationSeconds: b.countdownSeconds ? (parseInt(b.countdownSeconds) || undefined) : undefined,
+                        practiceConfig: b.type === 'PracticeSession' ? JSON.stringify(b.practiceRefs) : undefined,
+                    });
+                }
+            }
+        }
+    };
+
     const handleSave = async () => {
         if (!course.title.trim()) { setSaveError('Course title is required'); return; }
         setSaving(true);
         setSaveError(null);
         try {
-            const savedCourse = await createCourse({
-                name: course.title,
-                description: course.description,
-                thumbnailUrl: course.image || undefined,
-            });
+            const meta = { name: course.title, description: course.description, thumbnailUrl: course.image || undefined };
 
-            for (let ci = 0; ci < course.chapters.length; ci++) {
-                const ch = course.chapters[ci];
-                const savedChapter = await createChapter({ name: ch.title, courseId: savedCourse.id, order: ci + 1 });
-
-                for (let li = 0; li < ch.lessons.length; li++) {
-                    const l = ch.lessons[li];
-                    const savedLesson = await createLesson({ name: l.title, description: l.description, chapterId: savedChapter.id, order: li + 1 });
-
-                    for (let bi = 0; bi < l.blocks.length; bi++) {
-                        const b = l.blocks[bi];
-                        await createBlock({
-                            type: b.type,
-                            lessonId: savedLesson.id,
-                            order: bi + 1,
-                            textContent: b.type === 'Text' ? (b.textContent || undefined) : undefined,
-                            videoUrl: b.type === 'Video' ? (b.videoUrl || undefined) : undefined,
-                            imageUrl: b.type === 'Image' ? (b.imageUrl || undefined) : undefined,
-                            caption: b.type === 'Image' ? (b.caption || undefined) : undefined,
-                            durationSeconds: (b.type === 'Video' || b.type === 'PracticeSession') && b.countdownSeconds
-                                ? (parseInt(b.countdownSeconds) || undefined)
-                                : undefined,
-                            practiceConfig: b.type === 'PracticeSession' ? JSON.stringify(b.practiceRefs) : undefined,
-                        });
-                    }
-                }
+            if (isEditMode && editCourseId !== null) {
+                await updateCourse(editCourseId, meta);
+                for (const chId of existingChapterIds) await deleteChapter(chId);
+                await saveChapters(editCourseId);
+            } else {
+                const savedCourse = await createCourse(meta);
+                await saveChapters(savedCourse.id);
             }
 
             setSaved(true);
@@ -412,8 +476,14 @@ export default function AdminCourseCreator() {
             {/* Top bar */}
             <div className="border-b border-border bg-card px-6 py-3 flex items-center justify-between sticky top-16 z-10">
                 <div className="flex items-center gap-3">
+                    {isEditMode && (
+                        <button onClick={() => navigate(paths.admin.course_drafts)}
+                            className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-muted/10 transition-colors">
+                            <ArrowLeft className="w-4 h-4" />
+                        </button>
+                    )}
                     <Layers className="w-5 h-5 text-primary" />
-                    <span className="font-bold text-text">Course Creator</span>
+                    <span className="font-bold text-text">{isEditMode ? 'Edit Course' : 'Course Creator'}</span>
                     <span className="text-xs text-muted bg-border px-2 py-0.5 rounded-full">Admin only</span>
                 </div>
                 <div className="flex items-center gap-2">

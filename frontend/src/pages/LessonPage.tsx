@@ -369,10 +369,20 @@ export default function LessonPage() {
     const chapter = chapters.find(ch => ch.lessons.some(l => l.id === lesson.id));
 
     return (
-        <div className="flex flex-1 w-full bg-background text-text" style={{ minHeight: 0, overflow: 'hidden' }}>
+        <div className="flex flex-col flex-1 w-full bg-background text-text" style={{ minHeight: 0, overflow: 'hidden' }}>
 
-            {/* Sidebar */}
-            <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col overflow-hidden">
+            {/* Mobile top bar */}
+            <div className="md:hidden shrink-0 border-b border-border bg-card px-4 py-3 flex items-center gap-3">
+                <button onClick={() => navigate(`/roadmap/course/${courseId}`)}
+                    className="flex items-center gap-1.5 text-muted hover:text-primary text-xs font-bold uppercase tracking-wider group transition-colors">
+                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                    <span className="truncate max-w-[200px]">{courseTitle}</span>
+                </button>
+            </div>
+
+            <div className="flex flex-1 min-h-0 overflow-hidden">
+            {/* Sidebar — desktop only */}
+            <aside className="hidden md:flex w-64 shrink-0 border-r border-border bg-card flex-col overflow-hidden">
                 <div className="px-4 py-4 border-b border-border shrink-0">
                     <button onClick={() => navigate(`/roadmap/course/${courseId}`)}
                         className="flex items-center gap-1.5 text-muted hover:text-primary text-xs font-bold uppercase tracking-wider group transition-colors w-full">
@@ -393,7 +403,7 @@ export default function LessonPage() {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto min-w-0">
-                <div className="max-w-3xl mx-auto px-8 py-10">
+                <div className="max-w-3xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
 
                     {/* Breadcrumb */}
                     <div className="flex items-center gap-1.5 text-xs text-muted mb-6 flex-wrap">
@@ -456,31 +466,32 @@ export default function LessonPage() {
                     </div>
 
                     {/* Footer nav */}
-                    <div className="mt-12 pt-8 border-t border-border flex items-center justify-between gap-4 flex-wrap">
+                    <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                         <button onClick={() => prevLesson && goTo(prevLesson)} disabled={!prevLesson}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-semibold text-muted hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                            <ArrowLeft className="w-4 h-4" />
-                            {prevLesson ? prevLesson.title : 'Previous'}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-semibold text-muted hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all min-w-0">
+                            <ArrowLeft className="w-4 h-4 shrink-0" />
+                            <span className="truncate">{prevLesson ? prevLesson.title : 'Previous'}</span>
                         </button>
 
                         {!isDone ? (
                             <button onClick={markDone}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white font-black text-sm hover:bg-primary/90 active:scale-[0.97] transition-all shadow-md shadow-primary/20">
+                                className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white font-black text-sm hover:bg-primary/90 active:scale-[0.97] transition-all shadow-md shadow-primary/20 shrink-0">
                                 <CheckCircle2 className="w-4 h-4" /> Mark as Complete
                             </button>
                         ) : (
-                            <div className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 font-black text-sm border border-green-500/20">
+                            <div className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 font-black text-sm border border-green-500/20 shrink-0">
                                 <CheckCircle2 className="w-4 h-4" /> Completed
                             </div>
                         )}
 
                         <button onClick={() => nextLesson && goTo(nextLesson)} disabled={!nextLesson}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-semibold text-muted hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                            {nextLesson ? nextLesson.title : 'Next'}
-                            <ArrowRight className="w-4 h-4" />
+                            className="flex items-center justify-end gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-semibold text-muted hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all min-w-0">
+                            <span className="truncate">{nextLesson ? nextLesson.title : 'Next'}</span>
+                            <ArrowRight className="w-4 h-4 shrink-0" />
                         </button>
                     </div>
                 </div>
+            </div>
             </div>
 
             {/* Practice modal */}

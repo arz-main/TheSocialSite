@@ -81,7 +81,10 @@ export default function CourseRoadmap() {
     const [error, setError] = useState<string | null>(null);
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [practiceLesson, setPracticeLesson] = useState<Lesson | null>(null);
-    const [completedLessons, setCompletedLessons] = useState<number[]>([]);
+    const [completedLessons, setCompletedLessons] = useState<number[]>(() => {
+        if (!courseId) return [];
+        try { return JSON.parse(localStorage.getItem(completedKey(courseId)) ?? '[]'); } catch { return []; }
+    });
 
     useEffect(() => {
         if (!courseId) return;
@@ -129,10 +132,25 @@ export default function CourseRoadmap() {
                 totalLessons={allLessons.length}
                 progressPct={progressPct}
                 isFullyDone={isFullyDone}
+                completedLessons={completedLessons}
             />
 
+            {/* Mobile chapter tabs */}
+            <div className="md:hidden shrink-0 border-b border-border bg-background overflow-x-auto">
+                <div className="flex gap-2 px-4 py-2.5 min-w-max">
+                    {chapters.map((ch, i) => (
+                        <button key={ch.id} onClick={() => setSelectedId(ch.id)}
+                            className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap ${
+                                selectedId === ch.id ? 'bg-primary text-white' : 'bg-card border border-border text-muted hover:text-text'
+                            }`}>
+                            {i + 1}. {ch.title}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             <div className="flex flex-1 overflow-hidden min-h-0">
-                <div className="w-72 shrink-0 border-r border-border bg-background overflow-y-auto">
+                <div className="hidden md:block w-72 shrink-0 border-r border-border bg-background overflow-y-auto">
                     <ChapterSpine
                         chapters={chapters}
                         completedLessons={completedLessons}

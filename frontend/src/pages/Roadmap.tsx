@@ -9,14 +9,22 @@ import LoadingScreen from '../components/LoadingScreen';
 import ErrorScreen from '../components/ErrorScreen';
 
 function mapApiCourse(c: CourseDto): Course {
+    const totalLessons = c.chapters?.reduce((sum, ch) => sum + (ch.lessons?.length ?? 0), 0) ?? 0;
+    let progress = 0;
+    if (totalLessons > 0) {
+        try {
+            const completed: number[] = JSON.parse(localStorage.getItem(`completed-lessons-${c.id}`) ?? '[]');
+            progress = Math.round((completed.length / totalLessons) * 100);
+        } catch { /* ignore */ }
+    }
     return {
         id: c.id,
         image: c.thumbnailUrl ?? '',
         title: c.name,
         description: c.description,
-        progress: 0,
+        progress,
         chapters: c.chapters?.length ?? 0,
-        lessons: c.chapters?.reduce((sum, ch) => sum + (ch.lessons?.length ?? 0), 0) ?? 0,
+        lessons: totalLessons,
         isFavourite: false,
         difficulty: undefined,
         badgeText: undefined,
@@ -37,7 +45,7 @@ export default function Roadmap() {
 
     useEffect(() => {
         getAllCourses()
-            .then(data => setCourses(data.map(mapApiCourse)))
+            .then(data => setCourses(data.filter(c => c.isPublished).map(mapApiCourse)))
             .catch(() => setError('Failed to load courses'))
             .finally(() => setLoading(false));
     }, []);
@@ -68,7 +76,7 @@ export default function Roadmap() {
                 filteredCount={filteredCourses.length} totalCount={courses.length}
             />
 
-            <div className="flex-1 py-8 px-10">
+            <div className="flex-1 py-6 sm:py-8 px-4 sm:px-10">
                 <div className="max-w-7xl mx-auto">
                     <CourseGrid
                         filteredCourses={filteredCourses}

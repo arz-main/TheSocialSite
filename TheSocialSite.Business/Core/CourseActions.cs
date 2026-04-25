@@ -15,7 +15,6 @@ namespace TheSocialSite.Business.Core
             using var ctx = new AppDbContext();
 
             var courses = ctx.Courses
-                .Include(c => c.Author)
                 .Select(c => new CourseDto
                 {
                     Id = c.Id,
@@ -26,7 +25,21 @@ namespace TheSocialSite.Business.Core
                     AuthorUsername = c.Author.Username,
                     AuthorAvatarUrl = c.Author.AvatarUrl,
                     IsPublished = c.IsPublished,
-                    CreatedAt = c.CreatedAt
+                    CreatedAt = c.CreatedAt,
+                    Chapters = c.Chapters.OrderBy(ch => ch.Order).Select(ch => new ChapterDto
+                    {
+                        Id = ch.Id,
+                        Name = ch.Name,
+                        CourseId = c.Id,
+                        Order = ch.Order,
+                        Lessons = ch.Lessons.OrderBy(l => l.Order).Select(l => new LessonDto
+                        {
+                            Id = l.Id,
+                            Name = l.Name,
+                            ChapterId = ch.Id,
+                            Order = l.Order
+                        }).ToList()
+                    }).ToList()
                 })
                 .ToList();
 
