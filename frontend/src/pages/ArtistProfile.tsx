@@ -223,19 +223,19 @@ export default function ArtistProfile() {
                             <div className="mt-5">
                                 <TabsContent value="posts">
                                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <div className="columns-2 sm:columns-3 lg:columns-4 gap-2.5">
                                             {/* New Post card — always first */}
                                             <motion.button
                                                 initial={{ opacity: 0, y: 12 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 onClick={() => setShowCreatePost(true)}
-                                                className="relative rounded-2xl overflow-hidden border border-dashed border-border hover:border-primary/60 transition-all group aspect-[4/3] flex flex-col items-center justify-center gap-3 bg-background"
+                                                className="break-inside-avoid mb-2.5 w-full relative rounded-xl overflow-hidden border border-dashed border-border hover:border-primary/60 transition-all group flex flex-col items-center justify-center gap-3 bg-background"
+                                                style={{ height: 140 }}
                                             >
-                                                {/* blurry placeholder bg */}
                                                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 group-hover:from-primary/10 group-hover:to-primary/20 transition-all" />
                                                 <div className="relative z-10 flex flex-col items-center gap-2">
-                                                    <div className="w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
-                                                        <Plus className="w-5 h-5 text-primary" />
+                                                    <div className="w-9 h-9 rounded-full bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+                                                        <Plus className="w-4 h-4 text-primary" />
                                                     </div>
                                                     <span className="text-sm font-bold text-text">New Post</span>
                                                     <span className="text-xs text-muted">Share your artwork</span>
@@ -335,6 +335,9 @@ export default function ArtistProfile() {
                         comments={comments}
                         imageIndex={imageIndex}
                         newComment={newComment}
+                        isLiked={likedPosts.has(openedPost.id)}
+                        likeCount={likeCounts[openedPost.id] ?? openedPost.likes}
+                        onToggleLike={handleLike}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

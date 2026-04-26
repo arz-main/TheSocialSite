@@ -107,11 +107,12 @@ export default function ExplorePage() {
 
                     {/* Posts Grid */}
                     <div className="flex-1">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {localLoading
-                                ? Array.from({ length: 9 }).map((_, i) => <PostCardSkeleton key={i} />)
-                                : localError
-                                    ? <div className="col-span-full"><ErrorScreen /></div>
+                        {localError ? (
+                            <ErrorScreen />
+                        ) : (
+                            <div className="columns-2 sm:columns-3 md:columns-4 xl:columns-5 gap-2.5">
+                                {localLoading
+                                    ? Array.from({ length: 15 }).map((_, i) => <PostCardSkeleton key={i} index={i} />)
                                     : visiblePosts.map((post, index) => (
                                         <PostCard
                                             key={post.id}
@@ -125,8 +126,9 @@ export default function ExplorePage() {
                                             formatDate={formatDate}
                                         />
                                     ))
-                            }
-                        </div>
+                                }
+                            </div>
+                        )}
                     </div>
 
                     {hasMore && (
@@ -144,7 +146,9 @@ export default function ExplorePage() {
                         comments={comments}
                         imageIndex={imageIndex}
                         newComment={newComment}
-                        // loading={localLoading}
+                        isLiked={likedPosts.has(openedPost.id)}
+                        likeCount={likeCounts[openedPost.id] ?? openedPost.likes}
+                        onToggleLike={handleLike}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

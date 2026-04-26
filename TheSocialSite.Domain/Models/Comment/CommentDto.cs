@@ -19,7 +19,7 @@ namespace TheSocialSite.Domain.Models.Comment
 
         public string AuthorUsername { get; set; } // flattened from Author navigation
 
-        public string AuthorAvatar { get; set; } // optional, from Author
+        public string AuthorAvatarUrl { get; set; }
 
         [Required]
         [MaxLength(1000)]

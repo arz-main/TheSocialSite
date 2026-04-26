@@ -75,6 +75,7 @@ export default function Practice() {
 
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const timerDrawingRef = useRef<number>(-1);
+    const captureRef = useRef<((cb: () => void) => void) | null>(null);
 
     const { createPost } = usePosts();
 
@@ -102,14 +103,21 @@ export default function Practice() {
             setTimeLeft(prev => {
                 if (prev <= 1) {
                     clearInterval(intervalRef.current!);
-                    setDrawingIndex(idx => {
-                        const next = idx + 1;
-                        if (next >= sessionDrawings.length) {
-                            setTimeout(() => setSessionState("done"), 50);
-                            return 0;
-                        }
-                        return next;
-                    });
+                    const advance = () => {
+                        setDrawingIndex(idx => {
+                            const next = idx + 1;
+                            if (next >= sessionDrawings.length) {
+                                setTimeout(() => setSessionState("done"), 50);
+                                return 0;
+                            }
+                            return next;
+                        });
+                    };
+                    if (captureRef.current) {
+                        captureRef.current(advance);
+                    } else {
+                        advance();
+                    }
                     return 0;
                 }
                 return prev - 1;
@@ -258,6 +266,7 @@ export default function Practice() {
                                     onStop={handleStop}
                                     onCanvasCapture={handleCanvasCapture}
                                     onDrawingStarted={handleDrawingStarted}
+                                    captureRef={captureRef}
                                 />
                             )}
                         </motion.div>

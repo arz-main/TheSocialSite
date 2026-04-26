@@ -26,7 +26,7 @@ const socialPlatforms: { key: keyof SocialLinks; label: string; type: string }[]
 
 export default function EditProfile() {
     const navigate = useNavigate();
-    const { currentUser, logout, refreshToken } = useAuth();
+    const { currentUser, logout, reloadCurrentUser } = useAuth();
     const { getUser, updateUser, deleteUser } = useUsers();
     const { getSocialMedia, createSocialMedia, updateSocialMedia } = useSocialMedia();
 
@@ -142,7 +142,7 @@ export default function EditProfile() {
                 setHasSocialRecord(true);
             }
 
-            await refreshToken();
+            await reloadCurrentUser();
             setSuccess(true);
             navigate(paths.artist.profile);
         } catch (err) {

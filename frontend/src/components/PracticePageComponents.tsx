@@ -145,7 +145,7 @@ export function DrawingCanvas({ onCapture, triggerCapture, clearSignal, onFirstS
 export function ActiveSessionPanel({
     drawing, drawingIndex, totalDrawings, timeLeft, timePerDrawing,
     sessionState, useCanvas, clearSignal, onPause, onResume, onSkip, onStop, onCanvasCapture,
-    onDrawingStarted,
+    onDrawingStarted, captureRef,
 }: ActiveSessionPanelProps) {
     const [triggerCapture, setTriggerCapture] = useState(false);
 
@@ -154,6 +154,10 @@ export function ActiveSessionPanel({
         setTriggerCapture(true);
         setTimeout(() => { setTriggerCapture(false); cb(); }, 50);
     }, [useCanvas]);
+
+    useEffect(() => {
+        if (captureRef) captureRef.current = captureAndThen;
+    }, [captureRef, captureAndThen]);
 
     const handleCapture = useCallback((dataUrl: string) => {
         onCanvasCapture(drawing.id, dataUrl);

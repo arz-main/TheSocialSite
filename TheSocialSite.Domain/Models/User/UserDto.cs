@@ -16,7 +16,7 @@ namespace TheSocialSite.Domain.Models.User
         public string Email { get; set; } 
         public Role Role { get; set; } = Role.User;
         public string Username { get; set; }
-        public string? Avatar { get; set; }
+        public string? AvatarUrl { get; set; }
         public string? Bio { get; set; }
         public string? Location { get; set; }
         public string? Website { get; set; }

@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type { MockDrawing } from "../_mock/mockPracticePage";
 
 export type SessionState = "idle" | "active" | "paused" | "done";
@@ -31,6 +32,7 @@ export interface ActiveSessionPanelProps {
     onStop: () => void;
     onCanvasCapture: (drawingId: number, dataUrl: string) => void;
     onDrawingStarted?: (drawingId: number) => void;
+    captureRef?: RefObject<((cb: () => void) => void) | null>;
 }
 
 export interface SessionResult {
