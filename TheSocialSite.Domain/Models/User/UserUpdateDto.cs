@@ -10,7 +10,7 @@ namespace TheSocialSite.Domain.Models.User
         public string? Location { get; set; }
         public string? Website { get; set; }
         public string? Bio { get; set; }
-        public string? Avatar { get; set; } // URL to image
+        public string? AvatarUrl { get; set; }
         public Role? Role { get; set; }
         public SocialMediaDto? SocialMedia { get; set; }
     }

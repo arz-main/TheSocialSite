@@ -31,7 +31,7 @@ namespace TheSocialSite.Business.Core
                         Id = c.Id,
                         PostId = c.PostId,
                         AuthorId = c.AuthorId,
-                        AuthorAvatar = c.Author?.AvatarUrl,
+                        AuthorAvatarUrl = c.Author?.AvatarUrl,
                         AuthorUsername = c.Author?.Username,
                         Content = c.Content,
                         CreatedAt = c.CreatedAt,
@@ -66,7 +66,7 @@ namespace TheSocialSite.Business.Core
                         Id = comment.Id,
                         PostId = comment.PostId,
                         AuthorId = comment.AuthorId,
-                        AuthorAvatar = comment.Author?.AvatarUrl,
+                        AuthorAvatarUrl = comment.Author?.AvatarUrl,
                         AuthorUsername = comment.Author?.Username,
                         Content = comment.Content,
                         CreatedAt = comment.CreatedAt,
@@ -107,7 +107,7 @@ namespace TheSocialSite.Business.Core
                         PostId = comment.PostId,
                         AuthorId = comment.AuthorId,
                         AuthorUsername = author?.Username,
-                        AuthorAvatar = author?.AvatarUrl,
+                        AuthorAvatarUrl = author?.AvatarUrl,
                         Content = comment.Content,
                         CreatedAt = comment.CreatedAt
                     }

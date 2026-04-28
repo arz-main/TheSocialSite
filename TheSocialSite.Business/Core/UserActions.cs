@@ -29,7 +29,7 @@ namespace TheSocialSite.Business.Core
                         Email = user.Email,
                         Role = user.Role,
                         Username = user.Username,
-                        Avatar = user.AvatarUrl,
+                        AvatarUrl = user.AvatarUrl,
                         Bio = user.Bio,
                         Location = user.Location,
                         Website = user.Website,
@@ -69,7 +69,7 @@ namespace TheSocialSite.Business.Core
                         Email = user.Email,
                         Username = user.Username,
                         Role = user.Role,
-                        Avatar = user.AvatarUrl,
+                        AvatarUrl = user.AvatarUrl,
                         Bio = user.Bio,
                         Location = user.Location,
                         Website = user.Website,
@@ -137,7 +137,7 @@ namespace TheSocialSite.Business.Core
                 if (data.Location != null) user.Location = data.Location;
                 if (data.Website != null) user.Website = data.Website;
                 if (data.Bio != null) user.Bio = data.Bio;
-                if (data.Avatar != null) user.AvatarUrl = data.Avatar;
+                if (data.AvatarUrl != null) user.AvatarUrl = data.AvatarUrl;
 
                 if (data.SocialMedia != null)
                 {

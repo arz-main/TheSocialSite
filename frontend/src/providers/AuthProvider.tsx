@@ -63,8 +63,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const reloadCurrentUser = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        try {
+            await fetchUser(token);
+        } catch (err) {
+            console.error("Failed to reload user", err);
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ currentUser, initializing, refreshToken, login, logout, signup }}>
+        <AuthContext.Provider value={{ currentUser, initializing, refreshToken, reloadCurrentUser, login, logout, signup }}>
             {children}
         </AuthContext.Provider>
     );

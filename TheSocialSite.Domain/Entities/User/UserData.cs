@@ -33,7 +33,7 @@ namespace TheSocialSite.Domain.Entities.User
         [MaxLength(50)]
         public string Username { get; set; } = string.Empty;
 
-        [MaxLength(250)]
+        [Column(TypeName = "nvarchar(max)")]
         public string? AvatarUrl { get; set; } = string.Empty;
 
         [MaxLength(500)]

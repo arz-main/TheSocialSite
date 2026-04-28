@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { RefObject } from "react";
 import type { MockDrawing } from "../_mock/mockPracticePage";
 
 export type SessionState = "idle" | "active" | "paused" | "done";
@@ -10,7 +10,7 @@ export type TimerBarProps = {
 
 export type PracticeCardProp = {
     id: number;
-    icon: LucideIcon;
+    previewImage: string;
     title: string;
     selected?: boolean;
     onToggle?: () => void;
@@ -31,6 +31,8 @@ export interface ActiveSessionPanelProps {
     onSkip: () => void;
     onStop: () => void;
     onCanvasCapture: (drawingId: number, dataUrl: string) => void;
+    onDrawingStarted?: (drawingId: number) => void;
+    captureRef?: RefObject<((cb: () => void) => void) | null>;
 }
 
 export interface SessionResult {
@@ -41,8 +43,7 @@ export interface SessionResult {
 export interface PostDrawingPanelProps {
     result: SessionResult;
     onClose: () => void;
-    onUploadToProfile: (withRef: boolean) => void;
-    onSendToFriend: () => void;
+    onUploadToProfile: (withRef: boolean) => Promise<void>;
     onDownload: () => void;
 }
 
@@ -50,5 +51,5 @@ export interface DrawingReviewGridProps {
     results: SessionResult[];
     useCanvas: boolean;
     onSelectResult: (result: SessionResult) => void;
-    onFinish: () => void; 
+    onFinish: () => void;
 }

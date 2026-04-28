@@ -222,7 +222,7 @@ export default function OthersProfile() {
                                                 <p className="text-muted">This user hasn't posted anything yet</p>
                                             </Card>
                                         ) : (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div className="columns-2 sm:columns-3 lg:columns-4 gap-2.5">
                                                 {userPosts.map((post, index) => (
                                                     <PostCard
                                                         key={post.id}
@@ -304,6 +304,9 @@ export default function OthersProfile() {
                         comments={comments}
                         imageIndex={imageIndex}
                         newComment={newComment}
+                        isLiked={likedPosts.has(openedPost.id)}
+                        likeCount={likeCounts[openedPost.id] ?? openedPost.likes}
+                        onToggleLike={handleLike}
                         onChangeImageIndex={setImageIndex}
                         onChangeNewComment={setNewComment}
                         onSubmitComment={handleSubmitComment}

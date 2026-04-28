@@ -1,5 +1,3 @@
-import { PersonStanding, Hand, Amphora, HandFist, SquareUserRound, Panda } from "lucide-react";
-
 export interface MockDrawing {
 	id: number;
 	categoryId: number;
@@ -11,30 +9,33 @@ export const mockCategories = [
 	{
 		id: 1,
 		title: "Figure Drawing",
-		icon: PersonStanding,
+		previewImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=60",
 	},
 	{
 		id: 2,
 		title: "Hands",
-		icon: Hand,
+		previewImage: "https://images.unsplash.com/photo-1526406915893-552bbda3a0b1?w=400&q=60",
 	},
 	{
 		id: 3,
 		title: "Still Life",
-		icon: Amphora,
-	},{
+		previewImage: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&q=60",
+	},
+	{
 		id: 4,
 		title: "Fights",
-		icon: HandFist,
-	},{
+		previewImage: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=60",
+	},
+	{
 		id: 5,
 		title: "Portraits",
-		icon: SquareUserRound,
-	},{
+		previewImage: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=60",
+	},
+	{
 		id: 6,
 		title: "Animals",
-		icon: Panda,
-	}
+		previewImage: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&q=60",
+	},
 ];
 
 export const mockDrawings: MockDrawing[] = [

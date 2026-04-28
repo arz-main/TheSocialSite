@@ -7,4 +7,5 @@ export type AuthContextType = {
     logout: () => void;
     signup: (userData: CreateUserDto) => Promise<void>;
     refreshToken(): Promise<void>;
+    reloadCurrentUser(): Promise<void>;
 };
