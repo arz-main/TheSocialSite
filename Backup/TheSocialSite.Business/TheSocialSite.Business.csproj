@@ -4,8 +4,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <FileUpgradeFlags>40</FileUpgradeFlags>
-    <UpgradeBackupLocation>C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\</UpgradeBackupLocation>
-    <OldToolsVersion>Current</OldToolsVersion>
+    <UpgradeBackupLocation>C:\Users\liviu\Desktop\Siteu\TheSocialSite\Backup\TheSocialSite.Business\</UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />

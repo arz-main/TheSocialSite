@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+ <html xmlns:msxsl="urn:schemas-microsoft-com:xslt"><head><meta content="en-us" http-equiv="Content-Language" /><meta content="text/html; charset=utf-16" http-equiv="Content-Type" /><title _locID="ConversionReport0">
+          Отчет о переносе
+        </title><style> 
+                    /* Body style, for the entire document */
+                    body
+                    {
+                        background: #F3F3F4;
+                        color: #1E1E1F;
+                        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    /* Header1 style, used for the main title */
+                    h1
+                    {
+                        padding: 10px 0px 10px 10px;
+                        font-size: 21pt;
+                        background-color: #E2E2E2;
+                        border-bottom: 1px #C1C1C2 solid; 
+                        color: #201F20;
+                        margin: 0;
+                        font-weight: normal;
+                    }
+
+                    /* Header2 style, used for "Overview" and other sections */
+                    h2
+                    {
+                        font-size: 18pt;
+                        font-weight: normal;
+                        padding: 15px 0 5px 0;
+                        margin: 0;
+                    }
+
+                    /* Header3 style, used for sub-sections, such as project name */
+                    h3
+                    {
+                        font-weight: normal;
+                        font-size: 15pt;
+                        margin: 0;
+                        padding: 15px 0 5px 0;
+                        background-color: transparent;
+                    }
+
+                    /* Color all hyperlinks one color */
+                    a
+                    {
+                        color: #1382CE;
+                    }
+
+                    /* Table styles */ 
+                    table
+                    {
+                        border-spacing: 0 0;
+                        border-collapse: collapse;
+                        font-size: 10pt;
+                    }
+
+                    table th
+                    {
+                        background: #E7E7E8;
+                        text-align: left;
+                        text-decoration: none;
+                        font-weight: normal;
+                        padding: 3px 6px 3px 6px;
+                    }
+
+                    table td
+                    {
+                        vertical-align: top;
+                        padding: 3px 6px 5px 5px;
+                        margin: 0px;
+                        border: 1px solid #E7E7E8;
+                        background: #F7F7F8;
+                    }
+
+                    /* Local link is a style for hyperlinks that link to file:/// content, there are lots so color them as 'normal' text until the user mouse overs */
+                    .localLink
+                    {
+                        color: #1E1E1F;
+                        background: #EEEEED;
+                        text-decoration: none;
+                    }
+
+                    .localLink:hover
+                    {
+                        color: #1382CE;
+                        background: #FFFF99;
+                        text-decoration: none;
+                    }
+
+                    /* Center text, used in the over views cells that contain message level counts */ 
+                    .textCentered
+                    {
+                        text-align: center;
+                    }
+
+                    /* The message cells in message tables should take up all avaliable space */
+                    .messageCell
+                    {
+                        width: 100%;
+                    }
+
+                    /* Padding around the content after the h1 */ 
+                    #content 
+                    {
+	                    padding: 0px 12px 12px 12px; 
+                    }
+
+                    /* The overview table expands to width, with a max width of 97% */ 
+                    #overview table
+                    {
+                        width: auto;
+                        max-width: 75%; 
+                    }
+
+                    /* The messages tables are always 97% width */
+                    #messages table
+                    {
+                        width: 97%;
+                    }
+
+                    /* All Icons */
+                    .IconSuccessEncoded, .IconInfoEncoded, .IconWarningEncoded, .IconErrorEncoded
+                    {
+                        min-width:18px;
+                        min-height:18px; 
+                        background-repeat:no-repeat;
+                        background-position:center;
+                    }
+
+                    /* Success icon encoded */
+                    .IconSuccessEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconSuccess#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABcElEQVR4Xq2TsUsCURzHv15g8ZJcBWlyiYYgCIWcb9DFRRwMW5TA2c0/QEFwFkxxUQdxVlBwCYWOi6IhWgQhBLHJUCkhLr/BW8S7gvrAg+N+v8/v+x68Z8MGy+XSCyABQAXgBgHGALoASkIIDWSLeLBetdHryMjd5IxQPWT4rn1c/P7+xxp72Cs9m5SZ0Bq2vPnbPFafK2zDvmNHypdC0BPkLlQhxJsCAhQoZwdZU5mwxh720qGo8MzTxTTKZDPCx2HoVzp6lz0Q9tKhyx0kGs8Ny+TkWRKk8lCROwEduhyg9l/6lunOPSfmH3NUH6uQ0KHLAe7JYvJjevm+DAMGJHToKtigE+vwvIidxLamb8IBY9e+C5LiXREkfho3TSd06HJA13/oh6T51MTsfQbHrsMynQ5dDihFjiK8JJAU9AKIWTp76dCVN7HWHrajmUEGvyF9nkbAE6gLIS7kTUyuf2gscLoJrElZo/Mvj+nPz/kLTmfnEwP3tB0AAAAASUVORK5CYII=);
+                    }
+
+                    /* Information icon encoded */
+                    .IconInfoEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconInformation#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVR4Xs2TsUoDQRRF7wwoziokjZUKadInhdhukR9YP8DMX1hYW+QvdsXa/QHBbcXC7W0CamWTQnclFutceIQJwwaWNLlwm5k5d94M76mmaeCrrmsLYOocY12FcxZFUeozCqKqqgYA8uevv1H6VuPxcwlfk5N92KHBxfFeCSAxxswlYAW/Xr989x/mv9gkhtyMDhcAxgzRsp7flj8B/HF1RsMXq+NZMkopaHe7lbKxQUEIGbKsYNoGn969060hZBkQex/W8oRQwsQaW2o3Ago2SVcJUzAgY3N0lTCZZm+zPS8HB51gMmS1DEYyOz9acKO1D8JWTlafKIMxdhvlfdyT94Vv5h7P8Ky7nQzACmhvKq3zk3PjW9asz9D/1oigecsioooAAAAASUVORK5CYII=);
+                    }
+
+                    /* Warning icon encoded */
+                    .IconWarningEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconWarning#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAx0lEQVR4XpWSMQ7CMAxFf4xAyBMLCxMrO8dhaBcuwdCJS3RJBw7SA/QGTCxdWJgiQYWKXJWKIXHIlyw5lqr34tQgEOdcBsCOx5yZK3hCCKdYXneQkh4pEfqzLfu+wVDSyyzFoJjfz9NB+pAF+eizx2Vruts0k15mPgvS6GYvpVtQhB61IB/dk6AF6fS4Ben0uIX5odtFe8Q/eW1KvFeH4e8khT6+gm5B+t3juyDt7n0jpe+CANTd+oTUjN/U3yVaABnSUjFz/gFq44JaVSCXeQAAAABJRU5ErkJggg==);
+                    }
+
+                    /* Error icon encoded */
+                    .IconErrorEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconError#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQElEQVR4XqWTvUoEQRCE6wYPZUA80AfwAQz23uCMjA7MDRQEIzPBVEyNTQUFIw00vcQTTMzuAh/AxEQQT8HF/3G/oGGnEUGuoNnd6qoZuqltyKEsyzVJq5I6rnUp6SjGeGhESikzzlc1eL7opfuVbrqbU1Zw9NCgtQMaZpY0eNnaaL2fHusvTK5vKu7sjSS1Y4y3QUA6K3e3Mau5UFDyMP7tYF9o8cAHZv68vipoIJg971PZIZ5HiwdvYGGvFVFHmGmZ2MxwmQYPXubPl9Up0tfoMQGetXd6mRbvhBw+boZ6WF7Mbv1+GsHRk0fQmPAH1GfmZirbCfDJ61tw3Px8/8pZsPAG4jlVhcPgZ7adwNWBB68lkRQWFiTgFlbnLY3DGGM7izIJIyT/jjIvEJw6fdJTc6krDzh6aMwMP9bvDH4ADSsa9uSWVJkAAAAASUVORK5CYII=);
+                    }
+                 </style><script type="text/javascript" language="javascript"> 
+          
+            // Startup 
+            // Hook up the the loaded event for the document/window, to linkify the document content
+            var startupFunction = function() { linkifyElement("messages"); };
+            
+            if(window.attachEvent)
+            {
+              window.attachEvent('onload', startupFunction);
+            }
+            else if (window.addEventListener) 
+            {
+              window.addEventListener('load', startupFunction, false);
+            }
+            else 
+            {
+              document.addEventListener('load', startupFunction, false);
+            } 
+            
+            // Toggles the visibility of table rows with the specified name 
+            function toggleTableRowsByName(name)
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  if(!!currentName && currentName.indexOf(name) == 0)
+                  {
+                      var isVisible = allRows[i].style.display == ''; 
+                      isVisible ? allRows[i].style.display = 'none' : allRows[i].style.display = '';
+                  }
+               }
+            }
+            
+            function scrollToFirstVisibleRow(name) 
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  var isVisible = allRows[i].style.display == ''; 
+                  if(!!currentName && currentName.indexOf(name) == 0 && isVisible)
+                  {
+                     allRows[i].scrollIntoView(true); 
+                     return true; 
+                  }
+               }
+               
+               return false;
+            }
+            
+            // Linkifies the specified text content, replaces candidate links with html links 
+            function linkify(text)
+            {
+                 if(!text || 0 === text.length)
+                 {
+                     return text; 
+                 }
+
+                 // Find http, https and ftp links and replace them with hyper links 
+                 var urlLink = /(http|https|ftp)\:\/\/[a-zA-Z0-9\-\.]+(:[a-zA-Z0-9]*)?\/?([a-zA-Z0-9\-\._\?\,\/\\\+&%\$#\=~;\{\}])*/gi;
+                 
+                 return text.replace(urlLink, '<a href="$&">$&</a>') ;
+            }
+            
+            // Linkifies the specified element by ID
+            function linkifyElement(id)
+            {
+                var element = document.getElementById(id);
+                if(!!element)
+                {
+                  element.innerHTML = linkify(element.innerHTML); 
+                }
+            }
+            
+            function ToggleMessageVisibility(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              toggleTableRowsByName("MessageRowClass" + projectName);
+              toggleTableRowsByName('MessageRowHeaderShow' + projectName);
+              toggleTableRowsByName('MessageRowHeaderHide' + projectName); 
+            }
+            
+            function ScrollToFirstVisibleMessage(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              // First try the 'Show messages' row
+              if(!scrollToFirstVisibleRow('MessageRowHeaderShow' + projectName))
+              {
+                // Failed to find a visible row for 'Show messages', try an actual message row 
+                scrollToFirstVisibleRow('MessageRowClass' + projectName); 
+              }
+            }
+           </script></head><body><h1 _locID="ConversionReport">
+          Отчет о миграции - </h1><div id="content"><h2 _locID="OverviewTitle">Обзор</h2><div id="overview"><table><tr><th></th><th _locID="ProjectTableHeader">Проект</th><th _locID="PathTableHeader">Путь</th><th _locID="ErrorsTableHeader">Ошибки</th><th _locID="WarningsTableHeader">Предупреждения</th><th _locID="MessagesTableHeader">Сообщения</th></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#TheSocialSite.Api">TheSocialSite.Api</a></strong></td><td>TheSocialSite.Api\TheSocialSite.Api.csproj</td><td class="textCentered"><a href="#TheSocialSite.ApiError">2</a></td><td class="textCentered"><a href="#TheSocialSite.ApiWarning">2</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('TheSocialSite.Api'); return false;">16</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#TheSocialSite.Business">TheSocialSite.Business</a></strong></td><td>TheSocialSite.Business\TheSocialSite.Business.csproj</td><td class="textCentered"><a href="#TheSocialSite.BusinessError">2</a></td><td class="textCentered"><a href="#TheSocialSite.BusinessWarning">2</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('TheSocialSite.Business'); return false;">30</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#TheSocialSite.DataAccess">TheSocialSite.DataAccess</a></strong></td><td>TheSocialSite.DataAccess\TheSocialSite.DataAccess.csproj</td><td class="textCentered"><a href="#TheSocialSite.DataAccessError">2</a></td><td class="textCentered"><a href="#TheSocialSite.DataAccessWarning">2</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('TheSocialSite.DataAccess'); return false;">15</a></td></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#TheSocialSite.Domain">TheSocialSite.Domain</a></strong></td><td>TheSocialSite.Domain\TheSocialSite.Domain.csproj</td><td class="textCentered"><a href="#TheSocialSite.DomainError">2</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('TheSocialSite.Domain'); return false;">35</a></td></tr><tr><td class="IconWarningEncoded" /><td><strong><a href="#Solution"><span _locID="OverviewSolutionSpan">Решение</span></a></strong></td><td>TheSocialSite.sln</td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#SolutionWarning">1</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('Solution'); return false;">2</a></td></tr></table></div><h2 _locID="SolutionAndProjectsTitle">Решение и проекты</h2><div id="messages"><a name="TheSocialSite.Api" /><h3>TheSocialSite.Api</h3><table><tr id="TheSocialSite.ApiHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassTheSocialSite.Api"><td class="IconErrorEncoded"><a name="TheSocialSite.ApiError" /></td><td class="messageCell"><strong>TheSocialSite.Api\App.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\App.xaml</span></td></tr><tr name="ErrorRowClassTheSocialSite.Api"><td class="IconErrorEncoded"><a name="TheSocialSite.ApiError" /></td><td class="messageCell"><strong>TheSocialSite.Api\Application.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Application.xaml</span></td></tr><tr name="WarningRowClassTheSocialSite.Api"><td class="IconWarningEncoded"><a name="TheSocialSite.ApiWarning" /></td><td class="messageCell"><strong>TheSocialSite.Api\TheSocialSite.Api.csproj:
+        </strong><span>Среде Visual Studio требуется внести в этот проект нефункциональные изменения, чтобы его можно было открывать в выпущенных версиях Visual Studio, которые новее Visual Studio 2010 с пакетом обновления 1 (SP1), без ущерба для поведения проекта.</span></td></tr><tr name="WarningRowClassTheSocialSite.Api"><td class="IconWarningEncoded"><a name="TheSocialSite.ApiWarning" /></td><td class="messageCell"><strong>TheSocialSite.Api\TheSocialSite.Api.csproj:
+        </strong><span>Среда Visual Studio внесла в этот проект нефункциональные изменения, чтобы его можно было открывать в выпущенных версиях Visual Studio, которые новее Visual Studio 2010 с пакетом обновления 1 (SP1), без ущерба для поведения проекта.</span></td></tr><tr name="MessageRowHeaderShowTheSocialSite.Api"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="TheSocialSite.ApiMessage" onclick="ToggleMessageVisibility('TheSocialSite.Api'); return false;">
+          Показать 16 дополнительные сообщения
+        </a></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\TheSocialSite.Api.csproj:
+        </strong><span>Успешно создана резервная копия файла проекта: C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\TheSocialSite.Api.csproj</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\TheSocialSite.Api.csproj.user:
+        </strong><span>Резервная копия проекта успешно создана как C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\TheSocialSite.Api.csproj.user</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\AuthController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\AuthController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\AwardedBadgeController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\AwardedBadgeController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\BadgeTemplateController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\BadgeTemplateController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\CommentController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\CommentController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\HealthController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\HealthController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\PostController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\PostController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\SocialMediaController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\SocialMediaController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Controllers\UserController.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Controllers\UserController.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Program.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Program.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\Properties\launchSettings.json:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\Properties\launchSettings.json</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\appsettings.json:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\appsettings.json</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\appsettings.json:
+        </strong><span>Конфликт имен резервных копий. Резервная копия переименовывается в: C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\appsettings(2).json</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\appsettings.json:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Api\appsettings(2).json</span></td></tr><tr name="MessageRowClassTheSocialSite.Api" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.ApiMessage" /></td><td class="messageCell"><strong>TheSocialSite.Api\TheSocialSite.Api.csproj:
+        </strong><span>Проект успешно перенесен</span></td></tr><tr style="display: none" name="MessageRowHeaderHideTheSocialSite.Api"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="TheSocialSite.ApiMessage" onclick="ToggleMessageVisibility('TheSocialSite.Api'); return false;">
+          Скрыть 16 дополнительные сообщения
+        </a></td></tr></table><a name="TheSocialSite.Business" /><h3>TheSocialSite.Business</h3><table><tr id="TheSocialSite.BusinessHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassTheSocialSite.Business"><td class="IconErrorEncoded"><a name="TheSocialSite.BusinessError" /></td><td class="messageCell"><strong>TheSocialSite.Business\App.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\App.xaml</span></td></tr><tr name="ErrorRowClassTheSocialSite.Business"><td class="IconErrorEncoded"><a name="TheSocialSite.BusinessError" /></td><td class="messageCell"><strong>TheSocialSite.Business\Application.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Application.xaml</span></td></tr><tr name="WarningRowClassTheSocialSite.Business"><td class="IconWarningEncoded"><a name="TheSocialSite.BusinessWarning" /></td><td class="messageCell"><strong>TheSocialSite.Business\TheSocialSite.Business.csproj:
+        </strong><span>Среде Visual Studio требуется внести в этот проект нефункциональные изменения, чтобы его можно было открывать в выпущенных версиях Visual Studio, которые новее Visual Studio 2010 с пакетом обновления 1 (SP1), без ущерба для поведения проекта.</span></td></tr><tr name="WarningRowClassTheSocialSite.Business"><td class="IconWarningEncoded"><a name="TheSocialSite.BusinessWarning" /></td><td class="messageCell"><strong>TheSocialSite.Business\TheSocialSite.Business.csproj:
+        </strong><span>Среда Visual Studio внесла в этот проект нефункциональные изменения, чтобы его можно было открывать в выпущенных версиях Visual Studio, которые новее Visual Studio 2010 с пакетом обновления 1 (SP1), без ущерба для поведения проекта.</span></td></tr><tr name="MessageRowHeaderShowTheSocialSite.Business"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="TheSocialSite.BusinessMessage" onclick="ToggleMessageVisibility('TheSocialSite.Business'); return false;">
+          Показать 30 дополнительные сообщения
+        </a></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\TheSocialSite.Business.csproj:
+        </strong><span>Успешно создана резервная копия файла проекта: C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\TheSocialSite.Business.csproj</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\BusinessLogic.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\BusinessLogic.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\AuthActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\AuthActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\Badge\AwardedBadgeActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\Badge\AwardedBadgeActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\Badge\BadgeEvaluationActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\Badge\BadgeEvaluationActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\Badge\BadgeTemplateActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\Badge\BadgeTemplateActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\CommentActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\CommentActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\JwtActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\JwtActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\MessageActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\MessageActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\PostActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\PostActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\SocialMediaActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\SocialMediaActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\UserActions.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\UserActions.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Core\UserActivitySnapshotBuilder.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Core\UserActivitySnapshotBuilder.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\IAuthInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\IAuthInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\IAwardedBadgeInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\IAwardedBadgeInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\IBadgeTemplateInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\IBadgeTemplateInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\ICommentInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\ICommentInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\IJwtInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\IJwtInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\IPostInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\IPostInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\ISocialMediaInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\ISocialMediaInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Interfaces\IUserInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Interfaces\IUserInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\AuthInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\AuthInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\AwardedBadgeInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\AwardedBadgeInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\BadgeTemplateInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\BadgeTemplateInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\CommentInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\CommentInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\JwtInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\JwtInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\PostInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\PostInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\SocialMediaInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\SocialMediaInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\Structure\UserInteractAction.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Business\Structure\UserInteractAction.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Business" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.BusinessMessage" /></td><td class="messageCell"><strong>TheSocialSite.Business\TheSocialSite.Business.csproj:
+        </strong><span>Проект успешно перенесен</span></td></tr><tr style="display: none" name="MessageRowHeaderHideTheSocialSite.Business"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="TheSocialSite.BusinessMessage" onclick="ToggleMessageVisibility('TheSocialSite.Business'); return false;">
+          Скрыть 30 дополнительные сообщения
+        </a></td></tr></table><a name="TheSocialSite.DataAccess" /><h3>TheSocialSite.DataAccess</h3><table><tr id="TheSocialSite.DataAccessHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassTheSocialSite.DataAccess"><td class="IconErrorEncoded"><a name="TheSocialSite.DataAccessError" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\App.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\App.xaml</span></td></tr><tr name="ErrorRowClassTheSocialSite.DataAccess"><td class="IconErrorEncoded"><a name="TheSocialSite.DataAccessError" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Application.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Application.xaml</span></td></tr><tr name="WarningRowClassTheSocialSite.DataAccess"><td class="IconWarningEncoded"><a name="TheSocialSite.DataAccessWarning" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\TheSocialSite.DataAccess.csproj:
+        </strong><span>Среде Visual Studio требуется внести в этот проект нефункциональные изменения, чтобы его можно было открывать в выпущенных версиях Visual Studio, которые новее Visual Studio 2010 с пакетом обновления 1 (SP1), без ущерба для поведения проекта.</span></td></tr><tr name="WarningRowClassTheSocialSite.DataAccess"><td class="IconWarningEncoded"><a name="TheSocialSite.DataAccessWarning" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\TheSocialSite.DataAccess.csproj:
+        </strong><span>Среда Visual Studio внесла в этот проект нефункциональные изменения, чтобы его можно было открывать в выпущенных версиях Visual Studio, которые новее Visual Studio 2010 с пакетом обновления 1 (SP1), без ущерба для поведения проекта.</span></td></tr><tr name="MessageRowHeaderShowTheSocialSite.DataAccess"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="TheSocialSite.DataAccessMessage" onclick="ToggleMessageVisibility('TheSocialSite.DataAccess'); return false;">
+          Показать 15 дополнительные сообщения
+        </a></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\TheSocialSite.DataAccess.csproj:
+        </strong><span>Успешно создана резервная копия файла проекта: C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\TheSocialSite.DataAccess.csproj</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Context\AppDbContext.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Context\AppDbContext.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\DbSession.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\DbSession.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260407114722_InitialCreate.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260407114722_InitialCreate.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260407114722_InitialCreate.Designer.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260407114722_InitialCreate.Designer.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260408184654_InitialCreate.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260408184654_InitialCreate.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260408184654_InitialCreate.Designer.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260408184654_InitialCreate.Designer.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260409211216_AddedBadgeTemplates.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260409211216_AddedBadgeTemplates.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260409211216_AddedBadgeTemplates.Designer.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260409211216_AddedBadgeTemplates.Designer.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260413232744_NewPostLikeEntity.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260413232744_NewPostLikeEntity.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260413232744_NewPostLikeEntity.Designer.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260413232744_NewPostLikeEntity.Designer.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260420225726_NewAwardedBadgeEntity.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260420225726_NewAwardedBadgeEntity.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\20260420225726_NewAwardedBadgeEntity.Designer.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\20260420225726_NewAwardedBadgeEntity.Designer.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\Migrations\AppDbContextModelSnapshot.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.DataAccess\Migrations\AppDbContextModelSnapshot.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.DataAccess" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DataAccessMessage" /></td><td class="messageCell"><strong>TheSocialSite.DataAccess\TheSocialSite.DataAccess.csproj:
+        </strong><span>Проект успешно перенесен</span></td></tr><tr style="display: none" name="MessageRowHeaderHideTheSocialSite.DataAccess"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="TheSocialSite.DataAccessMessage" onclick="ToggleMessageVisibility('TheSocialSite.DataAccess'); return false;">
+          Скрыть 15 дополнительные сообщения
+        </a></td></tr></table><a name="TheSocialSite.Domain" /><h3>TheSocialSite.Domain</h3><table><tr id="TheSocialSite.DomainHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="ErrorRowClassTheSocialSite.Domain"><td class="IconErrorEncoded"><a name="TheSocialSite.DomainError" /></td><td class="messageCell"><strong>TheSocialSite.Domain\App.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\App.xaml</span></td></tr><tr name="ErrorRowClassTheSocialSite.Domain"><td class="IconErrorEncoded"><a name="TheSocialSite.DomainError" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Application.xaml:
+        </strong><span>Не удалось создать резервную копию файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Application.xaml</span></td></tr><tr name="MessageRowHeaderShowTheSocialSite.Domain"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="TheSocialSite.DomainMessage" onclick="ToggleMessageVisibility('TheSocialSite.Domain'); return false;">
+          Показать 35 дополнительные сообщения
+        </a></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\TheSocialSite.Domain.csproj:
+        </strong><span>Успешно создана резервная копия файла проекта: C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\TheSocialSite.Domain.csproj</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\Badge\AwardedBadgeData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\Badge\AwardedBadgeData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\Badge\BadgeTemplateData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\Badge\BadgeTemplateData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\Comment\CommentData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\Comment\CommentData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\Post\PostData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\Post\PostData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\Post\PostLikeData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\Post\PostLikeData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\SocialMedia\SocialMediaData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\SocialMedia\SocialMediaData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\User\UserData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\User\UserData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Entities\User\UserFollowData.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Entities\User\UserFollowData.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Badge\AwardedBadgeDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Badge\AwardedBadgeDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Badge\BadgeTemplateDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Badge\BadgeTemplateDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Badge\CreateAwardedBadgeDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Badge\CreateAwardedBadgeDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Badge\CreateBadgeTemplateDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Badge\CreateBadgeTemplateDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Badge\UpdateAwardedBadgeDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Badge\UpdateAwardedBadgeDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Badge\UpdateBadgeTemplateDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Badge\UpdateBadgeTemplateDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Badge\UserActivitySnapshot.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Badge\UserActivitySnapshot.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Comment\CommentDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Comment\CommentDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Comment\CreateCommentDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Comment\CreateCommentDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Message\MessageDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Message\MessageDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Post\CreatePostDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Post\CreatePostDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Post\PostDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Post\PostDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\AwardedBadgeActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\AwardedBadgeActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\BadgeTemplateActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\BadgeTemplateActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\CommentActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\CommentActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\JwtActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\JwtActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\MessageActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\MessageActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\PostActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\PostActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\SocialMediaActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\SocialMediaActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\Response\UserActionResponse.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\Response\UserActionResponse.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\SocialMedia\CreateSocialMediaDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\SocialMedia\CreateSocialMediaDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\SocialMedia\SocialMediaDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\SocialMedia\SocialMediaDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\User\CreateUserDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\User\CreateUserDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\User\UserDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\User\UserDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\User\UserLoginDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\User\UserLoginDto.cs</span></td></tr><tr name="MessageRowClassTheSocialSite.Domain" style="display: none"><td class="IconInfoEncoded"><a name="TheSocialSite.DomainMessage" /></td><td class="messageCell"><strong>TheSocialSite.Domain\Models\User\UserUpdateDto.cs:
+        </strong><span>Успешно создана резервная копия файла C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.Domain\Models\User\UserUpdateDto.cs</span></td></tr><tr style="display: none" name="MessageRowHeaderHideTheSocialSite.Domain"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="TheSocialSite.DomainMessage" onclick="ToggleMessageVisibility('TheSocialSite.Domain'); return false;">
+          Скрыть 35 дополнительные сообщения
+        </a></td></tr></table><a name="Solution" /><h3 _locID="ProjectDisplayNameHeader">Решение</h3><table><tr id="SolutionHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Сообщение</th></tr><tr name="WarningRowClassSolution"><td class="IconWarningEncoded"><a name="SolutionWarning" /></td><td class="messageCell"><strong>TheSocialSite.sln:
+        </strong><span>Среде Visual Studio требуется внести в этот проект нефункциональные изменения, чтобы его можно было открывать в выпущенных версиях Visual Studio, которые новее Visual Studio 2010 с пакетом обновления 1 (SP1), без ущерба для поведения проекта.</span></td></tr><tr name="MessageRowHeaderShowSolution"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="SolutionMessage" onclick="ToggleMessageVisibility('Solution'); return false;">
+          Показать 2 дополнительные сообщения
+        </a></td></tr><tr name="MessageRowClassSolution" style="display: none"><td class="IconInfoEncoded"><a name="SolutionMessage" /></td><td class="messageCell"><strong>TheSocialSite.sln:
+        </strong><span>Для файла была успешно создана резервная копия C:\Users\Arina.Rebeja\Documents\GitHub\TheSocialSite\Backup\TheSocialSite.sln</span></td></tr><tr name="MessageRowClassSolution" style="display: none"><td class="IconInfoEncoded"><a name="SolutionMessage" /></td><td class="messageCell"><strong>TheSocialSite.sln:
+        </strong><span>Перенос решения успешно завершен</span></td></tr><tr style="display: none" name="MessageRowHeaderHideSolution"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="SolutionMessage" onclick="ToggleMessageVisibility('Solution'); return false;">
+          Скрыть 2 дополнительные сообщения
+        </a></td></tr></table></div></div></body></html>

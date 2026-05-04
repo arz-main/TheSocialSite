@@ -12,8 +12,8 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260423210752_ExpandLessonDescription")]
-    partial class ExpandLessonDescription
+    [Migration("20260427122210_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -287,8 +287,7 @@ namespace TheSocialSite.DataAccess.Migrations
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Likes")
                         .HasColumnType("int");

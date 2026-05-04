@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheSocialSite.DataAccess.Context;
 
@@ -12,11 +11,9 @@ using TheSocialSite.DataAccess.Context;
 namespace TheSocialSite.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260423201010_AddCourseEntities")]
-    partial class AddCourseEntities
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,150 +115,6 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.HasIndex("PostId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.BlockData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Caption")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<int?>("DurationSeconds")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("LessonId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PracticeConfig")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TextContent")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<string>("VideoUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("Blocks");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.ChapterData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("Chapters");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.CourseData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ThumbnailUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.LessonData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ChapterId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChapterId");
-
-                    b.ToTable("Lessons");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostData", b =>
@@ -461,50 +314,6 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.BlockData", b =>
-                {
-                    b.HasOne("TheSocialSite.Domain.Entities.Course.LessonData", "Lesson")
-                        .WithMany("Blocks")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.ChapterData", b =>
-                {
-                    b.HasOne("TheSocialSite.Domain.Entities.Course.CourseData", "Course")
-                        .WithMany("Chapters")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.CourseData", b =>
-                {
-                    b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.LessonData", b =>
-                {
-                    b.HasOne("TheSocialSite.Domain.Entities.Course.ChapterData", "Chapter")
-                        .WithMany("Lessons")
-                        .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chapter");
-                });
-
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostData", b =>
                 {
                     b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "Author")
@@ -549,21 +358,6 @@ namespace TheSocialSite.DataAccess.Migrations
             modelBuilder.Entity("BadgeTemplateData", b =>
                 {
                     b.Navigation("AwardedBadges");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.ChapterData", b =>
-                {
-                    b.Navigation("Lessons");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.CourseData", b =>
-                {
-                    b.Navigation("Chapters");
-                });
-
-            modelBuilder.Entity("TheSocialSite.Domain.Entities.Course.LessonData", b =>
-                {
-                    b.Navigation("Blocks");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostData", b =>
