@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using TheSocialSite.Domain.Models.Friendship;
 using TheSocialSite.Domain.Models.Response;
 
-public interface IFriendshipInteractAction
-{
-    FriendshipActionResponse SendFriendRequest(string senderId, string receiverId);
+namespace TheSocialSite.Business.Interfaces {
+   public interface IFriendshipInteractAction
+   {FriendshipActionResponse RequestFollow(string senderId, string receiverId);
+    List<FriendshipResponseDto> GetFriendsList(string userId);
     FriendshipActionResponse AcceptFriendRequest(string requestId, string userId);
     FriendshipActionResponse DeclineFriendRequest(string requestId, string userId);
-    FriendshipActionResponse RemoveFriend(string userId, string friendId);
-    List<FriendshipResponseDto> GetFriendsList(string userId);
-}
+    FriendshipActionResponse RemoveFriend(string userId, string friendId);}
+ }

@@ -1,4 +1,5 @@
-﻿using TheSocialSite.Business.Interfaces;
+﻿using TheSocialSite.Business.Core;
+using TheSocialSite.Business.Interfaces;
 using TheSocialSite.Business.Structure;
 
 namespace TheSocialSite.Business
@@ -41,6 +42,10 @@ namespace TheSocialSite.Business
         public ICourseCreatorAction CourseCreateInteractAction()
         {
             return new CourseCreateInteractAction();
+        }
+        public IFriendshipInteractAction FriendshipInteractAction()
+        {
+            return new FriendshipInteractActions();
         }
     }
 }

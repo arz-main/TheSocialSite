@@ -4,6 +4,7 @@ using TheSocialSite.Domain.Entities.Comment;
 using TheSocialSite.Domain.Entities.Course;
 using TheSocialSite.Domain.Entities.Post;
 using TheSocialSite.Domain.Entities.SocialMedia;
+using TheSocialSite.Domain.Entities.Friendship;
 using TheSocialSite.Domain.Entities.User;
 
 namespace TheSocialSite.DataAccess.Context
@@ -98,5 +99,6 @@ namespace TheSocialSite.DataAccess.Context
         public DbSet<ChapterData> Chapters { get; set; }
         public DbSet<LessonData> Lessons { get; set; }
         public DbSet<BlockData> Blocks { get; set; }
+        public DbSet<FriendshipData> Friendships {get; set;}
     }
 }

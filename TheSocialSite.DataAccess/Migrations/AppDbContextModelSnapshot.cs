@@ -260,6 +260,38 @@ namespace TheSocialSite.DataAccess.Migrations
                     b.ToTable("Lessons");
                 });
 
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.Friendship.FriendshipData", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Friendships");
+                });
+
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostData", b =>
                 {
                     b.Property<string>("Id")
@@ -498,6 +530,25 @@ namespace TheSocialSite.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Chapter");
+                });
+
+            modelBuilder.Entity("TheSocialSite.Domain.Entities.Friendship.FriendshipData", b =>
+                {
+                    b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheSocialSite.Domain.Entities.User.UserData", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("TheSocialSite.Domain.Entities.Post.PostData", b =>
