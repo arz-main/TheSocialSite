@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import {
     Pause, Play, SkipForward, Download,
     Send, X, Pencil, Eraser, Minus, Plus, Check, CheckCircle2,
-    Square, Loader2, ImageOff
+    Square, Loader2, ImageOff, Undo2
 } from "lucide-react";
 import { Button } from "./BasicButton";
 import { TimerBar, ProgressPills } from "./PracticePageUIComponents";
@@ -26,6 +26,8 @@ export function DrawingCanvas({ onCapture, triggerCapture, clearSignal, onFirstS
     const drawing = useRef(false);
     const lastPos = useRef<{ x: number; y: number } | null>(null);
     const hasDrawnRef = useRef(false);
+    const historyRef = useRef<ImageData[]>([]);
+    const MAX_HISTORY = 30;
     const [tool, setTool] = useState<"brush" | "eraser">("brush");
     const [brushSize, setBrushSize] = useState(4);
     const [color, setColor] = useState("#1C0D0C");
@@ -40,13 +42,48 @@ export function DrawingCanvas({ onCapture, triggerCapture, clearSignal, onFirstS
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }, []);
 
+    const snapshot = useCallback(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas?.getContext("2d");
+        if (!canvas || !ctx) return;
+        try {
+            historyRef.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+            if (historyRef.current.length > MAX_HISTORY) historyRef.current.shift();
+        } catch { /* tainted canvas — ignore */ }
+    }, []);
+
+    const undo = useCallback(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas?.getContext("2d");
+        if (!canvas || !ctx) return;
+        const prev = historyRef.current.pop();
+        if (!prev) return;
+        ctx.putImageData(prev, 0, 0);
+    }, []);
+
+    const clear = useCallback(() => {
+        snapshot();
+        fillWhite();
+    }, [snapshot, fillWhite]);
+
     useEffect(() => { fillWhite(); }, [fillWhite]);
     useEffect(() => {
         if (clearSignal > 0) {
             fillWhite();
             hasDrawnRef.current = false;
+            historyRef.current = [];
         }
     }, [clearSignal, fillWhite]);
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
+                e.preventDefault();
+                undo();
+            }
+        };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+    }, [undo]);
     useEffect(() => {
         if (!triggerCapture) return;
         const canvas = canvasRef.current;
@@ -71,6 +108,7 @@ export function DrawingCanvas({ onCapture, triggerCapture, clearSignal, onFirstS
             hasDrawnRef.current = true;
             onFirstStroke?.();
         }
+        snapshot();
         drawing.current = true;
         lastPos.current = getPos(e, canvas);
     };
@@ -125,7 +163,11 @@ export function DrawingCanvas({ onCapture, triggerCapture, clearSignal, onFirstS
                         />
                     ))}
                 </div>
-                <button onClick={fillWhite} className="ml-auto text-xs text-muted hover:text-red-400 transition-colors px-1.5 py-0.5 rounded hover:bg-red-50/10">
+                <button onClick={undo} title="Undo (Ctrl+Z)"
+                    className="ml-auto p-1 rounded-md text-muted hover:bg-primary/10 hover:text-text transition-colors">
+                    <Undo2 className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={clear} className="text-xs text-muted hover:text-red-400 transition-colors px-1.5 py-0.5 rounded hover:bg-red-50/10">
                     Clear
                 </button>
             </div>

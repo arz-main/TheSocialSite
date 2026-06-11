@@ -1,4 +1,4 @@
-import { Palette, Clock, TrendingUp, Users, Award } from "lucide-react";
+import { Palette, Clock, TrendingUp, Users, Award, Map } from "lucide-react";
 const MockCards = [
 	{
 		id: 1,
@@ -27,6 +27,11 @@ const MockCards = [
 		title: "Earn Badges",
 		description: "Share your work and get inspired by drawings from artists around the world.",
 		icon: Award,
+	},{
+		id: 6,
+		title: "Guided Roadmap",
+		description: "Follow structured courses and lessons that guide you step by step from beginner to mastery.",
+		icon: Map,
 	}
 ];
 

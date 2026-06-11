@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npx tsc --noEmit -p tsconfig.app.json 2>&1)",
+      "Read(//c/Users/liviu/Desktop/Siteu/TheSocialSite/**)",
+      "PowerShell(dotnet build \"c:\\\\Users\\\\liviu\\\\Desktop\\\\Siteu\\\\TheSocialSite\\\\TheSocialSite.Business\\\\TheSocialSite.Business.csproj\" -nologo -v q 2>&1)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\liviu\\Desktop\\Siteu\\TheSocialSite\\TheSocialSite.Business\\Core"
+    ]
+  }
+}

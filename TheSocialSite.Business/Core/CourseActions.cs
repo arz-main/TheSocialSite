@@ -148,7 +148,6 @@ namespace TheSocialSite.Business.Core
                 }
             };
         }
-
         public CourseActionResponse UpdateCourseActionExecution(int courseId, CreateCourseDto dto)
         {
             using var ctx = new AppDbContext();
