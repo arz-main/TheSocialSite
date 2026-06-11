@@ -14,17 +14,17 @@ namespace TheSocialSite.Domain.Entities.Friendship
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        /*temporar*/ public string Id { get; set; } = string.Empty;
+        /*temporar*/ public string Id { get; set; } 
 
         [Required]
-        /*temporar*/ public string SenderId { get; set; } = string.Empty;
+        /*temporar*/ public string SenderId { get; set; }
         [ForeignKey("SenderId")]
-        /*temporar*/ public UserData? Sender { get; set; }
+        public UserData? Sender { get; set; }
 
         [Required]
-        /*temporar*/ public string ReceiverId { get; set; } = string.Empty;
+        /*temporar*/ public string ReceiverId { get; set; }
         [ForeignKey("ReceiverId")]
-        /*temporar*/ public UserData? Receiver { get; set; }
+        public UserData? Receiver { get; set; }
 
          //Statutul cererii
         [Required]

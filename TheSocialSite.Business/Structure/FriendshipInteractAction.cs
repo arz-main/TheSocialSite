@@ -11,8 +11,9 @@ namespace TheSocialSite.Business.Structure
     {
         public FriendshipActionResponse RequestFollow(string senderId, string receiverId) => RequestFollowExecution(senderId, receiverId);
         public List<FriendshipResponseDto> GetFriendsList(string userId) => GetFriendsListExecution(userId);
-        public FriendshipActionResponse AcceptFriendRequest(string requestId, string userId) => AcceptFriendRequestExecution(requestId, userId);
-        public FriendshipActionResponse DeclineFriendRequest(string requestId, string userId) => DeclineFriendRequestExecution(requestId, userId);
-        public FriendshipActionResponse RemoveFriend(string userId, string friendId) => RemoveFriendExecution   (userId, friendId);
+        public List<FriendshipResponseDto> GetPendingRequests(string userId) => GetPendingRequestsExecution(userId);
+        public FriendshipActionResponse AcceptFriendRequestAction(string requestId, string userId) => AcceptFriendRequestExecution(requestId, userId);
+        public FriendshipActionResponse DeclineFriendRequestAction(string requestId, string userId) => DeclineFriendRequestExecution(requestId, userId);
+        public FriendshipActionResponse RemoveFriendAction(string userId, string friendId) => RemoveFriendExecution   (userId, friendId);
     }
 }

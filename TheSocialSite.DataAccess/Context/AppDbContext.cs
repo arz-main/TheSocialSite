@@ -85,6 +85,20 @@ namespace TheSocialSite.DataAccess.Context
                 .WithMany(l => l.Blocks)
                 .HasForeignKey(b => b.LessonId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Friendship → Sender (User)
+            modelBuilder.Entity<FriendshipData>()
+                .HasOne(f => f.Sender)
+                .WithMany()
+                .HasForeignKey(f => f.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Friendship → Receiver (User)
+            modelBuilder.Entity<FriendshipData>()
+                .HasOne(f => f.Receiver)
+                .WithMany()
+                .HasForeignKey(f => f.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         // Single DbContext for everything

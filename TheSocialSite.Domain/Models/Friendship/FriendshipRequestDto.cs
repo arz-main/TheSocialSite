@@ -7,6 +7,6 @@ namespace TheSocialSite.Domain.Models.Friendship
     public class FriendshipRequestDto
     {
         [Required]
-        public string RequesterId {get; set;}
+        public string SenderId {get; set;}
     }
 }

@@ -89,6 +89,31 @@ namespace TheSocialSite.Business.Core
             // and returning a list of friends with their details
         }
 
+        public List<FriendshipResponseDto> GetPendingRequestsExecution(string userId)
+        {
+            using (var context = new AppDbContext())
+            {
+                var pendingRequests = context.Friendships
+                    .Include(f=>f.Sender)
+                    .Where(f=>f.ReceiverId == userId && f.Status == FriendshipStatus.Pending)
+                    .Select(f=>new FriendshipResponseDto
+                    {
+                        FriendId = f.SenderId,
+                        Username = f.Sender.Username,
+                        AvatarUrl = f.Sender.AvatarUrl,
+                        Bio = f.Sender.Bio,
+                        Status = f.Status.ToString(),
+                        CreatedAt = f.CreatedAt,
+                        UpdatedAt = f.UpdatedAt
+                    })
+                    .ToList();
+                    return pendingRequests;
+            }
+            // Implementation for retrieving a user's pending friend requests
+            // This would involve querying the database for all pending friendships where the user is the receiver
+            // and returning a list of pending requests with the sender's details
+        }
+
         public FriendshipActionResponse AcceptFriendRequestExecution(string requestId, string userId)
         {
             using (var context = new AppDbContext())
