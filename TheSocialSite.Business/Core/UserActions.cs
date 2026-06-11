@@ -168,6 +168,18 @@ namespace TheSocialSite.Business.Core
                         IsValid = false,
                         Message = "User not found."
                     };
+
+                // Posts and Courses use DeleteBehavior.Restrict, so the user's owned
+                // rows must be removed first. Their Comments, PostLikes, Chapters,
+                // Lessons and Blocks cascade automatically. The user's authored
+                // Comments, PostLikes, AwardedBadges and SocialMedia cascade from the
+                // user delete itself.
+                var userPosts = userContext.Posts.Where(p => p.AuthorId == userId).ToList();
+                userContext.Posts.RemoveRange(userPosts);
+
+                var userCourses = userContext.Courses.Where(c => c.AuthorId == userId).ToList();
+                userContext.Courses.RemoveRange(userCourses);
+
                 userContext.Remove(user);
                 userContext.SaveChanges();
             }

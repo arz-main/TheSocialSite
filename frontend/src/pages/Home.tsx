@@ -106,8 +106,8 @@ function HeroStrokes() {
 const words = ["SKETCH", "DRAW", "PRACTICE", "CREATE", "IMPROVE", "EXPLORE", "MASTER", "FLOW"];
 const MarqueeStrip = () => (
 	<div className="w-full overflow-hidden bg-primary py-3 select-none">
-		<div className="flex gap-10 whitespace-nowrap" style={{ animation: "marquee 18s linear infinite", width: "max-content" }}>
-			{[...words, ...words].map((w, i) => (
+		<div className="flex gap-10 whitespace-nowrap" style={{ animation: "marquee 36s linear infinite", width: "max-content" }}>
+			{[...words, ...words, ...words, ...words, ...words, ...words, ...words, ...words].map((w, i) => (
 				<span key={i} className="text-white font-black tracking-[0.3em] text-sm flex items-center gap-10">
 					{w}
 					<span className="inline-block w-2 h-2 rounded-full bg-white opacity-60 -mx-6" />
@@ -162,14 +162,6 @@ const Home = () => {
 					<span aria-hidden="true" className="absolute -bottom-10 -left-6 text-[22vw] font-black text-primary opacity-[0.04] leading-none select-none pointer-events-none">SF</span>
 					<InkAccent size={340} className="bg-primary opacity-[0.06] -top-20 -right-28 blur-3xl" />
 					<InkAccent size={200} className="bg-primary opacity-[0.08] bottom-10 left-0 blur-2xl" />
-
-					<div className="relative z-10 mb-2" style={{ animation: "floatY 4s ease-in-out infinite" }}>
-						<div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg rotate-6">
-							<svg viewBox="0 0 24 24" className="w-7 h-7 text-white fill-none stroke-white stroke-2 stroke-linecap-round stroke-linejoin-round">
-								<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-							</svg>
-						</div>
-					</div>
 
 					<div className="relative z-10 text-center flex flex-col items-center">
 						<h1 className="hero-word text-text text-5xl md:text-6xl font-black tracking-tight leading-tight mb-1">Master Your Art</h1>
